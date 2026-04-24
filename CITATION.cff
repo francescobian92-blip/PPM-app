@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "VIV PPM Calculator"
+version: "1.0.0"
+date-released: "2025-04-24"
+license: CC-BY-NC-4.0
+type: software
+abstract: >-
+  A real-time calculator for predicting patient-prosthesis mismatch (PPM)
+  during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI).
+  Uses a hybrid Gorlin approach that combines pre-procedural echocardiographic
+  stroke volume with intra-procedural invasive hemodynamics to compute aortic
+  valve area and indexed AVA in real time. Includes a database of 23 surgical
+  bioprostheses and 18 TAVI devices with peer-reviewed effective orifice area
+  reference values and a VIV-adjustment model.
+keywords:
+  - cardiology
+  - TAVI
+  - TAVR
+  - valve-in-valve
+  - patient-prosthesis mismatch
+  - Gorlin equation
+  - aortic valve area
+  - interventional cardiology
+  - medical calculator
+authors:
+  - family-names: "Bianchini"
+    given-names: "Francesco"
+    affiliation: "Fondazione Policlinico Universitario A. Gemelli IRCCS, Rome, Italy"
+repository-code: "https://github.com/francescobian92-blip/viv-tavi-ppm"
+url: "https://francescobian92-blip.github.io/viv-tavi-ppm/"
+references:
+  - type: article
+    authors:
+      - family-names: "Bianchini"
+        given-names: "Francesco"
+    title: "A hybrid approach to estimate aortic valve area during valve-in-valve transcatheter aortic valve implantation"
+    journal: "Cardiovascular Revascularization Medicine"
+    year: 2024

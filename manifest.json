@@ -1,0 +1,27 @@
+{
+  "name": "VIV PPM Calculator",
+  "short_name": "VIV PPM",
+  "description": "Predicted and measured patient-prosthesis mismatch for valve-in-valve TAVI procedures",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafbfc",
+  "theme_color": "#0b1e3a",
+  "lang": "en",
+  "categories": ["medical", "health", "education"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
