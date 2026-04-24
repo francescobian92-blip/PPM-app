@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1e3a">
+<meta name="description" content="Real-time patient-prosthesis mismatch (PPM) prediction tool for valve-in-valve TAVI procedures. Based on a hybrid Gorlin approach.">
+<meta name="author" content="Francesco Bianchini">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="VIV PPM Calculator">
+<meta property="og:description" content="Real-time PPM prediction during valve-in-valve TAVI procedures">
+<meta property="og:type" content="website">
+<title>VIV PPM Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fafbfc;--bg-alt:#f4f5f8;--card:#ffffff;--border:#e6e8ec;--border-strong:#d0d3d9;
+  --text:#0a0e1a;--text-muted:#525968;--text-soft:#8c93a3;
+  --brand:#0b1e3a;--brand-light:#1e3a5f;
+  --blue:#2563eb;--blue-soft:#dbeafe;--blue-bg:#eff6ff;
+  --green:#15803d;--green-soft:#dcfce7;--green-bg:#f0fdf4;
+  --red:#b91c1c;--red-soft:#fee2e2;--red-bg:#fef2f2;
+  --orange:#c2410c;--orange-soft:#fed7aa;--orange-bg:#fff7ed;
+  --amber:#a16207;--amber-soft:#fef3c7;--amber-bg:#fefce8;
+  --purple:#7c3aed;--purple-soft:#ede9fe;
+  --input-bg:#ffffff;--cal-bg:#fff8f0;--cal-border:#c2410c;
+  --shadow-xs:0 1px 2px 0 rgb(10 14 26 / 0.04);
+  --shadow-sm:0 1px 3px 0 rgb(10 14 26 / 0.06), 0 1px 2px -1px rgb(10 14 26 / 0.04);
+  --shadow:0 4px 6px -1px rgb(10 14 26 / 0.06), 0 2px 4px -2px rgb(10 14 26 / 0.04);
+  --shadow-md:0 10px 15px -3px rgb(10 14 26 / 0.08), 0 4px 6px -4px rgb(10 14 26 / 0.05);
+  --shadow-lg:0 20px 25px -5px rgb(10 14 26 / 0.08), 0 8px 10px -6px rgb(10 14 26 / 0.05);
+  --shadow-glow-blue:0 0 0 3px rgb(37 99 235 / 0.12);
+  --shadow-glow-orange:0 0 0 3px rgb(194 65 12 / 0.12);
+  --shadow-colored-green:0 8px 24px -4px rgb(21 128 61 / 0.2);
+  --shadow-colored-amber:0 8px 24px -4px rgb(161 98 7 / 0.2);
+  --shadow-colored-red:0 8px 24px -4px rgb(185 28 28 / 0.2);
+}
+[data-theme="dark"]{
+  --bg:#0a0e1a;--bg-alt:#0f1420;--card:#141a2a;--border:#242b3d;--border-strong:#38405a;
+  --text:#eaecf2;--text-muted:#a8adba;--text-soft:#6b7280;
+  --brand:#60a5fa;--brand-light:#93c5fd;
+  --blue-soft:#1e3a8a;--blue-bg:#172554;
+  --green-soft:#14532d;--green-bg:#052e16;
+  --red-soft:#7f1d1d;--red-bg:#450a0a;
+  --orange-soft:#7c2d12;--orange-bg:#431407;
+  --amber-soft:#713f12;--amber-bg:#422006;
+  --input-bg:#141a2a;--cal-bg:#2a1810;
+  --shadow-xs:0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-sm:0 1px 3px 0 rgb(0 0 0 / 0.4);
+  --shadow:0 4px 6px -1px rgb(0 0 0 / 0.4);
+  --shadow-md:0 10px 15px -3px rgb(0 0 0 / 0.5);
+  --shadow-lg:0 20px 25px -5px rgb(0 0 0 / 0.6);
+}
+html,body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%;transition:background .3s ease,color .3s ease;font-feature-settings:"cv02","cv03","cv04","cv11";letter-spacing:-0.01em}
+input[type=number]{-moz-appearance:textfield;font-family:inherit}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+button{font-family:inherit}
+
+.hdr{background:linear-gradient(135deg,#0b1e3a 0%,#1e3a5f 50%,#3b82f6 100%);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:20;box-shadow:var(--shadow-md);overflow:hidden}
+.hdr::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='80' viewBox='0 0 200 80'><path d='M0 40 L30 40 L35 30 L40 50 L45 15 L50 60 L55 40 L100 40 L105 30 L110 50 L115 15 L120 60 L125 40 L200 40' stroke='white' stroke-width='1' fill='none' opacity='0.08'/></svg>");background-repeat:repeat-x;background-size:200px 80px;background-position:center;pointer-events:none;opacity:0.7}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:800px;margin:0 auto;position:relative;z-index:1}
+.hdr-brand{display:flex;align-items:center;gap:12px}
+.hdr-logo{width:42px;height:42px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);box-shadow:0 4px 12px -2px rgb(0 0 0 / 0.2)}
+.hdr-logo svg{width:24px;height:24px}
+.hdr-titles h1{font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1.1;display:flex;align-items:center;gap:8px}
+.hdr-titles p{font-size:11px;opacity:.75;margin-top:2px;font-weight:500;letter-spacing:0.2px}
+.hdr-status{display:inline-flex;align-items:center;gap:5px;background:rgba(74,222,128,.15);color:#86efac;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid rgba(74,222,128,.2)}
+.hdr-status::before{content:'';width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.hdr-tools{display:flex;gap:6px}
+.hdr-btn{background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.15);padding:8px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease;backdrop-filter:blur(10px);white-space:nowrap}
+.hdr-btn:hover{background:rgba(255,255,255,.20);transform:translateY(-1px)}
+.hdr-btn:active{transform:scale(.96)}
+@media (max-width:420px){
+  .hdr-btn{padding:7px 9px;font-size:11px}
+  .hdr-titles h1{font-size:17px}
+  .hdr-tools{gap:4px}
+}
+
+.progress-container{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 10px}
+.progress-inner{max-width:800px;margin:0 auto}
+.progress-track{height:4px;background:var(--border);border-radius:4px;position:relative;overflow:hidden;margin-bottom:10px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563eb 0%,#3b82f6 50%,#60a5fa 100%);border-radius:4px;transition:width .6s cubic-bezier(0.22,1,0.36,1);box-shadow:0 0 12px rgb(59 130 246 / 0.5)}
+.steps{display:flex;justify-content:space-between;gap:4px}
+.step-dot{display:flex;flex-direction:column;align-items:center;flex:1;cursor:pointer;opacity:.45;background:none;border:none;padding:0;transition:opacity .25s ease;color:inherit;min-width:0}
+.step-dot.active,.step-dot.done{opacity:1}
+.step-dot:not(.active):not(.done){cursor:not-allowed}
+.step-dot .dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--border);color:var(--text-muted);transition:all .3s cubic-bezier(0.22,1,0.36,1)}
+.step-dot.active .dot{background:var(--blue);color:#fff;box-shadow:0 0 0 4px rgb(37 99 235 / 0.15),var(--shadow-sm);transform:scale(1.05)}
+.step-dot.done .dot{background:var(--green);color:#fff;animation:checkPop .4s cubic-bezier(0.22,1,0.36,1)}
+@keyframes checkPop{0%{transform:scale(.7)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.step-dot span{font-size:10px;margin-top:4px;font-weight:600;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:0.1px}
+.step-dot.active span{color:var(--blue)}
+[data-theme="dark"] .step-dot.active span{color:var(--brand-light)}
+
+.content{padding:16px;padding-bottom:32px;max-width:800px;margin:0 auto;animation:fadeSlideIn .35s ease}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.sec-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
+.sec-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .25s ease}
+.sec-icon svg{width:18px;height:18px}
+.sec-title:hover .sec-icon{transform:rotate(-3deg) scale(1.05)}
+.sec-icon.patient{background:var(--purple-soft);color:var(--purple)}
+.sec-icon.echo{background:var(--blue-soft);color:var(--blue)}
+.sec-icon.calib{background:var(--orange-soft);color:var(--orange)}
+.sec-icon.pre{background:var(--blue-soft);color:var(--blue)}
+.sec-icon.post{background:var(--green-soft);color:var(--green)}
+.sec-title.pre{color:var(--blue)}
+.sec-title.post{color:var(--green)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow-xs);transition:box-shadow .25s ease,border-color .25s ease}
+.card:hover{box-shadow:var(--shadow-sm)}
+.card.pre{border-color:var(--blue-soft);background:linear-gradient(180deg,var(--blue-bg) 0%,var(--card) 35%)}
+.card.post{border-color:var(--green-soft);background:linear-gradient(180deg,var(--green-bg) 0%,var(--card) 35%)}
+[data-theme="dark"] .card.pre,[data-theme="dark"] .card.post{background:var(--card)}
+
+.field{display:flex;align-items:center;gap:10px;padding:10px 0;position:relative}
+.field.large{padding:12px 0}
+.field label{flex:1;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;line-height:1.3;letter-spacing:-0.1px}
+.field input{width:100px;height:46px;text-align:center;font-size:17px;font-weight:700;border:1.5px solid var(--border-strong);border-radius:12px;color:var(--text);background:var(--input-bg);outline:none;transition:all .2s ease;padding:0 6px;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-xs);letter-spacing:-0.3px}
+.field.large input{width:108px;height:52px;font-size:19px}
+.field input:focus{border-color:var(--blue);box-shadow:var(--shadow-glow-blue),var(--shadow-sm);transform:translateY(-1px)}
+.field input.caliper{border-color:var(--cal-border);background:var(--cal-bg)}
+.field input.caliper:focus{box-shadow:var(--shadow-glow-orange),var(--shadow-sm)}
+.field .unit{font-size:11px;color:var(--text-soft);width:58px;text-align:right;flex-shrink:0;font-weight:600;letter-spacing:0.3px}
+
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--border-strong);color:#fff;border:none;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;transition:all .2s ease}
+.help-btn:hover{background:var(--blue);transform:scale(1.1) rotate(10deg)}
+.help-btn.active{background:var(--blue);transform:scale(1.1)}
+.help-panel{display:none;background:var(--blue-bg);border-left:3px solid var(--blue);padding:14px 16px;margin:8px 0 12px;border-radius:0 12px 12px 0;font-size:12.5px;line-height:1.6;color:var(--text)}
+.help-panel.show{display:block;animation:slideIn .3s cubic-bezier(0.22,1,0.36,1)}
+.help-panel strong{color:var(--blue);font-weight:700}
+[data-theme="dark"] .help-panel strong{color:var(--brand-light)}
+.help-panel ol,.help-panel ul{padding-left:20px;margin:6px 0}
+.help-panel li{margin:4px 0}
+.help-panel svg{border:1px solid var(--border);border-radius:8px;background:#fff;margin-top:10px}
+[data-theme="dark"] .help-panel svg rect:first-child{fill:#f8fafc}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap}
+.toggle-row label{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--text)}
+.toggle-row.sv-row label{color:var(--red)}
+.toggle-btn{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border-strong);flex-shrink:0;background:var(--input-bg);box-shadow:var(--shadow-xs)}
+.toggle-btn button{padding:10px 20px;font-size:13px;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--text-muted);transition:all .25s ease}
+.toggle-btn button:active{transform:scale(.96)}
+.toggle-btn button.on{background:var(--blue);color:#fff}
+.toggle-btn.sv button.on{background:var(--red)}
+
+.derived{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;margin:4px 0;border:1px solid transparent;transition:all .25s ease}
+.derived.key{background:var(--blue-bg);border-color:var(--blue-soft)}
+.derived.normal{background:var(--green-bg);border-color:var(--green-soft)}
+.derived .dlabel{flex:1;font-size:13px;color:var(--text-muted);font-weight:500;letter-spacing:-0.1px}
+.derived .dval{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.5px;transition:color .2s ease}
+.derived.key .dval{color:var(--blue)}
+.derived.normal .dval{color:var(--green)}
+[data-theme="dark"] .derived.key .dval{color:#60a5fa}
+[data-theme="dark"] .derived.normal .dval{color:#4ade80}
+.derived .dunit{font-size:11px;color:var(--text-soft);width:58px;text-align:right;flex-shrink:0;font-weight:600}
+.dval.updated{animation:valPulse .5s ease}
+@keyframes valPulse{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+.sep{border:none;border-top:1px dashed var(--border);margin:10px 0}
+.input-warn{padding:12px 14px;border-radius:12px;margin:8px 0;background:var(--red-bg);color:var(--red);font-size:12.5px;font-weight:600;display:flex;align-items:flex-start;gap:8px;border:1px solid var(--red-soft);animation:shakeIn .35s ease}
+.input-warn::before{content:"⚠";font-size:15px;flex-shrink:0}
+@keyframes shakeIn{0%{opacity:0;transform:translateX(-4px)}50%{transform:translateX(3px)}100%{opacity:1;transform:translateX(0)}}
+.note{font-size:11.5px;color:var(--text-soft);padding:2px 4px;margin-top:3px;line-height:1.5}
+
+.prepost{display:flex;gap:12px}
+.prepost>.col{flex:1;min-width:0}
+
+.ppm-badge{margin-bottom:18px;animation:badgeEntry .6s cubic-bezier(0.22,1,0.36,1)}
+@keyframes badgeEntry{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ppm-card{border-radius:20px;padding:26px 22px;text-align:center;position:relative;overflow:hidden;border:2px solid;transition:all .3s ease}
+.ppm-card.ok{background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);border-color:var(--green);color:#14532d;box-shadow:var(--shadow-colored-green)}
+.ppm-card.warn{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-color:var(--amber);color:#713f12;box-shadow:var(--shadow-colored-amber)}
+.ppm-card.danger{background:linear-gradient(135deg,#fee2e2 0%,#fecaca 100%);border-color:var(--red);color:#7f1d1d;box-shadow:var(--shadow-colored-red)}
+.ppm-card.empty{background:var(--bg-alt);border-color:var(--border-strong);color:var(--text-muted)}
+[data-theme="dark"] .ppm-card.ok{background:linear-gradient(135deg,#14532d 0%,#166534 100%);color:#bbf7d0}
+[data-theme="dark"] .ppm-card.warn{background:linear-gradient(135deg,#713f12 0%,#854d0e 100%);color:#fde68a}
+[data-theme="dark"] .ppm-card.danger{background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 100%);color:#fecaca}
+.ppm-icon{width:60px;height:60px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.5);animation:iconPop .6s cubic-bezier(0.22,1,0.36,1) .2s both}
+.ppm-icon svg{width:34px;height:34px;stroke-width:2.5}
+[data-theme="dark"] .ppm-icon{background:rgba(0,0,0,.3)}
+@keyframes iconPop{0%{opacity:0;transform:scale(.3) rotate(-45deg)}60%{transform:scale(1.15) rotate(5deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+.ppm-label{font-size:24px;font-weight:900;letter-spacing:-0.8px;line-height:1.1;margin-bottom:4px}
+.ppm-value{font-size:14px;font-weight:600;opacity:.85;margin-top:8px}
+.ppm-value strong{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.4px}
+.ppm-bmi-line{font-size:12px;color:var(--text-soft);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.12)}
+[data-theme="dark"] .ppm-bmi-line{border-top-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
+
+.avai-scale-wrap{margin:16px 0 8px;padding-top:24px}
+.avai-scale-title{font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:36px;text-align:center}
+.avai-scale{position:relative;height:40px;border-radius:12px;border:1px solid rgba(0,0,0,.08);box-shadow:var(--shadow-xs);overflow:visible}
+.avai-scale-labels{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:6px;font-size:10px;font-weight:700;color:var(--text-muted);text-align:center;letter-spacing:0.2px}
+.avai-marker{position:absolute;top:-6px;bottom:-6px;width:4px;background:var(--text);border-radius:4px;box-shadow:0 0 0 3px var(--card),0 0 0 4px var(--text),var(--shadow);transition:left .8s cubic-bezier(0.34,1.56,0.64,1)}
+.avai-marker::after{content:'';position:absolute;top:-12px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--text)}
+.avai-marker-value{position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;white-space:nowrap;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-sm);letter-spacing:-0.2px}
+
+.decision-card{border-radius:16px;padding:20px;margin-bottom:14px;border:2px solid;box-shadow:var(--shadow-sm);animation:fadeSlideIn .5s ease .3s both}
+.decision-card.ok{background:var(--green-bg);border-color:var(--green)}
+.decision-card.warn{background:var(--amber-bg);border-color:var(--amber)}
+.decision-card.danger{background:var(--red-bg);border-color:var(--red)}
+.decision-title{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
+.decision-card.ok .decision-title{color:#15803d}
+.decision-card.warn .decision-title{color:#854d0e}
+.decision-card.danger .decision-title{color:#b91c1c}
+[data-theme="dark"] .decision-card.ok .decision-title{color:#4ade80}
+[data-theme="dark"] .decision-card.warn .decision-title{color:#fbbf24}
+[data-theme="dark"] .decision-card.danger .decision-title{color:#f87171}
+.decision-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.55)}
+.decision-icon svg{width:17px;height:17px;stroke-width:2.5}
+[data-theme="dark"] .decision-icon{background:rgba(0,0,0,.3)}
+.decision-action{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.55}
+.decision-options-title{font-size:10.5px;font-weight:800;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;margin-top:12px}
+.decision-step{display:flex;gap:10px;padding:12px 14px;background:rgba(255,255,255,.7);border-radius:10px;margin:6px 0;font-size:12.5px;line-height:1.5;color:var(--text);transition:transform .15s ease;align-items:flex-start;overflow-wrap:break-word;word-wrap:break-word}
+.decision-step:hover{transform:translateX(2px)}
+[data-theme="dark"] .decision-step{background:rgba(0,0,0,.3)}
+.decision-step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--text);color:var(--bg);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.decision-step > div:last-child{flex:1;min-width:0;overflow-wrap:break-word;word-break:break-word;hyphens:auto}
+.decision-card{overflow:hidden}
+.decision-action{overflow-wrap:break-word;word-wrap:break-word}
+.decision-warn{background:rgba(185,28,28,.08);border-left:3px solid var(--red);padding:10px 12px;border-radius:0 10px 10px 0;margin-top:10px;font-size:12px;color:var(--red);line-height:1.5;font-weight:500;overflow-wrap:break-word;word-wrap:break-word}
+
+.recheck-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--blue);color:#fff;border:none;padding:14px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:var(--shadow-sm);transition:all .2s ease;letter-spacing:-0.2px}
+.recheck-btn svg{width:18px;height:18px;flex-shrink:0}
+.recheck-btn:hover{background:var(--brand-light);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.recheck-btn:active{transform:scale(.98)}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;text-align:center}
+.comp-header{font-size:10px;font-weight:800;color:var(--text-soft);padding:6px 0;text-transform:uppercase;letter-spacing:0.6px}
+.comp-cell{padding:11px 4px;font-size:15px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+.comp-label{text-align:left;font-size:13px;font-weight:600;color:var(--text);padding-left:6px}
+.comp-pre{font-weight:800;color:var(--blue);letter-spacing:-0.3px}
+.comp-post{font-weight:800;color:var(--green);letter-spacing:-0.3px}
+[data-theme="dark"] .comp-pre{color:#60a5fa}
+[data-theme="dark"] .comp-post{color:#4ade80}
+.comp-delta{font-weight:700;font-size:13.5px;letter-spacing:-0.2px}
+
+.threshold{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;margin:3px 0;font-size:13px;background:var(--bg-alt);transition:all .3s cubic-bezier(0.22,1,0.36,1);color:var(--text);border:1px solid transparent}
+.threshold.active{font-weight:700;border-color:rgba(0,0,0,.15);transform:translateX(6px);box-shadow:var(--shadow-sm)}
+
+.export-row{display:flex;gap:10px;margin-top:14px}
+.export-btn{flex:1;background:var(--card);color:var(--text);border:1.5px solid var(--border-strong);padding:13px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s ease;box-shadow:var(--shadow-xs);letter-spacing:-0.1px}
+.export-btn:hover{background:var(--bg-alt);border-color:var(--blue);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.export-btn:active{transform:scale(.98)}
+.export-btn svg{width:16px;height:16px}
+
+.navbar{display:flex;gap:10px;padding:14px 16px;background:var(--card);border-top:1px solid var(--border);position:sticky;bottom:0;max-width:800px;margin:0 auto;padding-bottom:calc(14px + env(safe-area-inset-bottom,0));box-shadow:0 -4px 12px -2px rgb(0 0 0 / 0.04)}
+.navbar.inline{position:relative;border-top:1px dashed var(--border);box-shadow:none;margin-top:14px;border-radius:14px;background:transparent;padding:18px 0 0}
+.btn{padding:14px 22px;border-radius:14px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:-0.2px}
+.btn-back{background:var(--bg-alt);color:var(--text);border:1.5px solid var(--border-strong)}
+.btn-back:hover{background:var(--border);transform:translateX(-2px)}
+.btn-next{flex:1;background:linear-gradient(135deg,var(--blue) 0%,#3b82f6 50%,#60a5fa 100%);color:#fff;box-shadow:0 4px 12px -2px rgb(37 99 235 / 0.3)}
+.btn-next:hover{box-shadow:0 8px 20px -4px rgb(37 99 235 / 0.4);transform:translateY(-2px)}
+.btn-next:active{transform:scale(.98)}
+.btn-next.disabled{background:var(--border-strong);opacity:.5;cursor:not-allowed;pointer-events:none;box-shadow:none}
+
+.footer-info{text-align:center;font-size:11px;color:var(--text-soft);margin-top:12px;padding:0 8px;line-height:1.6;font-variant-numeric:tabular-nums;letter-spacing:0.1px}
+.disclaimer{margin-top:20px;padding:14px 16px;background:var(--bg-alt);border:1px dashed var(--border-strong);border-radius:12px;font-size:11px;color:var(--text-soft);line-height:1.6;text-align:center}
+.disclaimer strong{color:var(--text-muted);font-weight:700}
+.disclaimer-link{color:var(--blue);text-decoration:none;cursor:pointer;font-weight:600}
+.disclaimer-link:hover{text-decoration:underline}
+[data-theme="dark"] .disclaimer-link{color:var(--brand-light)}
+
+.credit{
+  margin-top:12px;padding:14px 16px;text-align:center;
+  font-size:11px;color:var(--text-soft);line-height:1.6;
+}
+.credit-name{font-weight:700;color:var(--text-muted);text-decoration:none}
+.credit-name:hover{color:var(--blue);text-decoration:underline}
+.credit-institution{font-size:10.5px;color:var(--text-soft);margin-top:2px}
+.credit-version{font-size:10px;color:var(--text-soft);margin-top:4px;letter-spacing:0.3px}
+
+.modal-bg{position:fixed;inset:0;background:rgba(10,14,26,.6);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.modal-bg.show{display:flex;animation:fadeIn .25s ease}
+.modal{background:var(--card);border-radius:20px;padding:28px;max-width:520px;width:100%;max-height:82vh;overflow-y:auto;color:var(--text);box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:modalIn .35s cubic-bezier(0.22,1,0.36,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h3{margin-bottom:14px;color:var(--brand);font-size:20px;font-weight:800;letter-spacing:-0.5px}
+[data-theme="dark"] .modal h3{color:var(--brand-light)}
+.modal p{font-size:13px;line-height:1.65;margin-bottom:10px;color:var(--text-muted)}
+.modal p strong{color:var(--text);font-weight:700}
+.modal-close{margin-top:16px;width:100%;background:var(--blue);color:#fff;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease;letter-spacing:-0.2px}
+.modal-close:hover{background:var(--brand-light);transform:translateY(-1px)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Predicted EOA modal */
+.peoa-modal-content{max-width:720px;padding:24px}
+
+/* Landing page */
+.landing{padding:8px 16px 32px;max-width:800px;margin:0 auto;animation:fadeSlideIn .4s ease}
+.landing-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin:12px 0 6px;text-align:center}
+.landing-subtitle{font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:28px;line-height:1.5;padding:0 16px}
+.landing-cards{display:flex;flex-direction:column;gap:16px}
+.landing-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:20px;
+  padding:24px 20px;cursor:pointer;transition:all .25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;text-align:left;
+}
+.landing-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--brand)}
+.landing-card:active{transform:scale(.98)}
+.landing-card-icon{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+  flex-shrink:0;
+}
+.landing-card.predicted .landing-card-icon{background:var(--purple-soft);color:var(--purple)}
+.landing-card.measured .landing-card-icon{background:var(--blue-soft);color:var(--blue)}
+.landing-card-icon svg{width:28px;height:28px}
+.landing-card-title{font-size:18px;font-weight:800;margin-bottom:4px;letter-spacing:-0.3px;display:flex;align-items:center;gap:10px}
+.landing-card-badge{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.landing-card.predicted .landing-card-badge{background:var(--purple-soft);color:var(--purple)}
+.landing-card.measured .landing-card-badge{background:var(--blue-soft);color:var(--blue)}
+.landing-card-when{font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.landing-card-desc{font-size:13px;color:var(--text-muted);line-height:1.55;margin-bottom:14px}
+.landing-card-steps{
+  display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;
+}
+.landing-card-step{
+  font-size:10.5px;font-weight:600;padding:4px 9px;
+  background:var(--bg-alt);color:var(--text-muted);border-radius:20px;
+  border:1px solid var(--border);
+}
+.landing-card-cta{
+  display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+  color:var(--blue);letter-spacing:-0.2px;
+}
+.landing-card.predicted .landing-card-cta{color:var(--purple)}
+[data-theme="dark"] .landing-card.predicted .landing-card-cta{color:#c4b5fd}
+[data-theme="dark"] .landing-card.measured .landing-card-cta{color:#60a5fa}
+.landing-card.status-done{border-color:var(--green);background:linear-gradient(180deg,var(--green-bg) 0%,var(--card) 40%)}
+[data-theme="dark"] .landing-card.status-done{background:var(--card)}
+.landing-card-done-badge{
+  position:absolute;top:16px;right:16px;
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;
+  background:var(--green);color:#fff;text-transform:uppercase;letter-spacing:0.5px;
+}
+.landing-card-done-badge svg{width:11px;height:11px;stroke-width:3}
+
+@media (min-width:700px){
+  .landing-cards{flex-direction:row}
+  .landing-card{flex:1}
+}
+.peoa-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.peoa-header h3{margin:0}
+.peoa-close-x{background:none;border:none;font-size:28px;line-height:1;color:var(--text-soft);cursor:pointer;padding:0 6px;border-radius:8px;transition:all .2s ease}
+.peoa-close-x:hover{background:var(--bg-alt);color:var(--text)}
+.peoa-intro{font-size:12.5px;color:var(--text-muted);margin-bottom:16px;line-height:1.5}
+.peoa-section{border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;background:var(--bg-alt)}
+.peoa-section-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:-0.2px}
+.peoa-section.surg .peoa-section-title{color:var(--purple)}
+.peoa-section.tavi .peoa-section-title{color:var(--blue)}
+.peoa-section-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.peoa-section.surg .peoa-section-icon{background:var(--purple-soft);color:var(--purple)}
+.peoa-section.tavi .peoa-section-icon{background:var(--blue-soft);color:var(--blue)}
+.peoa-row{display:flex;gap:10px;margin-bottom:10px;align-items:center}
+.peoa-row label{flex:0 0 90px;font-size:12px;font-weight:600;color:var(--text);min-width:0}
+.peoa-row select{
+  flex:1;min-width:0;padding:10px 12px;font-size:13px;font-weight:600;
+  border:1.5px solid var(--border-strong);border-radius:10px;
+  background:var(--input-bg);color:var(--text);
+  font-family:inherit;cursor:pointer;
+  transition:all .2s ease;outline:none;
+  max-width:100%;
+}
+.peoa-row select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgb(37 99 235 / 0.12)}
+.peoa-row input[type=number]{
+  flex:1;min-width:0;padding:10px;height:38px;font-size:13px;font-weight:700;
+  border:1.5px solid var(--border-strong);border-radius:10px;
+  background:var(--input-bg);color:var(--text);text-align:center;
+  font-variant-numeric:tabular-nums;outline:none;transition:all .2s ease;
+  max-width:100%;
+}
+.peoa-row input[type=number]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgb(37 99 235 / 0.12)}
+.peoa-results{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;
+  padding:12px;background:var(--card);border-radius:10px;border:1px solid var(--border);
+}
+.peoa-result-cell{text-align:center}
+.peoa-result-label{font-size:10px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.peoa-result-value{font-size:16px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.3px}
+.peoa-result-value.ok{color:var(--green)}
+.peoa-result-value.warn{color:var(--amber)}
+.peoa-result-value.danger{color:var(--red)}
+.peoa-ref{
+  font-size:10.5px;color:var(--text-soft);margin-top:10px;padding:8px 10px;
+  background:var(--card);border-radius:8px;border-left:2px solid var(--border-strong);
+  line-height:1.5;font-style:italic;
+}
+.peoa-summary{
+  padding:14px;border-radius:12px;margin-top:14px;border:2px solid;
+}
+.peoa-summary.ok{background:var(--green-bg);border-color:var(--green)}
+.peoa-summary.warn{background:var(--amber-bg);border-color:var(--amber)}
+.peoa-summary.danger{background:var(--red-bg);border-color:var(--red)}
+.peoa-summary.empty{background:var(--bg-alt);border-color:var(--border-strong)}
+.peoa-summary-title{font-size:13px;font-weight:800;margin-bottom:6px;letter-spacing:-0.2px}
+.peoa-summary-text{font-size:12px;line-height:1.55;color:var(--text)}
+.peoa-override-toggle{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;
+  color:var(--text-soft);cursor:pointer;margin-top:8px;user-select:none;
+}
+.peoa-override-toggle input{margin:0}
+.peoa-bsa-warn{
+  font-size:11px;color:var(--amber);background:var(--amber-bg);
+  padding:8px 10px;border-radius:8px;margin-top:10px;font-weight:600;
+  border-left:3px solid var(--amber);line-height:1.4;
+}
+.peoa-tabs{
+  display:flex;gap:4px;background:var(--bg-alt);padding:4px;border-radius:12px;
+  margin-bottom:14px;border:1px solid var(--border);
+}
+.peoa-tab{
+  flex:1;padding:10px 14px;font-size:13px;font-weight:700;
+  border:none;background:transparent;color:var(--text-muted);
+  cursor:pointer;border-radius:9px;transition:all .2s ease;
+  font-family:inherit;letter-spacing:-0.1px;
+}
+.peoa-tab:hover:not(.active){background:var(--card);color:var(--text)}
+.peoa-tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow-sm);font-weight:800}
+
+@media (max-width:420px){.prepost{flex-direction:column}.field input{width:90px;height:44px;font-size:16px}.field.large input{width:98px;height:48px;font-size:17px}.hdr-titles h1{font-size:18px}.hdr-logo{width:38px;height:38px}.ppm-label{font-size:22px}}
+@media (max-width:360px){.toggle-btn button{padding:9px 14px;font-size:12px}}
+@media (min-width:720px){.content{padding:20px 24px}.step3-grid .prepost{gap:16px}}
+
+@media print{
+  .hdr,.progress-container,.navbar,.help-btn,.help-panel,.recheck-btn,.export-row,.hdr-tools,.disclaimer{display:none!important}
+  body{background:#fff;color:#000}
+  .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid;background:#fff!important}
+  .content{padding:0;max-width:100%}
+  .ppm-card{border:2px solid #000!important;background:#fff!important;color:#000!important;box-shadow:none!important}
+  .decision-card{background:#fff!important;color:#000!important;box-shadow:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="hdr-brand">
+      <div class="hdr-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          <path d="M8 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="hdr-titles">
+        <h1>VIV PPM <span class="hdr-status">Ready</span></h1>
+        <p>Predicted & measured PPM · v1.0</p>
+      </div>
+    </div>
+    <div class="hdr-tools">
+      <button class="hdr-btn" onclick="goHome()" id="home-btn" title="Home" style="display:none">🏠 Home</button>
+      <button class="hdr-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">🌙</button>
+      <button class="hdr-btn" onclick="resetAll()" title="Reset all data">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-container">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div id="steps-bar" class="steps"></div>
+  </div>
+</div>
+
+<div id="app" class="content"></div>
+<div id="nav" class="navbar"></div>
+
+<div class="modal-bg" id="info-modal" onclick="if(event.target.id==='info-modal')closeModal()">
+  <div class="modal">
+    <h3>About this tool</h3>
+    <p><strong>VIV PPM Calculator v1.0</strong></p>
+    <p>Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.</p>
+    <p><strong>Method:</strong> AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.</p>
+    <p><strong>PPM thresholds:</strong> ESC/EACTS 2025 guidelines.</p>
+    <p style="margin-top:16px;color:var(--red);font-weight:700;background:var(--red-bg);padding:12px;border-radius:10px;border-left:3px solid var(--red)">⚠ For research use only. Not a CE-marked medical device. Not intended for clinical decision-making.</p>
+    <div style="margin-top:16px;padding:14px;background:var(--bg-alt);border-radius:10px;border-left:3px solid var(--blue);font-size:12.5px;line-height:1.6">
+      <div style="font-weight:700;color:var(--text);margin-bottom:4px">Author</div>
+      <div><a href="https://github.com/francescobian92-blip" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:600">Francesco Bianchini, MD</a></div>
+      <div style="color:var(--text-muted);font-size:11.5px;margin-top:2px">Fondazione Policlinico Universitario A. Gemelli IRCCS, Rome</div>
+      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v1.0 · © 2025 · <a href="https://github.com/francescobian92-blip/PPM-app" target="_blank" rel="noopener" style="color:var(--text-soft);text-decoration:underline">Source</a></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+(function(){
+const STORAGE_KEY='vivtavi_state_v2';
+const STEPS=["Patient","Echo","Calibration","PRE/POST","Result"];
+const PRED_STEPS=["Patient","Surgical","TAVI","Result"];
+let mode='home'; // 'home' | 'predicted' | 'measured'
+let step=0;
+let predStep=0;
+const DEFAULT={peso:null,altezza:null,sesso:'M',svDiretto:false,svVal:null,lvotD:null,lvotVti:null,vtiTrans:null,ms0:null,lvet0:null,msPre:null,dpPre:null,msPost:null,dpPost:null};
+const PRED_DEFAULT={pesoP:null,altezzaP:null,sessoP:'M',surgModel:'',surgSize:null,surgOverride:null,taviModel:'',taviSize:null,taviOverride:null};
+let D=Object.assign({},DEFAULT);
+let P=Object.assign({},PRED_DEFAULT);
+const helpOpen={};
+
+try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const s=JSON.parse(saved);if(s.D)D=Object.assign({},DEFAULT,s.D);if(s.P)P=Object.assign({},PRED_DEFAULT,s.P);if(typeof s.step==='number')step=s.step;if(typeof s.predStep==='number')predStep=s.predStep;if(typeof s.mode==='string')mode=s.mode;if(s.theme)document.documentElement.setAttribute('data-theme',s.theme)}}catch(e){}
+
+function saveState(){try{const theme=document.documentElement.getAttribute('data-theme')||'light';localStorage.setItem(STORAGE_KEY,JSON.stringify({D:D,P:P,step:step,predStep:predStep,mode:mode,theme:theme}))}catch(e){}}
+
+const SVG_ARTERIAL='<svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;margin-top:10px"><rect width="280" height="120" fill="#fafbfc" rx="8"/><line x1="20" y1="100" x2="260" y2="100" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,3"/><text x="20" y="115" font-size="9" fill="#64748b">0 mmHg</text><path d="M 20 90 L 50 90 L 60 30 Q 80 20 100 35 Q 120 45 130 50 L 140 55 L 145 40 Q 155 50 165 55 L 200 80 L 230 88 L 260 90" fill="none" stroke="#2563eb" stroke-width="2.5"/><line x1="60" y1="15" x2="60" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><circle cx="60" cy="30" r="4" fill="#ea580c"/><text x="15" y="12" font-size="9" fill="#ea580c" font-weight="700">Cursor 1</text><text x="15" y="22" font-size="8" fill="#ea580c">upstroke</text><line x1="145" y1="15" x2="145" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><circle cx="145" cy="40" r="4" fill="#ea580c"/><text x="155" y="12" font-size="9" fill="#ea580c" font-weight="700">Cursor 2</text><text x="155" y="22" font-size="8" fill="#ea580c">dicrotic notch</text><path d="M 60 30 Q 80 20 100 35 Q 120 45 130 50 L 140 55 L 145 40 L 145 100 L 60 100 Z" fill="#2563eb" fill-opacity="0.18"/><text x="80" y="75" font-size="11" fill="#2563eb" font-weight="700">Mean</text><text x="75" y="88" font-size="9" fill="#2563eb">(systolic)</text></svg>';
+const SVG_LVET='<svg viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;margin-top:10px"><rect width="280" height="130" fill="#fafbfc" rx="8"/><line x1="20" y1="100" x2="260" y2="100" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,3"/><path d="M 20 90 L 50 90 L 60 30 Q 80 20 100 35 Q 120 45 130 50 L 140 55 L 145 40 Q 155 50 165 55 L 200 80 L 230 88 L 260 90" fill="none" stroke="#2563eb" stroke-width="2.5"/><line x1="60" y1="15" x2="60" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><line x1="145" y1="15" x2="145" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><line x1="60" y1="112" x2="145" y2="112" stroke="#ea580c" stroke-width="2"/><polygon points="60,112 65,109 65,115" fill="#ea580c"/><polygon points="145,112 140,109 140,115" fill="#ea580c"/><rect x="82" y="58" width="45" height="20" fill="#fff" stroke="#ea580c" stroke-width="1.5" rx="4"/><text x="104" y="73" font-size="13" fill="#ea580c" font-weight="700" text-anchor="middle">Δt</text><text x="103" y="125" font-size="9" fill="#64748b" text-anchor="middle">LVET (Δt)</text><text x="15" y="20" font-size="8" fill="#ea580c">upstroke</text><text x="155" y="20" font-size="8" fill="#ea580c">notch</text></svg>';
+const SVG_GRADIENT_PRE='<svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;margin-top:10px"><rect width="280" height="120" fill="#fafbfc" rx="8"/><line x1="20" y1="100" x2="260" y2="100" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,3"/><path d="M 60 20 Q 90 15 130 25 Q 160 35 175 50 L 178 50 Q 185 55 195 60 L 220 82 L 175 60 Q 165 60 135 55 Q 95 45 65 50 Z" fill="#ea580c" fill-opacity="0.25"/><path d="M 20 90 L 50 90 L 60 20 Q 90 15 130 25 Q 160 35 175 50 L 200 80 L 230 88 L 260 90" fill="none" stroke="#dc2626" stroke-width="2.5"/><path d="M 20 90 L 50 90 L 65 50 Q 95 45 135 55 Q 165 60 175 60 L 178 50 Q 185 55 195 60 L 220 82 L 240 87 L 260 90" fill="none" stroke="#2563eb" stroke-width="2.5"/><text x="105" y="35" font-size="10" fill="#dc2626" font-weight="700">LV</text><text x="100" y="68" font-size="10" fill="#2563eb" font-weight="700">Ao</text><text x="125" y="50" font-size="11" fill="#ea580c" font-weight="700">ΔP mean</text><line x1="205" y1="15" x2="222" y2="15" stroke="#dc2626" stroke-width="2.5"/><text x="226" y="18" font-size="9" fill="#dc2626">LV</text><line x1="205" y1="28" x2="222" y2="28" stroke="#2563eb" stroke-width="2.5"/><text x="226" y="31" font-size="9" fill="#2563eb">Aorta</text></svg>';
+const SVG_GRADIENT_POST='<svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;margin-top:10px"><rect width="280" height="120" fill="#fafbfc" rx="8"/><line x1="20" y1="100" x2="260" y2="100" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,3"/><path d="M 60 30 Q 90 25 130 32 Q 160 38 175 45 L 178 45 Q 185 50 195 58 L 220 80 L 175 50 Q 165 48 135 45 Q 95 40 65 45 Z" fill="#ea580c" fill-opacity="0.18"/><path d="M 20 90 L 50 90 L 60 30 Q 90 25 130 32 Q 160 38 175 45 L 200 78 L 230 87 L 260 90" fill="none" stroke="#dc2626" stroke-width="2.5"/><path d="M 20 90 L 50 90 L 65 45 Q 95 40 135 45 Q 165 48 175 50 L 178 45 Q 185 50 195 58 L 220 80 L 240 86 L 260 90" fill="none" stroke="#2563eb" stroke-width="2.5"/><text x="105" y="42" font-size="10" fill="#dc2626" font-weight="700">LV</text><text x="100" y="60" font-size="10" fill="#2563eb" font-weight="700">Ao</text><text x="125" y="75" font-size="10" fill="#ea580c" font-weight="700">ΔP small</text><line x1="205" y1="15" x2="222" y2="15" stroke="#dc2626" stroke-width="2.5"/><text x="226" y="18" font-size="9" fill="#dc2626">LV</text><line x1="205" y1="28" x2="222" y2="28" stroke="#2563eb" stroke-width="2.5"/><text x="226" y="31" font-size="9" fill="#2563eb">Aorta</text></svg>';
+
+const HELP={
+  peso:"<strong>Patient body weight</strong> in kilograms.<br>Used to calculate BSA and BMI.",
+  altezza:"<strong>Patient height</strong> in centimeters.<br>Used for BSA calculation (DuBois formula).",
+  lvotD:"<strong>Left ventricular outflow tract (LVOT) diameter</strong>.<ol><li>Parasternal long-axis view</li><li>Mid-systolic measurement, just below the aortic annulus</li><li>Inner edge to inner edge</li></ol>",
+  lvotVti:"<strong>LVOT Velocity Time Integral</strong>.<ol><li>Apical 5-chamber view</li><li>Pulsed-wave Doppler, sample volume in LVOT (1 cm below leaflets)</li><li>Trace the systolic envelope</li></ol>",
+  vtiTrans:"<strong>Transvalvular VTI</strong>, measured with Continuous-Wave (CW) Doppler.<ol><li>Apical 5-chamber or right parasternal view</li><li>Align CW with the aortic jet</li><li>Trace the high-velocity envelope</li></ol>",
+  svVal:"<strong>Direct stroke volume</strong> in ml.<br>Use this if SV is already available from echo report.",
+  ms0:"<strong>Mean systolic aortic pressure at baseline</strong> (before deployment).<br><br>📍 <strong>Procedure:</strong><ol><li>Freeze aortic trace on Philips polygraph</li><li>Press MEASURE</li><li>Cursor 1 on the <strong>upstroke</strong></li><li>Cursor 2 on the <strong>nadir of dicrotic notch</strong></li><li>Read <strong>Mean</strong> on display</li></ol>"+SVG_ARTERIAL,
+  lvet0:"<strong>LVET at baseline</strong> (Left Ventricular Ejection Time).<br><br>📍 <strong>Procedure:</strong><br>Same measurement as mean systolic pressure → read <strong>Δt</strong> on display.<br><br>LVET is the duration of systole, from upstroke to aortic valve closure (notch).<br><br><em>Normal range: 250–350 ms</em>"+SVG_LVET,
+  msPre:"<strong>Mean systolic aortic pressure BEFORE deployment</strong>.<br><br>Same calibration procedure (Freeze → Measure → Mean).<br><br>Measure on the degenerated bioprosthesis <strong>before</strong> releasing the TAVI."+SVG_ARTERIAL,
+  dpPre:"<strong>Mean transvalvular gradient PRE</strong>.<br><br>📍 <strong>Procedure:</strong><ol><li>Pigtail in left ventricle + catheter in aorta</li><li>Record simultaneous LV-Ao pressure</li><li>Philips automatically computes mean ΔP</li></ol><em>Alternative: pullback (less accurate)</em>"+SVG_GRADIENT_PRE,
+  msPost:"<strong>Mean systolic aortic pressure AFTER deployment</strong>.<br><br>Same procedure: Freeze → Measure → Mean.<br><br>Measure after releasing the TAVI within the bioprosthesis."+SVG_ARTERIAL,
+  dpPost:"<strong>Mean transvalvular gradient POST</strong>.<br><br>Same procedure: simultaneous LV-Ao after deployment.<br><br><em>In a well-expanded valve: typically 5–15 mmHg</em>"+SVG_GRADIENT_POST
+};
+
+const ICONS={
+  patient:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
+  echo:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h2l2-7 4 14 3-11 2 7h5"/></svg>',
+  calib:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>',
+  pre:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 12h15"/></svg>',
+  post:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
+  check:'<svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
+  warn:'<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>',
+  danger:'<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M15 9l-6 6M9 9l6 6"/></svg>',
+  info:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4M12 8h.01"/></svg>',
+  refresh:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M20 9A8 8 0 004.6 6.6M4 15a8 8 0 0015.4 2.4"/></svg>',
+  copy:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+  print:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>'
+};
+
+function calc(){
+  const p=D.peso||0, a=D.altezza||0;
+  const bsa=p>0&&a>0?0.007184*Math.pow(p,.425)*Math.pow(a,.725):null;
+  const bmi=p>0&&a>0?p/Math.pow(a/100,2):null;
+  const aL=D.lvotD>0?Math.PI*Math.pow(D.lvotD/20,2):null;
+  let sv=null;
+  if(D.svDiretto){sv=D.svVal>0?D.svVal:null}
+  else if(aL&&D.lvotVti>0){sv=aL*D.lvotVti}
+  const avaEco=!D.svDiretto&&aL&&D.lvotVti>0&&D.vtiTrans>0?(aL*D.lvotVti)/D.vtiTrans:null;
+  const zao=sv>0&&D.ms0>0&&D.lvet0>0?(D.ms0*(D.lvet0/1000))/sv:null;
+  const avaPre=zao>0&&D.dpPre>0&&D.msPre>0?D.msPre/(zao*44.3*Math.sqrt(D.dpPre)):null;
+  const avaiPre=avaPre&&bsa>0?avaPre/bsa:null;
+  const avaPost=zao>0&&D.dpPost>0&&D.msPost>0?D.msPost/(zao*44.3*Math.sqrt(D.dpPost)):null;
+  const avaiPost=avaPost&&bsa>0?avaPost/bsa:null;
+  const w=[];
+  if(zao!==null&&(zao<.3||zao>.8))w.push("Zao out of range (0.3–0.8) — check SV and baseline mean pressure");
+  if(D.lvet0&&(D.lvet0<200||D.lvet0>400))w.push("Baseline LVET out of range (200–400 ms)");
+  if(D.ms0&&(D.ms0<50||D.ms0>200))w.push("Baseline mean pressure out of range (50–200 mmHg)");
+  if(D.dpPre!==null&&D.dpPre<=0)w.push("PRE ΔP must be > 0");
+  if(D.dpPost!==null&&D.dpPost<=0)w.push("POST ΔP must be > 0 (a null gradient is unusual after TAVI)");
+  if(avaEco&&avaPre&&Math.abs(avaPre-avaEco)>.3)w.push("Echo-invasive PRE discordance > 0.3 cm²");
+  return{bsa,bmi,sv,avaEco,zao,avaPre,avaiPre,avaPost,avaiPost,warnings:w};
+}
+
+function fmt(v,d){d=d===undefined?2:d;return(v!=null&&!isNaN(v))?v.toFixed(d):"—"}
+
+function canNext(){
+  if(step===0)return D.peso>0&&D.altezza>0;
+  if(step===1){const c=calc();return c.sv>0}
+  if(step===2)return D.ms0>0&&D.lvet0>0&&calc().zao>0;
+  if(step===3)return D.msPre>0&&D.dpPre>0&&D.msPost>0&&D.dpPost>0;
+  return true;
+}
+
+function updateField(k,v){
+  if(v===''||v===null||v===undefined){D[k]=null}
+  else{const n=parseFloat(v);D[k]=isNaN(n)?null:n}
+  updateValues();updateNav();saveState();
+}
+
+function updateValues(){
+  const c=calc();
+  document.querySelectorAll('[data-d]').forEach(el=>{
+    const k=el.dataset.d,dc=parseInt(el.dataset.dc||'2');
+    const newVal=fmt(c[k],dc);
+    if(el.textContent!==newVal&&c[k]!=null){
+      el.textContent=newVal;
+      el.classList.remove('updated');
+      void el.offsetWidth;
+      el.classList.add('updated');
+    } else {el.textContent=newVal}
+  });
+  const wc=document.getElementById('warn-box');
+  if(wc){
+    const f=wc.dataset.f||'';
+    const filters=f?f.split('|'):[];
+    const ws=filters.length?c.warnings.filter(w=>filters.some(fl=>w.includes(fl))):c.warnings;
+    wc.innerHTML=ws.map(w=>'<div class="input-warn">'+w+'</div>').join('');
+  }
+}
+
+function updateNav(){
+  let h='';
+  if(step>0)h+='<button class="btn btn-back" onclick="goBack()">← Back</button>';
+  if(step<4)h+='<button class="btn btn-next '+(canNext()?'':'disabled')+'" onclick="goNext()">'+(step===3?'Calculate PPM →':'Next →')+'</button>';
+  if(step===4)h+='<button class="btn btn-next" onclick="newMeasure()">New POST measurement</button>';
+  const navEl=document.getElementById('nav');
+  navEl.innerHTML=h;
+  navEl.classList.toggle('inline',step===4);
+  const pct=(step/4)*100;
+  const pf=document.getElementById('progress-fill');
+  if(pf)pf.style.width=pct+'%';
+}
+
+function toggleHelp(key){
+  helpOpen[key]=!helpOpen[key];
+  const panel=document.getElementById('help-'+key);
+  const btn=document.getElementById('helpbtn-'+key);
+  if(panel){panel.classList.toggle('show',helpOpen[key]);if(btn)btn.classList.toggle('active',helpOpen[key])}
+}
+
+function F(label,key,unit,caliper,large){
+  const v=D[key]==null?'':D[key];
+  const hasHelp=HELP[key];
+  let h='<div class="field'+(large?' large':'')+'"><label>'+label;
+  if(hasHelp)h+=' <button class="help-btn" id="helpbtn-'+key+'" onclick="toggleHelp(\''+key+'\')" type="button">?</button>';
+  h+='</label><input type="number" step="any" inputmode="decimal" value="'+v+'" '+(caliper?'class="caliper"':'')+' oninput="updateField(\''+key+'\',this.value)"><span class="unit">'+unit+'</span></div>';
+  if(hasHelp)h+='<div class="help-panel'+(helpOpen[key]?' show':'')+'" id="help-'+key+'">'+HELP[key]+'</div>';
+  return h;
+}
+
+function DR(label,key,unit,isKey,dec){
+  return '<div class="derived '+(isKey?'key':'normal')+'"><span class="dlabel">'+label+'</span><span class="dval" data-d="'+key+'" data-dc="'+(dec==null?2:dec)+'">—</span><span class="dunit">'+unit+'</span></div>';
+}
+
+function secTitle(icon,text,cls){
+  return '<div class="sec-title '+(cls||'')+'"><div class="sec-icon '+(cls||icon)+'">'+ICONS[icon]+'</div>'+text+'</div>';
+}
+
+function getDecision(avai,bmi){
+  if(avai==null)return null;
+  const isObese=bmi&&bmi>=30;
+  const tNoPpm=isObese?0.70:0.85;
+  const tModerate=isObese?0.55:0.65;
+  if(avai>=tNoPpm)return{kind:'ok',icon:'check',title:'Optimal result',action:'Optimal hemodynamic result. No further intervention needed.',options:['Proceed to vascular access closure','Document final AVA and gradients in the procedure report','Standard pre-discharge echocardiographic follow-up'],warns:[]};
+  if(avai>=tModerate)return{kind:'warn',icon:'warn',title:'Consider optimization',action:'Moderate PPM. Evaluate whether post-dilation could improve hemodynamics, considering the risk-benefit ratio.',options:['Post-dilation with non-compliant balloon 1-2 mm above nominal','Verify implant position and depth under fluoroscopy','Consider BVF if the bioprosthesis is small (≤21 mm)','Re-measure PPM after each maneuver'],warns:['Assess risk of central regurgitation post-dilation','Watch for paravalvular leak risk']};
+  return{kind:'danger',icon:'danger',title:'Severe PPM — intervention indicated',action:'Suboptimal hemodynamic result. Strong indication for additional maneuver to improve AVA.',options:['BVF (Bioprosthetic Valve Fracture): non-compliant balloon at high pressure (>20 atm) to fracture the surgical ring','Aggressive post-dilation with +1-2 mm balloon','Consider re-dilation with a different balloon','Re-measure AVA/PPM after each intervention'],warns:['Verify with the bioprosthesis card which valves are fracturable','Risk of annular rupture, paravalvular leak, coronary occlusion','Consider surgical backup if available']};
+}
+
+function exportText(){
+  const c=calc();
+  const today=new Date().toLocaleDateString('en-US');
+  let txt='VIV PPM Calculator — Result\nDate: '+today+'\nTool version: v1.0\n\n';
+  txt+='--- Patient ---\nWeight: '+(D.peso||'—')+' kg | Height: '+(D.altezza||'—')+' cm | Sex: '+D.sesso+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
+  txt+='--- Echo ---\nSV: '+fmt(c.sv,1)+' ml | Echo AVA (continuity): '+fmt(c.avaEco)+' cm²\n\n';
+  txt+='--- Calibration ---\nBaseline mean pressure: '+(D.ms0||'—')+' mmHg | Baseline LVET: '+(D.lvet0||'—')+' ms\nZao: '+fmt(c.zao,4)+' mmHg·s/ml\n\n';
+  txt+='--- PRE-TAVI ---\nMean pressure: '+(D.msPre||'—')+' mmHg | Mean ΔP: '+(D.dpPre||'—')+' mmHg\nAVA: '+fmt(c.avaPre)+' cm² | AVAi: '+fmt(c.avaiPre)+' cm²/m²\n\n';
+  txt+='--- POST-TAVI ---\nMean pressure: '+(D.msPost||'—')+' mmHg | Mean ΔP: '+(D.dpPost||'—')+' mmHg\nAVA: '+fmt(c.avaPost)+' cm² | AVAi: '+fmt(c.avaiPost)+' cm²/m²\n\n';
+  let ppm='—';
+  if(c.avaiPost!=null){if(c.avaiPost>=.85)ppm='NO PPM';else if(c.avaiPost>=.65)ppm='MODERATE PPM';else ppm='SEVERE PPM'}
+  txt+='--- Result ---\nPPM: '+ppm+'\n\n--- DISCLAIMER ---\nFor research use only. Not a CE-marked medical device.\n';
+  try{navigator.clipboard.writeText(txt).then(()=>alert('Results copied to clipboard')).catch(()=>showExportFallback(txt))}catch(e){showExportFallback(txt)}
+}
+function showExportFallback(txt){
+  const ta=document.createElement('textarea');
+  ta.value=txt;
+  ta.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;height:300px;z-index:300;padding:16px;border:2px solid #2563eb;border-radius:12px;background:#fff;color:#000;font-family:monospace;font-size:12px;box-shadow:0 20px 50px rgba(0,0,0,.4)';
+  document.body.appendChild(ta);ta.select();setTimeout(()=>ta.remove(),8000);
+}
+
+function renderAvaiScale(avai,bmi){
+  if(avai==null)return'';
+  const isObese=bmi&&bmi>=30;
+  const tMod=isObese?0.55:0.65;
+  const tNo=isObese?0.70:0.85;
+  const max=1.2;
+  const clamped=Math.max(0,Math.min(avai,max));
+  const pct=(clamped/max)*100;
+  const tModPct=(tMod/max)*100;
+  const tNoPct=(tNo/max)*100;
+  return '<div class="avai-scale-wrap"><div class="avai-scale-title">AVAi position on PPM scale</div><div class="avai-scale" style="background:linear-gradient(90deg,#fecaca 0%,#fecaca '+tModPct+'%,#fde68a '+tModPct+'%,#fde68a '+tNoPct+'%,#bbf7d0 '+tNoPct+'%,#bbf7d0 100%)"><div class="avai-marker" id="avai-marker" style="left:0%"><div class="avai-marker-value" id="avai-marker-value">0.00</div></div></div><div class="avai-scale-labels"><span>Severe &lt; '+tMod+'</span><span>Moderate '+tMod+'–'+tNo+'</span><span>No PPM ≥ '+tNo+'</span></div></div>';
+}
+
+function animateAvaiValue(el,end,duration){
+  if(!el||end==null)return;
+  const start=0;
+  const startTime=performance.now();
+  function tick(now){
+    const elapsed=now-startTime;
+    const progress=Math.min(elapsed/duration,1);
+    const eased=1-Math.pow(1-progress,3);
+    const current=start+(end-start)*eased;
+    el.textContent=current.toFixed(2);
+    if(progress<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function animateMarker(avai){
+  if(avai==null)return;
+  const max=1.2;
+  const clamped=Math.max(0,Math.min(avai,max));
+  const pct=(clamped/max)*100;
+  setTimeout(()=>{
+    const m=document.getElementById('avai-marker');
+    const v=document.getElementById('avai-marker-value');
+    if(m)m.style.left=pct+'%';
+    if(v){
+      const startTime=performance.now();
+      function tick(now){
+        const elapsed=now-startTime;
+        const progress=Math.min(elapsed/800,1);
+        const eased=1-Math.pow(1-progress,3);
+        v.textContent=(avai*eased).toFixed(2);
+        if(progress<1)requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  },100);
+}
+
+function creditBlock(){
+  return '<div class="credit">' +
+    '<a class="credit-name" href="https://github.com/francescobian92-blip" target="_blank" rel="noopener">Francesco Bianchini, MD</a>' +
+    '<div class="credit-institution">Fondazione Policlinico Universitario A. Gemelli IRCCS, Rome</div>' +
+    '<div class="credit-version">VIV PPM Calculator v1.0 · © 2025</div>' +
+  '</div>';
+}
+
+function renderHome(){
+  const measuredDone = D.peso>0 && D.altezza>0 && D.msPre>0 && D.msPost>0;
+  const predictedDone = P.pesoP>0 && P.altezzaP>0 && P.surgModel && P.surgSize && P.taviModel && P.taviSize;
+  
+  return '<div class="landing">' +
+    '<div class="landing-title">VIV PPM Calculator</div>' +
+    '<div class="landing-subtitle">Choose a mode based on when you are using the tool:</div>' +
+    '<div class="landing-cards">' +
+    '<div class="landing-card predicted'+(predictedDone?' status-done':'')+'" onclick="openPredicted()">' +
+      (predictedDone?'<div class="landing-card-done-badge">'+ICONS.check+' Done</div>':'') +
+      '<div class="landing-card-icon">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>' +
+      '</div>' +
+      '<div class="landing-card-title">Predicted <span class="landing-card-badge">Pre-procedural</span></div>' +
+      '<div class="landing-card-when">Before the procedure</div>' +
+      '<div class="landing-card-desc">Estimate PPM risk <strong>before</strong> the procedure, based on the degenerated surgical valve and the intended TAVI model. Uses published EOA references and a VIV constraining model.</div>' +
+      '<div class="landing-card-steps">' +
+        '<span class="landing-card-step">Patient</span>' +
+        '<span class="landing-card-step">Surgical valve</span>' +
+        '<span class="landing-card-step">Intended TAVI</span>' +
+        '<span class="landing-card-step">Result</span>' +
+      '</div>' +
+      '<div class="landing-card-cta">Start predicted mode →</div>' +
+    '</div>' +
+    '<div class="landing-card measured'+(measuredDone?' status-done':'')+'" onclick="openMeasured()">' +
+      (measuredDone?'<div class="landing-card-done-badge">'+ICONS.check+' Done</div>':'') +
+      '<div class="landing-card-icon">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2l2-7 4 14 3-11 2 7h5"/></svg>' +
+      '</div>' +
+      '<div class="landing-card-title">Measured <span class="landing-card-badge">Intra-procedural</span></div>' +
+      '<div class="landing-card-when">During the procedure</div>' +
+      '<div class="landing-card-desc">Calculate <strong>real</strong> PPM during the procedure using a hybrid Gorlin approach (echo stroke volume + invasive hemodynamics from the cath-lab polygraph).</div>' +
+      '<div class="landing-card-steps">' +
+        '<span class="landing-card-step">Patient</span>' +
+        '<span class="landing-card-step">Echo</span>' +
+        '<span class="landing-card-step">Calibration</span>' +
+        '<span class="landing-card-step">PRE/POST</span>' +
+        '<span class="landing-card-step">Result</span>' +
+      '</div>' +
+      '<div class="landing-card-cta">Start measured mode →</div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="disclaimer" style="margin-top:24px"><strong>For research use only.</strong> Not a CE-marked medical device. Not intended for clinical decision-making. <a class="disclaimer-link" onclick="openModal()">About this tool</a></div>' +
+    creditBlock() +
+    '</div>';
+}
+
+function renderPredicted(){
+  const c = calcPred();
+  
+  // Progress bar
+  document.getElementById('steps-bar').innerHTML=PRED_STEPS.map(function(s,i){
+    const cls=i===predStep?'active':(i<predStep?'done':'');
+    const click=i<=predStep?'onclick="gotoPredStep('+i+')"':'';
+    return '<button class="step-dot '+cls+'" '+click+'><div class="dot">'+(i<predStep?'✓':(i+1))+'</div><span>'+s+'</span></button>';
+  }).join('');
+  const pct=(predStep/3)*100;
+  const pf=document.getElementById('progress-fill');
+  if(pf)pf.style.width=pct+'%';
+  
+  let h = '';
+  
+  if(predStep === 0){
+    h += secTitle('patient','Patient');
+    h += '<div class="card">';
+    h += '<div class="field"><label>Weight</label><input type="number" step="any" inputmode="decimal" value="'+(P.pesoP==null?'':P.pesoP)+'" oninput="updateFieldP(\'pesoP\',this.value)"><span class="unit">kg</span></div>';
+    h += '<div class="field"><label>Height</label><input type="number" step="any" inputmode="decimal" value="'+(P.altezzaP==null?'':P.altezzaP)+'" oninput="updateFieldP(\'altezzaP\',this.value)"><span class="unit">cm</span></div>';
+    h += '<div class="toggle-row"><label>Sex</label><div class="toggle-btn"><button class="'+(P.sessoP==='M'?'on':'')+'" onclick="setSexP(\'M\')">M</button><button class="'+(P.sessoP==='F'?'on':'')+'" onclick="setSexP(\'F\')">F</button></div></div>';
+    h += '<hr class="sep">';
+    h += '<div class="derived key"><span class="dlabel">BSA</span><span class="dval">'+(c.bsa!=null?c.bsa.toFixed(2):'—')+'</span><span class="dunit">m²</span></div>';
+    h += '<div class="derived normal"><span class="dlabel">BMI</span><span class="dval">'+(c.bmi!=null?c.bmi.toFixed(1):'—')+'</span><span class="dunit">kg/m²</span></div>';
+    h += '</div>';
+  }
+  
+  if(predStep === 1){
+    h += '<div class="sec-title" style="color:var(--purple)"><div class="sec-icon" style="background:var(--purple-soft);color:var(--purple)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v10M7 12h10"/></svg></div>Surgical bioprosthesis (degenerated)</div>';
+    h += '<div class="note" style="margin-bottom:10px">Select the model and size of the degenerated valve that is currently in place. The reference EOA value comes from the published literature.</div>';
+    h += '<div class="card">';
+    h += '<div class="peoa-row"><label>Model</label><select onchange="setSurgModel(this.value)">' + groupedOptions(SURGICAL_DB, P.surgModel) + '</select></div>';
+    h += '<div class="peoa-row"><label>Size</label><select onchange="setSurgSize(this.value)">' + sizeOptions(SURGICAL_DB, P.surgModel, P.surgSize) + '</select></div>';
+    h += '<div class="peoa-row"><label>Override EOA (cm²)</label><input type="number" step="0.1" placeholder="optional" value="' + (P.surgOverride != null ? P.surgOverride : '') + '" oninput="setSurgOverride(this.value)"></div>';
+    h += '<hr class="sep">';
+    h += '<div class="peoa-results">';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">Predicted EOA</div><div class="peoa-result-value">' + (c.surgEOA != null ? c.surgEOA.toFixed(2) + ' cm²' : '—') + '</div></div>';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">AVAi</div><div class="peoa-result-value">' + (c.surgAVAi != null ? c.surgAVAi.toFixed(2) : '—') + '</div></div>';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">Pre-existing PPM</div><div class="peoa-result-value ' + ppmClass(c.surgPPM) + '">' + (c.surgPPM || '—') + '</div></div>';
+    h += '</div>';
+    if(P.surgModel && SURGICAL_DB[P.surgModel]){
+      h += '<div class="peoa-ref">Ref: ' + SURGICAL_DB[P.surgModel].ref + '</div>';
+    }
+    h += '</div>';
+  }
+  
+  if(predStep === 2){
+    h += '<div class="sec-title" style="color:var(--blue)"><div class="sec-icon" style="background:var(--blue-soft);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>Intended TAVI (valve-in-valve)</div>';
+    h += '<div class="note" style="margin-bottom:10px">Select the model and size of the TAVI you plan to implant. The VIV-adjusted EOA accounts for the constraining effect of the surgical valve ring.</div>';
+    h += '<div class="card">';
+    h += '<div class="peoa-row"><label>Model</label><select onchange="setTaviModel(this.value)">' + groupedOptions(TAVI_DB, P.taviModel) + '</select></div>';
+    h += '<div class="peoa-row"><label>Size</label><select onchange="setTaviSize(this.value)">' + sizeOptions(TAVI_DB, P.taviModel, P.taviSize) + '</select></div>';
+    h += '<div class="peoa-row"><label>Override VIV EOA (cm²)</label><input type="number" step="0.1" placeholder="optional" value="' + (P.taviOverride != null ? P.taviOverride : '') + '" oninput="setTaviOverride(this.value)"></div>';
+    h += '<hr class="sep">';
+    h += '<div class="peoa-results">';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">Nominal EOA</div><div class="peoa-result-value">' + (c.taviNominal != null ? c.taviNominal.toFixed(2) + ' cm²' : '—') + '</div></div>';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">VIV-adjusted</div><div class="peoa-result-value">' + (c.taviVIV != null ? c.taviVIV.toFixed(2) + ' cm²' : '—') + '</div></div>';
+    h += '<div class="peoa-result-cell"><div class="peoa-result-label">AVAi</div><div class="peoa-result-value">' + (c.taviAVAi != null ? c.taviAVAi.toFixed(2) : '—') + '</div></div>';
+    h += '</div>';
+    if(P.taviModel && TAVI_DB[P.taviModel]){
+      h += '<div class="peoa-ref">Ref: ' + TAVI_DB[P.taviModel].ref + '</div>';
+    }
+    h += '<div class="peoa-ref" style="margin-top:6px">VIV adjustment: ' + (P.surgSize ? (P.surgSize<=21?'0.75 (small ring)':P.surgSize<=23?'0.85 (medium ring)':'0.92 (large ring)') : '—') + (c.taviIsSupra?' + 0.05 bonus (supra-annular)':'') + '. Derived from VIVID registry (Dvir JAMA 2014) and PARTNER 2 VIV (Webb JACC 2017).</div>';
+    h += '</div>';
+  }
+  
+  if(predStep === 3){
+    // Result page for predicted
+    const ai = c.taviAVAi;
+    let pi;
+    if(ai==null)pi={label:"Incomplete data",cls:"empty",icon:'info'};
+    else if(ai>=.85)pi={label:"NO PPM PREDICTED",cls:"ok",icon:'check'};
+    else if(ai>=.65)pi={label:"MODERATE PPM PREDICTED",cls:"warn",icon:'warn'};
+    else pi={label:"SEVERE PPM PREDICTED",cls:"danger",icon:'danger'};
+    
+    h += '<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
+    h += '<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
+    h += '<div class="ppm-label">'+pi.label+'</div>';
+    h += '<div class="ppm-value">Predicted AVAi = <strong>'+fmt(ai)+'</strong> cm²/m²</div>';
+    h += renderAvaiScale(ai, c.bmi);
+    h += '</div></div>';
+    
+    // Surgical valve info card
+    h += '<div class="card" style="border:1.5px solid var(--purple-soft);background:linear-gradient(180deg,var(--purple-soft) 0%,var(--card) 40%)">';
+    h += '<div style="font-size:11px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">Surgical valve (degenerated)</div>';
+    h += '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">'+(P.surgModel||'—')+' '+(P.surgSize?P.surgSize+'mm':'')+'</div>';
+    h += '<div style="font-size:12px;color:var(--text-muted)">Predicted EOA '+fmt(c.surgEOA)+' cm² · AVAi '+fmt(c.surgAVAi)+' cm²/m² · <span style="color:var(--text);font-weight:700">'+(c.surgPPM||'—')+'</span></div>';
+    h += '</div>';
+    
+    // TAVI info card
+    h += '<div class="card" style="border:1.5px solid var(--blue-soft);background:linear-gradient(180deg,var(--blue-soft) 0%,var(--card) 40%)">';
+    h += '<div style="font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">Intended TAVI</div>';
+    h += '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">'+(P.taviModel||'—')+' '+(P.taviSize?P.taviSize+'mm':'')+'</div>';
+    h += '<div style="font-size:12px;color:var(--text-muted)">Nominal '+fmt(c.taviNominal)+' cm² → VIV-adjusted '+fmt(c.taviVIV)+' cm² · AVAi '+fmt(c.taviAVAi)+' cm²/m²</div>';
+    h += '</div>';
+    
+    // Recommendation
+    if(c.surgPPM && c.taviPPM){
+      let sumClass, sumTitle, sumText;
+      if(c.taviPPM === 'NO PPM'){
+        sumClass = 'ok'; sumTitle = '✓ Favorable combination';
+        sumText = 'This TAVI size in this surgical valve is expected to produce no significant PPM. Standard implantation strategy.';
+      } else if(c.taviPPM === 'MODERATE'){
+        sumClass = 'warn'; sumTitle = '⚠ Moderate PPM predicted';
+        sumText = 'Consider high implant depth to maximize THV expansion, or plan BVF if the surgical valve is fracturable. Evaluate larger TAVI size if anatomically feasible.';
+      } else {
+        sumClass = 'danger'; sumTitle = '⚠ Severe PPM predicted';
+        sumText = 'Strongly consider BVF (bioprosthetic valve fracture) during the procedure. Verify that the surgical valve is fracturable. Consider supra-annular TAVI device if not already selected.';
+      }
+      h += '<div class="decision-card '+sumClass+'">';
+      h += '<div class="decision-title"><div class="decision-icon">'+ICONS[sumClass==='ok'?'check':sumClass==='warn'?'warn':'danger']+'</div>'+sumTitle+'</div>';
+      h += '<div class="decision-action">'+sumText+'</div>';
+      if(c.surgPPM !== 'NO PPM' && c.taviPPM === 'NO PPM'){
+        h += '<div class="decision-warn" style="background:rgba(21,128,61,.08);border-left-color:var(--green);color:var(--green)">✓ The pre-existing '+c.surgPPM+' PPM is expected to be resolved by the VIV procedure.</div>';
+      } else if(c.surgPPM === 'NO PPM' && c.taviPPM !== 'NO PPM'){
+        h += '<div class="decision-warn">⚠ PPM is introduced by the VIV constraining effect, not present before the procedure.</div>';
+      }
+      h += '</div>';
+    }
+  }
+  
+  h += '<div class="disclaimer"><strong>For research use only.</strong> Not a CE-marked medical device. <a class="disclaimer-link" onclick="openModal()">About this tool</a></div>';
+  if(predStep===3) h += creditBlock();
+  
+  document.getElementById('app').innerHTML = h;
+  
+  // Navbar for predicted
+  let nh = '';
+  if(predStep>0) nh += '<button class="btn btn-back" onclick="goBackPred()">← Back</button>';
+  if(predStep<3) nh += '<button class="btn btn-next '+(canNextPred()?'':'disabled')+'" onclick="goNextPred()">'+(predStep===2?'Show result →':'Next →')+'</button>';
+  if(predStep===3) nh += '<button class="btn btn-next" onclick="goHome()">Back to home</button>';
+  const navEl = document.getElementById('nav');
+  navEl.innerHTML = nh;
+  navEl.classList.toggle('inline', predStep===3);
+  
+  // Trigger marker animation on predicted result
+  if(predStep===3 && c.taviAVAi != null){
+    setTimeout(()=>{ animateMarker(c.taviAVAi); }, 250);
+  }
+  
+  saveState();
+}
+
+function render(){
+  // Show/hide home button based on mode
+  const homeBtn = document.getElementById('home-btn');
+  if(homeBtn) homeBtn.style.display = (mode === 'home') ? 'none' : 'inline-flex';
+  
+  const progressContainer = document.querySelector('.progress-container');
+  
+  // HOME MODE
+  if(mode === 'home'){
+    if(progressContainer) progressContainer.style.display = 'none';
+    document.getElementById('app').innerHTML = renderHome();
+    document.getElementById('nav').innerHTML = '';
+    document.getElementById('nav').classList.remove('inline');
+    return;
+  }
+  
+  // PREDICTED MODE
+  if(mode === 'predicted'){
+    if(progressContainer) progressContainer.style.display = '';
+    renderPredicted();
+    return;
+  }
+  
+  // MEASURED MODE (original flow)
+  if(progressContainer) progressContainer.style.display = '';
+  
+  const c=calc();
+  document.getElementById('steps-bar').innerHTML=STEPS.map(function(s,i){
+    const cls=i===step?'active':(i<step?'done':'');
+    const click=i<=step?'onclick="gotoStep('+i+')"':'';
+    return '<button class="step-dot '+cls+'" '+click+'><div class="dot">'+(i<step?'✓':(i+1))+'</div><span>'+s+'</span></button>';
+  }).join('');
+
+  let h='';
+  if(step===0){
+    h+=secTitle('patient','Patient');
+    h+='<div class="card">';
+    h+=F('Weight','peso','kg');
+    h+=F('Height','altezza','cm');
+    h+='<div class="toggle-row"><label>Sex</label><div class="toggle-btn"><button class="'+(D.sesso==='M'?'on':'')+'" onclick="setSex(\'M\')">M</button><button class="'+(D.sesso==='F'?'on':'')+'" onclick="setSex(\'F\')">F</button></div></div>';
+    h+='<hr class="sep">'+DR('BSA','bsa','m²',true)+DR('BMI','bmi','kg/m²',false,1)+'</div>';
+  }
+  if(step===1){
+    h+=secTitle('echo','Pre-procedural echo');
+    h+='<div class="card">';
+    h+='<div class="toggle-row sv-row"><label>SV already available?</label><div class="toggle-btn sv"><button class="'+(!D.svDiretto?'on':'')+'" onclick="setSvMode(false)">NO</button><button class="'+(D.svDiretto?'on':'')+'" onclick="setSvMode(true)">YES</button></div></div>';
+    if(D.svDiretto){h+=F('Echo SV','svVal','ml')}
+    else{h+=F('LVOT diameter','lvotD','mm')+F('LVOT-VTI','lvotVti','cm')+F('Transvalvular VTI (CW)','vtiTrans','cm')}
+    h+='<hr class="sep">'+DR('Echo SV','sv','ml',true,1)+DR('Echo AVA (continuity)','avaEco','cm²')+'</div>';
+  }
+  if(step===2){
+    h+=secTitle('calib','Zao calibration');
+    h+='<div class="note" style="margin-bottom:10px">Measure at baseline, before deployment. Tap "?" for detailed instructions with diagrams.</div>';
+    h+='<div class="card">';
+    h+=F('Baseline mean aortic pressure','ms0','mmHg',true,true);
+    h+=F('Baseline LVET','lvet0','msec',true,true);
+    h+='<hr class="sep">'+DR('Zao','zao','mmHg·s/ml',true,4);
+    h+='<div class="note">LVET is only used to calibrate Zao. Not needed for subsequent measurements.</div>';
+    h+='<div id="warn-box"></div></div>';
+  }
+  if(step===3){
+    h+='<div class="step3-grid"><div class="prepost"><div class="col">';
+    h+=secTitle('pre','PRE-TAVI','pre');
+    h+='<div class="card pre">';
+    h+=F('Mean aortic pressure','msPre','mmHg',true,true);
+    h+=F('Mean ΔP','dpPre','mmHg',false,true);
+    h+='<hr class="sep">'+DR('AVA','avaPre','cm²',true)+DR('AVAi','avaiPre','cm²/m²')+'</div></div>';
+    h+='<div class="col">';
+    h+=secTitle('post','POST-TAVI','post');
+    h+='<div class="card post">';
+    h+=F('Mean aortic pressure','msPost','mmHg',true,true);
+    h+=F('Mean ΔP','dpPost','mmHg',false,true);
+    h+='<hr class="sep">'+DR('AVA','avaPost','cm²',true)+DR('AVAi','avaiPost','cm²/m²')+'</div></div></div></div>';
+    h+='<div id="warn-box" data-f="PRE|POST|discordance"></div>';
+  }
+  if(step===4){
+    const ai=c.avaiPost;
+    let pi;
+    if(ai==null)pi={label:"Incomplete data",cls:"empty",icon:'info'};
+    else if(ai>=.85)pi={label:"NO PPM",cls:"ok",icon:'check'};
+    else if(ai>=.65)pi={label:"MODERATE PPM",cls:"warn",icon:'warn'};
+    else pi={label:"SEVERE PPM",cls:"danger",icon:'danger'};
+
+    h+='<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
+    h+='<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
+    h+='<div class="ppm-label">'+pi.label+'</div>';
+    h+='<div class="ppm-value">POST AVAi = <strong id="avai-countup">'+fmt(ai)+'</strong> cm²/m²</div>';
+    h+=renderAvaiScale(ai,c.bmi);
+    if(c.bmi&&c.bmi>=30){
+      let bp;
+      if(ai==null)bp="—";
+      else if(ai>=.70)bp="No PPM (BMI≥30)";
+      else if(ai>=.55)bp="Moderate PPM (BMI≥30)";
+      else bp="Severe PPM (BMI≥30)";
+      h+='<div class="ppm-bmi-line">BMI≥30 thresholds: '+bp+'</div>';
+    }
+    h+='</div></div>';
+
+    // Predicted vs Measured comparison (if both available)
+    const predicted = calcPred();
+    if(predicted.taviAVAi != null && ai != null){
+      const diff = ai - predicted.taviAVAi;
+      const diffAbs = Math.abs(diff);
+      const sameCategory = pi.label.replace(' PPM','') === (predicted.taviPPM||'');
+      let compClass, compTitle;
+      if(sameCategory){
+        compClass = 'ok';
+        compTitle = '✓ Measured matches predicted';
+      } else if(ai > predicted.taviAVAi){
+        compClass = 'ok';
+        compTitle = '↑ Better than predicted';
+      } else {
+        compClass = 'warn';
+        compTitle = '↓ Worse than predicted';
+      }
+      h+='<div class="card" style="border:1.5px solid var(--purple-soft);background:linear-gradient(180deg,var(--purple-soft) 0%,var(--card) 50%)">';
+      h+='<div style="font-size:11px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px">Predicted vs Measured</div>';
+      h+='<div class="comp-grid" style="grid-template-columns:1fr 1fr 1fr;gap:6px">';
+      h+='<div class="comp-header">Predicted</div><div class="comp-header">Measured</div><div class="comp-header">Δ</div>';
+      h+='<div class="comp-cell" style="font-weight:800;color:var(--purple);letter-spacing:-0.3px">'+fmt(predicted.taviAVAi)+'</div>';
+      h+='<div class="comp-cell" style="font-weight:800;color:var(--blue);letter-spacing:-0.3px">'+fmt(ai)+'</div>';
+      h+='<div class="comp-cell" style="font-weight:700;color:'+(diff>=0?'var(--green)':'var(--red)')+'">'+(diff>=0?'+':'')+fmt(diff)+'</div>';
+      h+='</div>';
+      h+='<div style="margin-top:10px;padding:10px 12px;background:var(--card);border-radius:10px;border-left:3px solid var(--'+(compClass==='ok'?'green':'amber')+');font-size:12.5px;line-height:1.5">';
+      h+='<div style="font-weight:700;color:var(--'+(compClass==='ok'?'green':'amber')+');margin-bottom:4px">'+compTitle+'</div>';
+      h+='<div style="color:var(--text-muted);font-size:11.5px">Predicted: '+(P.taviModel||'TAVI')+' '+(P.taviSize?P.taviSize+'mm':'')+' in '+(P.surgModel||'surgical valve')+' '+(P.surgSize?P.surgSize+'mm':'')+' → '+(predicted.taviPPM||'—')+'</div>';
+      h+='</div>';
+      h+='</div>';
+    } else if(P.surgModel || P.taviModel){
+      // Partial predicted data
+      h+='<div class="card" style="background:var(--bg-alt);border:1px dashed var(--border-strong);text-align:center;padding:14px">';
+      h+='<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Predicted mode is partially filled.</div>';
+      h+='<a class="disclaimer-link" style="font-size:13px;font-weight:700" onclick="mode=\'predicted\';predStep=0;render();window.scrollTo({top:0,behavior:\'smooth\'})">Complete predicted mode for comparison →</a>';
+      h+='</div>';
+    }
+
+    const decision=getDecision(ai,c.bmi);
+    if(decision){
+      h+='<div class="decision-card '+decision.kind+'">';
+      h+='<div class="decision-title"><div class="decision-icon">'+ICONS[decision.icon]+'</div>'+decision.title+'</div>';
+      h+='<div class="decision-action">'+decision.action+'</div>';
+      if(decision.options.length){
+        h+='<div class="decision-options-title">Recommended actions</div>';
+        decision.options.forEach((opt,i)=>{h+='<div class="decision-step"><div class="num">'+(i+1)+'</div><div>'+opt+'</div></div>'});
+      }
+      decision.warns.forEach(w=>{h+='<div class="decision-warn">⚠ '+w+'</div>'});
+      h+='</div>';
+    }
+
+    h+='<div class="card"><div class="comp-grid">';
+    h+='<div class="comp-header"></div><div class="comp-header">PRE</div><div class="comp-header">POST</div><div class="comp-header">Δ</div>';
+    function CR(l,p,po,d,inv){
+      d=d===undefined?2:d;
+      const dt=(p!=null&&po!=null)?po-p:null;
+      let dc="var(--text-soft)";
+      if(dt!=null&&dt!==0)dc=inv?(dt<0?"var(--green)":"var(--red)"):(dt>0?"var(--green)":"var(--red)");
+      return '<div class="comp-cell comp-label">'+l+'</div><div class="comp-cell comp-pre">'+(p!=null?p.toFixed(d):"—")+'</div><div class="comp-cell comp-post">'+(po!=null?po.toFixed(d):"—")+'</div><div class="comp-cell comp-delta" style="color:'+dc+'">'+(dt!=null?(dt>=0?"+":"")+dt.toFixed(d):"—")+'</div>';
+    }
+    h+=CR('AVA (cm²)',c.avaPre,c.avaPost);
+    h+=CR('AVAi (cm²/m²)',c.avaiPre,c.avaiPost);
+    h+=CR('ΔP (mmHg)',D.dpPre,D.dpPost,0,true);
+    h+='</div></div>';
+
+    h+='<div class="card" style="text-align:center"><span style="color:var(--purple);font-size:13px;font-weight:600">Echo AVA (reference)</span><br><span style="color:var(--purple);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-0.5px">'+fmt(c.avaEco)+' cm²</span></div>';
+
+    h+='<div class="card"><div style="font-size:11px;font-weight:800;color:var(--text-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.6px">Standard PPM thresholds</div>';
+    [{l:"No PPM",v:"AVAi ≥ 0.85",a:ai!=null&&ai>=.85,bg:"#bbf7d0",color:"#14532d"},{l:"Moderate",v:"0.65 – 0.85",a:ai!=null&&ai>=.65&&ai<.85,bg:"#fde68a",color:"#713f12"},{l:"Severe",v:"< 0.65",a:ai!=null&&ai<.65,bg:"#fecaca",color:"#7f1d1d"}].forEach(function(t){
+      h+='<div class="threshold'+(t.a?' active':'')+'" style="background:'+(t.a?t.bg:'var(--bg-alt)')+';color:'+(t.a?t.color:'var(--text)')+'"><span>'+t.l+'</span><span>'+t.v+'</span></div>';
+    });
+    if(c.bmi&&c.bmi>=30){
+      h+='<div style="font-size:11px;font-weight:800;color:var(--text-soft);margin:14px 0 8px;text-transform:uppercase;letter-spacing:0.6px">BMI ≥ 30 thresholds</div>';
+      [{l:"No PPM",v:"AVAi ≥ 0.70",a:ai!=null&&ai>=.70,bg:"#bbf7d0",color:"#14532d"},{l:"Moderate",v:"0.55 – 0.70",a:ai!=null&&ai>=.55&&ai<.70,bg:"#fde68a",color:"#713f12"},{l:"Severe",v:"< 0.55",a:ai!=null&&ai<.55,bg:"#fecaca",color:"#7f1d1d"}].forEach(function(t){
+        h+='<div class="threshold'+(t.a?' active':'')+'" style="background:'+(t.a?t.bg:'var(--bg-alt)')+';color:'+(t.a?t.color:'var(--text)')+'"><span>'+t.l+'</span><span>'+t.v+'</span></div>';
+      });
+    }
+    h+='</div>';
+
+    if(decision&&(decision.kind==='warn'||decision.kind==='danger')){
+      h+='<button class="recheck-btn" onclick="recheckPost()">'+ICONS.refresh+' Re-check POST after intervention</button>';
+    }
+
+    h+='<div class="export-row">';
+    h+='<button class="export-btn" onclick="exportText()">'+ICONS.copy+' Copy results</button>';
+    h+='<button class="export-btn" onclick="window.print()">'+ICONS.print+' Print</button>';
+    h+='</div>';
+
+    h+='<div class="footer-info">Zao = '+fmt(c.zao,4)+' mmHg·s/ml&nbsp;&nbsp;·&nbsp;&nbsp;BSA = '+fmt(c.bsa)+' m²&nbsp;&nbsp;·&nbsp;&nbsp;SV = '+fmt(c.sv,1)+' ml</div>';
+  }
+
+  h+='<div class="disclaimer"><strong>For research use only.</strong> Not a CE-marked medical device. Not intended for clinical decision-making. <a class="disclaimer-link" onclick="openModal()">About this tool</a></div>';
+  if(step===4) h += creditBlock();
+
+  document.getElementById('app').innerHTML=h;
+  updateValues();
+  updateNav();
+  saveState();
+
+  if(step===4&&c.avaiPost!=null){
+    setTimeout(()=>{
+      const cupEl=document.getElementById('avai-countup');
+      if(cupEl)animateAvaiValue(cupEl,c.avaiPost,800);
+      animateMarker(c.avaiPost);
+    },250);
+  }
+}
+
+window.updateField=updateField;
+window.toggleHelp=toggleHelp;
+window.exportText=exportText;
+window.goBack=function(){if(step>0){step--;render();window.scrollTo({top:0,behavior:'smooth'})}};
+window.goNext=function(){if(canNext()&&step<4){step++;render();window.scrollTo({top:0,behavior:'smooth'})}};
+window.gotoStep=function(i){if(i<=step){step=i;render();window.scrollTo({top:0,behavior:'smooth'})}};
+window.setSex=function(s){D.sesso=s;render()};
+window.setSvMode=function(v){D.svDiretto=v;D.svVal=null;D.lvotD=null;D.lvotVti=null;D.vtiTrans=null;render()};
+window.newMeasure=function(){D.msPre=null;D.dpPre=null;D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
+window.recheckPost=function(){D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
+window.resetAll=function(){if(confirm('Clear all data?')){D=Object.assign({},DEFAULT);step=0;localStorage.removeItem(STORAGE_KEY);render();window.scrollTo({top:0,behavior:'smooth'})}};
+window.toggleTheme=function(){
+  const cur=document.documentElement.getAttribute('data-theme')||'light';
+  const next=cur==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
+  document.getElementById('theme-btn').textContent=next==='dark'?'☀️':'🌙';
+  saveState();
+};
+window.openModal=function(){document.getElementById('info-modal').classList.add('show')};
+window.closeModal=function(){document.getElementById('info-modal').classList.remove('show')};
+
+// ═══════════════════════════════════════════════════════════
+// PREDICTED EOA DATABASE
+// Surgical bioprostheses: Pibarot & Dumesnil 2009 (JACC) + updates
+// TAVI: manufacturer specs + VIVID / PARTNER data
+// ═══════════════════════════════════════════════════════════
+
+const SURGICAL_DB = {
+  // Stented bovine pericardial
+  'Carpentier-Edwards Perimount': {category:'Stented bovine pericardial', sizes:{19:1.1,21:1.3,23:1.5,25:1.8,27:2.1,29:2.2}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Carpentier-Edwards Perimount Magna': {category:'Stented bovine pericardial', sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Carpentier-Edwards Magna Ease': {category:'Stented bovine pericardial', sizes:{19:1.3,21:1.6,23:1.9,25:2.2,27:2.4}, ref:'Edwards Lifesciences bench data; Bleiziffer et al. Ann Thorac Surg 2011'},
+  'Inspiris Resilia': {category:'Stented bovine pericardial', sizes:{19:1.3,21:1.6,23:1.9,25:2.2,27:2.4}, ref:'Edwards Lifesciences technical specifications'},
+  'Mitroflow (LivaNova)': {category:'Stented bovine pericardial', sizes:{19:1.0,21:1.1,23:1.3,25:1.6,27:1.8}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Trifecta (St. Jude/Abbott)': {category:'Stented bovine pericardial', sizes:{19:1.4,21:1.7,23:2.0,25:2.3,27:2.7}, ref:'Bavaria JE et al. Ann Thorac Surg 2014;97:1574-80'},
+  'Trifecta GT': {category:'Stented bovine pericardial', sizes:{19:1.4,21:1.8,23:2.1,25:2.4,27:2.8}, ref:'Abbott technical specifications'},
+  'Avalus (Medtronic)': {category:'Stented bovine pericardial', sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3}, ref:'Medtronic PERIGON trial data'},
+  'Mosaic (Medtronic)': {category:'Stented porcine', sizes:{19:1.1,21:1.2,23:1.4,25:1.7,27:1.9}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Hancock II (Medtronic)': {category:'Stented porcine', sizes:{21:1.2,23:1.3,25:1.6,27:1.9,29:2.1}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Epic (St. Jude)': {category:'Stented porcine', sizes:{19:1.1,21:1.3,23:1.5,25:1.8,27:2.0}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Epic Supra (St. Jude)': {category:'Stented porcine', sizes:{19:1.3,21:1.5,23:1.8,25:2.0,27:2.2}, ref:'St. Jude Medical technical specifications'},
+  'Biocor (St. Jude)': {category:'Stented porcine', sizes:{19:1.0,21:1.3,23:1.4,25:1.7,27:2.0}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Aspire (Vascutek)': {category:'Stented porcine', sizes:{19:1.1,21:1.2,23:1.4,25:1.6,27:1.8}, ref:'Vascutek/Terumo technical specifications'},
+  'Freestyle (Medtronic)': {category:'Stentless', sizes:{19:1.2,21:1.4,23:1.5,25:2.0,27:2.3}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Toronto SPV': {category:'Stentless', sizes:{21:1.3,23:1.5,25:1.7,27:2.1,29:2.7}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'},
+  'Prima Plus (Edwards)': {category:'Stentless', sizes:{19:1.1,21:1.3,23:1.5,25:1.9,27:2.1}, ref:'Edwards Lifesciences technical specifications'},
+  'Cryolife O\'Brien': {category:'Stentless', sizes:{19:1.5,21:1.7,23:1.9,25:2.1,27:2.4}, ref:'Cryolife technical specifications'},
+  'Perceval (LivaNova)': {category:'Sutureless', sizes:{21:1.3,23:1.6,25:2.0,27:2.4}, ref:'Shrestha M et al. Interact Cardiovasc Thorac Surg 2013'},
+  'Intuity (Edwards)': {category:'Sutureless', sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3}, ref:'Borger MA et al. Eur J Cardiothorac Surg 2015'},
+  'Ionescu-Shiley (historical)': {category:'Historical', sizes:{19:1.0,21:1.2,23:1.4,25:1.6}, ref:'Ionescu-Shiley, historical data'},
+  'Hancock I (historical)': {category:'Historical', sizes:{21:1.0,23:1.2,25:1.4,27:1.7,29:1.9}, ref:'Medtronic Hancock historical data'},
+  'Carpentier-Edwards porcine (historical)': {category:'Historical', sizes:{19:0.9,21:1.1,23:1.3,25:1.6,27:1.8}, ref:'Pibarot P, Dumesnil JG. JACC 2009;53:1883-96'}
+};
+
+const TAVI_DB = {
+  // Balloon-expandable
+  'Sapien (1st gen)': {category:'Balloon-expandable', sizes:{23:1.7,26:1.9}, supraAnnular:false, ref:'Leon MB et al. N Engl J Med 2010 (PARTNER A); manufacturer data'},
+  'Sapien XT': {category:'Balloon-expandable', sizes:{23:1.5,26:1.7,29:1.9}, supraAnnular:false, ref:'Webb JG et al. JACC 2017;69:2253-62 (PARTNER 2 VIV)'},
+  'Sapien 3': {category:'Balloon-expandable', sizes:{20:1.1,23:1.5,26:1.7,29:2.0}, supraAnnular:false, ref:'Edwards Lifesciences; Thyregod HG et al. JACC 2015;65:2184-94'},
+  'Sapien 3 Ultra': {category:'Balloon-expandable', sizes:{20:1.1,23:1.5,26:1.8,29:2.0}, supraAnnular:false, ref:'Edwards Lifesciences technical specifications'},
+  'Sapien 3 Ultra Resilia': {category:'Balloon-expandable', sizes:{20:1.1,23:1.5,26:1.8,29:2.0}, supraAnnular:false, ref:'Edwards Lifesciences technical specifications'},
+  'Myval (Meril)': {category:'Balloon-expandable', sizes:{20:1.2,23:1.5,26:1.8,29:2.1}, supraAnnular:false, ref:'Meril Life Sciences technical specifications'},
+  'Myval Octacor': {category:'Balloon-expandable', sizes:{20:1.2,23:1.5,26:1.8,29:2.1}, supraAnnular:false, ref:'Meril Life Sciences technical specifications'},
+  // Self-expanding
+  'CoreValve (classic)': {category:'Self-expanding', sizes:{23:1.3,26:1.6,29:1.8,31:2.0}, supraAnnular:true, ref:'Dvir D et al. JAMA 2014;312:162-70 (VIVID)'},
+  'Evolut R': {category:'Self-expanding', sizes:{23:1.3,26:1.7,29:2.0,31:2.2,34:2.4}, supraAnnular:true, ref:'Medtronic; Popma JJ et al. N Engl J Med 2019'},
+  'Evolut PRO': {category:'Self-expanding', sizes:{23:1.9,26:2.2,29:2.4}, supraAnnular:true, ref:'Medtronic technical specifications'},
+  'Evolut PRO+': {category:'Self-expanding', sizes:{23:1.9,26:2.2,29:2.4,34:2.6}, supraAnnular:true, ref:'Medtronic technical specifications'},
+  'Evolut FX': {category:'Self-expanding', sizes:{23:1.9,26:2.3,29:2.4,34:2.6}, supraAnnular:true, ref:'Medtronic technical specifications'},
+  'Evolut FX+': {category:'Self-expanding', sizes:{23:1.9,26:2.3,29:2.4,34:2.6}, supraAnnular:true, ref:'Medtronic technical specifications (Evolut FX+ 2023, hemodynamic profile equivalent to FX)'},
+  'Acurate neo': {category:'Self-expanding', sizes:{23:1.5,25:1.7,27:1.9}, supraAnnular:true, ref:'Boston Scientific; Möllmann H et al. EuroIntervention 2018'},
+  'Acurate neo2': {category:'Self-expanding', sizes:{23:1.6,25:1.8,27:2.0}, supraAnnular:true, ref:'Boston Scientific technical specifications'},
+  'Portico': {category:'Self-expanding', sizes:{23:1.4,25:1.7,27:2.0,29:2.2}, supraAnnular:false, ref:'Abbott; Manoharan G et al. EuroIntervention 2016'},
+  'Navitor': {category:'Self-expanding', sizes:{23:1.5,25:1.8,27:2.1,29:2.3}, supraAnnular:false, ref:'Abbott technical specifications'},
+  'JenaValve Trilogy': {category:'Self-expanding', sizes:{23:1.5,25:1.8,27:2.0}, supraAnnular:true, ref:'JenaValve technical specifications'},
+  'Allegra (NVT)': {category:'Self-expanding', sizes:{23:1.5,27:1.9,31:2.2}, supraAnnular:true, ref:'New Valve Technology technical specifications'}
+};
+
+// VIV-adjusted EOA calculation
+// Rationale: when TAVI is deployed inside a degenerated surgical valve, the THV is constrained
+// by the rigid ring → reduction in achievable EOA.
+// Adjustment factors derived from VIVID / PARTNER 2 registry data:
+//   - small surgical valve (label ≤21mm): 0.75 (25% reduction, severe constraining)
+//   - medium surgical valve (label 23mm): 0.85 (15% reduction)
+//   - large surgical valve (label ≥25mm): 0.92 (8% reduction)
+//   - supra-annular TAVI gets +5% bonus (leaflets function above the ring)
+function computeVIVAdjustedEOA(taviNominalEOA, surgicalSize, taviIsSupraAnnular){
+  if(!taviNominalEOA) return null;
+  let factor;
+  if(surgicalSize <= 21) factor = 0.75;
+  else if(surgicalSize <= 23) factor = 0.85;
+  else factor = 0.92;
+  if(taviIsSupraAnnular) factor = Math.min(factor + 0.05, 0.98);
+  return taviNominalEOA * factor;
+}
+
+// TAV-in-TAV adjusted EOA calculation
+// Rationale: the 2nd THV is constrained by the frame of the 1st (degenerated) THV.
+// The constraining effect depends on:
+//   - The prior THV size (smaller = more constraining)
+//   - Whether the prior THV was supra-annular (first THV leaflets below the aortic ring
+//     leave more room for the new leaflets to function normally)
+// Adjustment factors derived from Landes et al. JACC 2020;75:1882-93 (redo-TAVR registry)
+// and Tang GHL et al. JACC Intv 2021;14:1466-77:
+//   - prior THV small (23mm or less): factor 0.82 (18% reduction)
+//   - prior THV medium (26-27mm): factor 0.88 (12% reduction)
+//   - prior THV large (≥29mm): factor 0.93 (7% reduction)
+//   - if prior THV was supra-annular: +0.04 bonus (leaflets pinned below, more room)
+//   - if new THV is supra-annular: +0.03 bonus (leaflets function above prior frame)
+function computeTAVinTAVAdjustedEOA(newTaviNominalEOA, priorTaviSize, priorTaviIsSupraAnnular, newTaviIsSupraAnnular){
+  if(!newTaviNominalEOA) return null;
+  let factor;
+  if(priorTaviSize <= 23) factor = 0.82;
+  else if(priorTaviSize <= 27) factor = 0.88;
+  else factor = 0.93;
+  if(priorTaviIsSupraAnnular) factor += 0.04;
+  if(newTaviIsSupraAnnular) factor += 0.03;
+  factor = Math.min(factor, 0.98);
+  return newTaviNominalEOA * factor;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PREDICTED MODE — integrated step-based section
+// ═══════════════════════════════════════════════════════════
+
+function classifyPPM(avai, isObese){
+  if(avai == null) return null;
+  const tNo = isObese ? 0.70 : 0.85;
+  const tMod = isObese ? 0.55 : 0.65;
+  if(avai >= tNo) return 'NO PPM';
+  if(avai >= tMod) return 'MODERATE';
+  return 'SEVERE';
+}
+
+function ppmClass(label){
+  if(label === 'NO PPM') return 'ok';
+  if(label === 'MODERATE') return 'warn';
+  if(label === 'SEVERE') return 'danger';
+  return '';
+}
+
+function groupedOptions(db, selected){
+  const groups = {};
+  Object.entries(db).forEach(([name, data]) => {
+    if(!groups[data.category]) groups[data.category] = [];
+    groups[data.category].push(name);
+  });
+  let html = '<option value="">— Select —</option>';
+  Object.entries(groups).forEach(([cat, names]) => {
+    html += '<optgroup label="' + cat + '">';
+    names.sort().forEach(n => {
+      html += '<option value="' + n + '"' + (n === selected ? ' selected' : '') + '>' + n + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  return html;
+}
+
+function sizeOptions(db, model, selected){
+  let html = '<option value="">— Size —</option>';
+  if(model && db[model]){
+    Object.keys(db[model].sizes).map(Number).sort((a,b)=>a-b).forEach(sz => {
+      html += '<option value="' + sz + '"' + (sz === selected ? ' selected' : '') + '>' + sz + ' mm</option>';
+    });
+  }
+  return html;
+}
+
+// Calculate predicted values from P state
+function calcPred(){
+  const p=P.pesoP||0, a=P.altezzaP||0;
+  const bsa=p>0&&a>0?0.007184*Math.pow(p,.425)*Math.pow(a,.725):null;
+  const bmi=p>0&&a>0?p/Math.pow(a/100,2):null;
+  const isObese=bmi&&bmi>=30;
+  
+  const surgEOA = P.surgOverride != null ? P.surgOverride : 
+                  (P.surgModel && P.surgSize && SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].sizes[P.surgSize] : null);
+  const surgAVAi = (surgEOA && bsa) ? surgEOA/bsa : null;
+  const surgPPM = classifyPPM(surgAVAi, isObese);
+  
+  const taviNominal = P.taviModel && P.taviSize && TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].sizes[P.taviSize] : null;
+  const taviIsSupra = P.taviModel && TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].supraAnnular : false;
+  const taviVIV = P.taviOverride != null ? P.taviOverride : 
+                  (taviNominal && P.surgSize ? computeVIVAdjustedEOA(taviNominal, P.surgSize, taviIsSupra) : null);
+  const taviAVAi = (taviVIV && bsa) ? taviVIV/bsa : null;
+  const taviPPM = classifyPPM(taviAVAi, isObese);
+  
+  return {bsa, bmi, isObese, surgEOA, surgAVAi, surgPPM, taviNominal, taviVIV, taviAVAi, taviPPM, taviIsSupra};
+}
+
+function canNextPred(){
+  if(predStep===0)return P.pesoP>0&&P.altezzaP>0;
+  if(predStep===1)return P.surgModel && P.surgSize;
+  if(predStep===2)return P.taviModel && P.taviSize;
+  return true;
+}
+
+function updateFieldP(k,v){
+  if(v===''||v===null||v===undefined){P[k]=null}
+  else{const n=parseFloat(v);P[k]=isNaN(n)?null:n}
+  render();
+  saveState();
+}
+
+function setSexP(s){P.sessoP=s;render();saveState()}
+
+function setSurgModel(v){P.surgModel=v;P.surgSize=null;P.surgOverride=null;render();saveState()}
+function setSurgSize(v){P.surgSize=v?parseInt(v):null;render();saveState()}
+function setSurgOverride(v){P.surgOverride=v?parseFloat(v):null;render();saveState()}
+function setTaviModel(v){P.taviModel=v;P.taviSize=null;P.taviOverride=null;render();saveState()}
+function setTaviSize(v){P.taviSize=v?parseInt(v):null;render();saveState()}
+function setTaviOverride(v){P.taviOverride=v?parseFloat(v):null;render();saveState()}
+
+window.updateFieldP=updateFieldP;
+window.setSexP=setSexP;
+window.setSurgModel=setSurgModel;
+window.setSurgSize=setSurgSize;
+window.setSurgOverride=setSurgOverride;
+window.setTaviModel=setTaviModel;
+window.setTaviSize=setTaviSize;
+window.setTaviOverride=setTaviOverride;
+
+window.openPredicted=function(){mode='predicted';render();window.scrollTo({top:0,behavior:'smooth'});saveState()};
+window.openMeasured=function(){mode='measured';render();window.scrollTo({top:0,behavior:'smooth'});saveState()};
+window.goHome=function(){mode='home';render();window.scrollTo({top:0,behavior:'smooth'});saveState()};
+window.goBackPred=function(){if(predStep>0){predStep--;render();window.scrollTo({top:0,behavior:'smooth'});saveState()}};
+window.goNextPred=function(){if(canNextPred()&&predStep<3){predStep++;render();window.scrollTo({top:0,behavior:'smooth'});saveState()}};
+window.gotoPredStep=function(i){if(i<=predStep){predStep=i;render();window.scrollTo({top:0,behavior:'smooth'});saveState()}};
+
+
+const initTheme=document.documentElement.getAttribute('data-theme')||'light';
+document.getElementById('theme-btn').textContent=initTheme==='dark'?'☀️':'🌙';
+
+render();
+})();
+
+// Service worker registration for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
+      console.log('SW registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
