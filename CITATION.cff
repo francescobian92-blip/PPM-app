@@ -16,12 +16,15 @@ abstract: >-
   invasive cath-lab hemodynamics; and a post-procedural Echo post mode using
   the continuity equation with VARC-3 SVD classification. Version 2.0
   introduces TAV-in-TAV mode for redo-TAVI scenarios (Akodad 2023, Sathananthan
-  2021), a what-if sensitivity analysis on AVAi, logical cross-checks for data
-  consistency, BVF (bioprosthetic valve fracture) modeling per Allen 2017 and
-  Chhatriwalla 2017, opt-in confidence intervals, and full bilingual interface
-  (English/Italian). Database expanded to 21 surgical bioprostheses and 19 TAVI
-  devices including Crown PRT, Hancock II Ultra, and Lotus Edge. PPM thresholds
-  follow Pibarot 2019 (EACVI/VARC-2 endorsed).
+  2021), a what-if sensitivity analysis on AVAi (in both Predicted and Measured
+  modes), logical cross-checks for data consistency, BVF (bioprosthetic valve
+  fracture) modeling in both Predicted (planning) and Measured modes per Allen
+  2017 and Chhatriwalla 2017, fracturable-flag annotation across all surgical
+  bioprostheses (Brinkmann 2019, Lewis 2020), strategy comparison table for
+  multi-option pre-procedural planning, opt-in confidence intervals, and full
+  bilingual interface (English/Italian). Database expanded to 21 surgical
+  bioprostheses and 19 TAVI devices including Crown PRT, Hancock II Ultra,
+  and Lotus Edge. PPM thresholds follow Pibarot 2019 (EACVI/VARC-2 endorsed).
 keywords:
   - cardiology
   - TAVI
@@ -205,3 +208,21 @@ references:
     year: 2020
     doi: "10.1016/j.jcin.2020.09.044"
     notes: "EOA reference for the Lotus Edge mechanically-expandable TAVI (added in v2.0; device withdrawn from market in 2020 — relevant for VIV scenarios in patients with prior implant)."
+  - type: article
+    authors:
+      - family-names: "Brinkmann"
+        given-names: "Christoph"
+    title: "Outcomes of valve-in-valve transcatheter aortic valve implantation with and without bioprosthetic valve fracture"
+    journal: "EuroIntervention"
+    year: 2021
+    doi: "10.4244/EIJ-D-20-01368"
+    notes: "Clinical outcomes evidence for BVF in different surgical bioprostheses (added in v2.0 to support fracturable flag annotations)."
+  - type: article
+    authors:
+      - family-names: "Lewis"
+        given-names: "Bradley R."
+    title: "Bioprosthetic Valve Fracture/Remodeling: A Multicenter Experience"
+    journal: "JACC: Cardiovascular Interventions"
+    year: 2020
+    doi: "10.1016/j.jcin.2020.06.028"
+    notes: "Multicenter registry on BVF feasibility across surgical valves (added in v2.0 to support fracturable flag annotations)."

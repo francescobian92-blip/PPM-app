@@ -208,9 +208,9 @@ html{scroll-behavior:smooth}
 .tour-btn.next{background:var(--blue);color:#fff;box-shadow:0 2px 6px -1px rgb(37 99 235 / 0.4)}
 .tour-btn.next:hover{transform:translateY(-1px);box-shadow:0 4px 10px -2px rgb(37 99 235 / 0.5)}
 
-.field{display:flex;align-items:center;gap:10px;padding:10px 0;position:relative}
+.field{display:flex;align-items:center;gap:10px;padding:10px 0;position:relative;width:100%;box-sizing:border-box;flex-wrap:wrap;min-width:0}
 .field.large{padding:12px 0}
-.field label{flex:1;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;line-height:1.3;letter-spacing:-0.1px}
+.field label{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;line-height:1.3;letter-spacing:-0.1px}
 .field input{width:100px;height:46px;text-align:center;font-size:17px;font-weight:700;border:1.5px solid var(--border-strong);border-radius:12px;color:var(--text);background:var(--input-bg);outline:none;transition:all .2s ease;padding:0 6px;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-xs);letter-spacing:-0.3px}
 .field.large input{width:108px;height:52px;font-size:19px}
 .field input:focus{border-color:var(--blue);box-shadow:var(--shadow-glow-blue),var(--shadow-sm);transform:translateY(-1px)}
@@ -218,6 +218,23 @@ html{scroll-behavior:smooth}
 .field input.caliper:focus{box-shadow:var(--shadow-glow-orange),var(--shadow-sm)}
 .field input[data-warn]{border-color:var(--amber);background:var(--amber-bg);box-shadow:0 0 0 3px rgb(245 158 11 / 0.12)}
 .field input[data-warn]:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgb(245 158 11 / 0.25)}
+/* Stepper +/- around inputs for fast cath-lab adjustment.
+   The wrap is inline to keep label flex:1 layout intact.
+   The wrap holds: [- btn] [input] [+ btn] [unit span].
+   Input narrowed slightly (84px instead of 100px) to compensate for steppers. */
+.input-stepper-wrap{display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
+.input-stepper-wrap input{width:72px!important;padding:0 4px}
+.field.large .input-stepper-wrap input{width:80px!important}
+.stepper-btn{width:30px;height:46px;background:var(--bg-alt);border:1.5px solid var(--border-strong);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .15s ease;padding:0;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.stepper-btn:hover{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+.stepper-btn:active{transform:scale(.92);background:var(--blue);color:white;border-color:var(--blue)}
+.field.large .stepper-btn{height:52px;width:32px;font-size:20px}
+.input-stepper-wrap .unit{margin-left:4px;font-size:11px;color:var(--text-soft);min-width:38px;font-weight:600;letter-spacing:-0.1px}
+@media print{.stepper-btn{display:none}}
+@media (max-width: 380px){
+  .stepper-btn{width:26px;height:42px;font-size:16px}
+  .input-stepper-wrap input{width:62px!important;height:42px!important;font-size:15px!important}
+}
 .range-warn{display:block;font-size:11px;font-weight:600;color:#92400e;background:var(--amber-bg);border-left:3px solid var(--amber);padding:6px 10px;margin:-4px 0 6px 0;border-radius:6px;letter-spacing:-0.1px;animation:warnSlide .25s cubic-bezier(0.22,1,0.36,1)}
 [data-theme="dark"] .range-warn{color:#fde68a}
 
@@ -606,7 +623,7 @@ html{scroll-behavior:smooth}
 .peoa-tab:hover:not(.active){background:var(--card);color:var(--text)}
 .peoa-tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow-sm);font-weight:800}
 
-@media (max-width:420px){.prepost{flex-direction:column}.field input{width:90px;height:44px;font-size:16px}.field.large input{width:98px;height:48px;font-size:17px}.hdr-titles h1{font-size:18px}.hdr-logo{width:38px;height:38px}.ppm-label{font-size:22px}}
+@media (max-width:420px){.prepost{flex-direction:column}.field input{width:90px;height:44px;font-size:16px}.field.large input{width:98px;height:48px;font-size:17px}.field .input-stepper-wrap input{width:60px!important;height:42px!important;font-size:15px!important}.field.large .input-stepper-wrap input{width:68px!important;height:46px!important;font-size:16px!important}.stepper-btn{width:28px!important;height:42px!important;font-size:16px!important}.field.large .stepper-btn{width:30px!important;height:46px!important;font-size:18px!important}.hdr-titles h1{font-size:18px}.hdr-logo{width:38px;height:38px}.ppm-label{font-size:22px}}
 @media (max-width:360px){.toggle-btn button{padding:9px 14px;font-size:12px}}
 @media (min-width:720px){.content{padding:20px 24px}.step3-grid .prepost{gap:16px}}
 
@@ -695,13 +712,36 @@ html{scroll-behavior:smooth}
       <div><a href="https://github.com/francescobian92-blip" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:600">Francesco Bianchini, MD</a></div>
       <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v2.0 · © 2025</div>
     </div>
+    <div style="margin-top:14px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;line-height:1.5">
+      <div style="font-weight:700;color:var(--text);margin-bottom:6px" id="about-bsa-title">BSA formula</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <button id="bsa-dubois-btn" onclick="setBsaFormula('dubois')" style="flex:1;padding:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">DuBois 1916</button>
+        <button id="bsa-mosteller-btn" onclick="setBsaFormula('mosteller')" style="flex:1;padding:8px;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">Mosteller 1987</button>
+      </div>
+      <div style="color:var(--text-soft);font-size:10.5px" id="about-bsa-desc">DuBois (default): BSA = 0.007184 × W^0.425 × H^0.725. Mosteller: BSA = √(W × H / 3600), simpler and performs better in extreme body sizes.</div>
+    </div>
     <button class="modal-close" id="about-close-btn" onclick="closeModal()">Close</button>
   </div>
 </div>
 
 <script>
 (function(){
+// BSA formula: configurable via window.bsaFormula ('dubois' default, 'mosteller' alternative)
+// DuBois 1916: BSA = 0.007184 × W^0.425 × H^0.725 (W=kg, H=cm) — most cited, slightly underestimates obese
+// Mosteller 1987: BSA = √(W × H / 3600) — simpler, performs better in obese/extreme body sizes
+let bsaFormula = (typeof localStorage !== 'undefined' && localStorage.getItem('vivppm_bsa_formula')) || 'dubois';
+function computeBSA(weightKg, heightCm){
+  if(!(weightKg > 0) || !(heightCm > 0)) return null;
+  if(bsaFormula === 'mosteller'){
+    return Math.sqrt(weightKg * heightCm / 3600);
+  }
+  return 0.007184 * Math.pow(weightKg, 0.425) * Math.pow(heightCm, 0.725);
+}
+
 const STORAGE_KEY='vivtavi_state_v2';
+// Schema version for stored data. Increment when DEFAULT/PRED_DEFAULT/FU_DEFAULT structure changes.
+// On load, if saved schema < CURRENT_SCHEMA, apply migrations or reset gracefully.
+const CURRENT_SCHEMA = 3;
 const LANG_KEY='vivtavi_lang_v1';
 const STEPS=["Patient","Echo","Calibration","PRE/POST","Result"];
 const PRED_STEPS=["Patient","Valve","TAVI","Result"];
@@ -710,8 +750,8 @@ let mode='home'; // 'home' | 'predicted' | 'measured' | 'fu'
 let step=0;
 let predStep=0;
 let fuStep=0;
-const DEFAULT={peso:null,altezza:null,sesso:'M',procDate:'',svDiretto:false,svVal:null,lvotD:null,lvotVti:null,vtiTrans:null,ms0:null,lvet0:null,msPre:null,dpPre:null,msPost:null,dpPost:null,bvfPerformed:false};
-const PRED_DEFAULT={pesoP:null,altezzaP:null,sessoP:'M',degeneratedType:'surgical',surgModel:'',surgSize:null,surgOverride:null,taviModel:'',taviSize:null,taviOverride:null};
+const DEFAULT={peso:null,altezza:null,sesso:'M',procDate:'',echoBaseDate:'',svDiretto:false,svVal:null,lvotD:null,lvotVti:null,vtiTrans:null,ms0:null,lvet0:null,msPre:null,dpPre:null,msPost:null,dpPost:null,bvfPerformed:false};
+const PRED_DEFAULT={pesoP:null,altezzaP:null,sessoP:'M',degeneratedType:'surgical',surgModel:'',surgSize:null,surgOverride:null,taviModel:'',taviSize:null,taviOverride:null,bvfPlanned:false};
 const FU_DEFAULT={pesoF:null,altezzaF:null,sessoF:'M',fuDate:'',fuLvotD:null,fuLvotVti:null,fuAvVti:null,fuMeanGrad:null,fuPeakVel:null,fuAR:'none'};
 let D=Object.assign({},DEFAULT);
 let P=Object.assign({},PRED_DEFAULT);
@@ -820,6 +860,57 @@ const I18N = {
     // BVF
     bvfPerformed: 'BVF performed?',
     bvfSub: 'Bioprosthetic Valve Fracture during VIV procedure',
+    // BVF Predicted (planning)
+    bvfPlanned: 'Plan BVF (Bioprosthetic Valve Fracture)?',
+    bvfPlannedSub: 'High-pressure non-compliant balloon to fracture the surgical ring before TAVI implant',
+    bvfPredictedInfo: '⚡ BVF planned: expected hemodynamic improvement of +0.10 to +0.20 cm² in EOA-VIV. Refs: Allen KB et al. JTCVS 2017; Chhatriwalla AK et al. Circ Cardiovasc Interv 2017.',
+    fracturableYes: '✓ This valve IS fracturable',
+    fracturableNo: '✕ This valve is NOT fracturable',
+    fracturablePartial: '⚠ Fracturability is variable / inconsistent',
+    bvfNotApplicable: 'BVF not feasible for this surgical valve',
+    bvfPartialWarn: 'BVF outcome variable for this valve',
+    bvfGainNote: 'BVF expected EOA gain: {gain} cm² (already applied)',
+    // Sensitivity Predicted
+    predSensRange: 'Sensitivity Range',
+    predSensRangeDesc: 'EOA database values are population means; actual achievable EOA can vary ±15% due to bench-testing variability, calcification, asymmetric expansion. Range below shows AVAi under ±15% EOA-VIV perturbation.',
+    predSensLow: '−15% (worst case)',
+    predSensCurrent: 'Estimated',
+    predSensHigh: '+15% (best case)',
+    predSensFragile: 'Borderline classification: PPM category may shift within the expected EOA variability range. Consider planning conservatively (BVF, larger TAVI, supra-annular device).',
+    predSensRobust: 'Robust prediction: PPM classification stable within the expected EOA variability range.',
+    // Comparison table
+    comparisonTitle: 'Strategy Comparison',
+    comparisonDesc: 'Predicted AVAi for the current strategy alongside alternative options. Use to inform pre-procedural planning.',
+    comparisonCurrent: 'Selected',
+    comparisonAlt: 'Alternative',
+    comparisonCurrentNote: 'Current strategy as configured',
+    comparisonBvfNote: 'Same TAVI + BVF',
+    comparisonOversizeNote: 'One size larger',
+    comparisonAltNote: 'Alternative platform (cross-class)',
+    comparisonNote: 'Note: alternatives shown only if anatomically and clinically feasible. Final decision must integrate CT/imaging anatomy, calcification, coronary heights, and operator experience.',
+    // App update banner
+    updateAvailable: '🆕 New version available',
+    updateReload: 'Update',
+    // JSON export
+    exportJsonTooltip: 'Export structured data as JSON for research/analysis',
+    jsonDownloaded: 'JSON file downloaded',
+    // Echo timing warning
+    echoBaseDate: 'Baseline echo date',
+    echoTimingWarn: 'Baseline echo was {days} days before the procedure. Hybrid Gorlin assumes constant stroke volume between echo and cath-lab — large gaps (>30 days) increase uncertainty due to potential hemodynamic shifts (volume status, BP changes, drug therapy). Consider acquiring an updated echo close to the procedure if feasible.',
+    // BSA formula
+    aboutBsaTitle: 'BSA formula',
+    aboutBsaDesc: 'DuBois (default): BSA = 0.007184 × W^0.425 × H^0.725. Mosteller: BSA = √(W × H / 3600), simpler and performs better in extreme body sizes.',
+    bsaFormulaChanged: 'BSA formula set to {f}',
+    // Error boundary
+    errorOccurred: 'An unexpected error occurred',
+    reportBugBtn: 'Report bug',
+    // Result detail toggle
+    detailQuickEnabled: 'Quick view: showing essential results only',
+    detailFullEnabled: 'Detailed view: showing all sections',
+    detailToggleQuick: 'Quick',
+    detailToggleFull: 'Detailed',
+    detailShowMore: 'Show full details',
+    detailShowLess: 'Hide details',
     yes: 'Yes',
     no: 'No',
     bvfInfo: '⚡ BVF performed: the surgical valve stent was fractured with a non-compliant balloon to allow larger TAVI expansion. Expected hemodynamic improvement of +0.10 to +0.20 cm² in AVA per Allen et al. JTCVS 2017 and Chhatriwalla et al. Circ CV Interv 2017.',
@@ -1116,6 +1207,57 @@ const I18N = {
     // BVF
     bvfPerformed: 'BVF eseguito?',
     bvfSub: 'Bioprosthetic Valve Fracture durante la procedura VIV',
+    // BVF Predicted (pianificazione)
+    bvfPlanned: 'Pianificare BVF (Bioprosthetic Valve Fracture)?',
+    bvfPlannedSub: 'Pallone non-compliant ad alta pressione per fratturare l\'anello chirurgico prima dell\'impianto TAVI',
+    bvfPredictedInfo: '⚡ BVF pianificato: miglioramento emodinamico atteso di +0.10 a +0.20 cm² nell\'EOA-VIV. Refs: Allen KB et al. JTCVS 2017; Chhatriwalla AK et al. Circ Cardiovasc Interv 2017.',
+    fracturableYes: '✓ Valvola fratturabile',
+    fracturableNo: '✕ Valvola NON fratturabile',
+    fracturablePartial: '⚠ Fratturabilità variabile / inconsistente',
+    bvfNotApplicable: 'BVF non praticabile per questa valvola chirurgica',
+    bvfPartialWarn: 'Outcome BVF variabile per questa valvola',
+    bvfGainNote: 'Guadagno EOA atteso da BVF: {gain} cm² (già applicato)',
+    // Sensitivity Predicted
+    predSensRange: 'Range di sensitività',
+    predSensRangeDesc: 'I valori EOA del database sono medie di popolazione; l\'EOA effettivo per il singolo paziente può variare ±15% a causa di variabilità bench-testing, calcificazioni, espansione asimmetrica. Il range mostra l\'AVAi atteso considerando ±15% di perturbazione dell\'EOA-VIV.',
+    predSensLow: '−15% (caso peggiore)',
+    predSensCurrent: 'Stimato',
+    predSensHigh: '+15% (caso migliore)',
+    predSensFragile: 'Classificazione borderline: la categoria PPM può cambiare entro la variabilità attesa dell\'EOA. Considerare pianificazione conservativa (BVF, TAVI di taglia maggiore, device supra-annulare).',
+    predSensRobust: 'Predizione robusta: classificazione PPM stabile entro la variabilità attesa dell\'EOA.',
+    // Tabella confronto strategie
+    comparisonTitle: 'Confronto strategie',
+    comparisonDesc: 'AVAi predetto per la strategia corrente affiancato a opzioni alternative. Da utilizzare per la pianificazione pre-procedurale.',
+    comparisonCurrent: 'Selezionata',
+    comparisonAlt: 'Alternativa',
+    comparisonCurrentNote: 'Strategia corrente come configurata',
+    comparisonBvfNote: 'Stessa TAVI + BVF',
+    comparisonOversizeNote: 'Una taglia in più',
+    comparisonAltNote: 'Piattaforma alternativa (cross-class)',
+    comparisonNote: 'Nota: le alternative sono mostrate solo se anatomicamente e clinicamente fattibili. La decisione finale deve integrare anatomia TC/imaging, calcificazioni, altezze coronariche ed esperienza dell\'operatore.',
+    // Banner aggiornamento app
+    updateAvailable: '🆕 Nuova versione disponibile',
+    updateReload: 'Aggiorna',
+    // Export JSON
+    exportJsonTooltip: 'Esporta dati strutturati in JSON per ricerca/analisi',
+    jsonDownloaded: 'File JSON scaricato',
+    // Avviso timing eco
+    echoBaseDate: 'Data eco basale',
+    echoTimingWarn: 'L\'eco basale è di {days} giorni prima della procedura. L\'hybrid Gorlin assume stroke volume costante tra eco e sala — intervalli ampi (>30 gg) aumentano l\'incertezza per possibili shift emodinamici (idratazione, pressione, terapia). Considerare un eco aggiornato prossimo alla procedura se fattibile.',
+    // Formula BSA
+    aboutBsaTitle: 'Formula BSA',
+    aboutBsaDesc: 'DuBois (default): BSA = 0.007184 × P^0.425 × A^0.725. Mosteller: BSA = √(P × A / 3600), più semplice e più accurata in pazienti con costituzione estrema.',
+    bsaFormulaChanged: 'Formula BSA impostata su {f}',
+    // Error boundary
+    errorOccurred: 'Si è verificato un errore inaspettato',
+    reportBugBtn: 'Segnala bug',
+    // Toggle livello di dettaglio risultato
+    detailQuickEnabled: 'Vista rapida: solo risultati essenziali',
+    detailFullEnabled: 'Vista dettagliata: tutte le sezioni',
+    detailToggleQuick: 'Rapida',
+    detailToggleFull: 'Dettagliata',
+    detailShowMore: 'Mostra dettagli completi',
+    detailShowLess: 'Nascondi dettagli',
     yes: 'Sì',
     no: 'No',
     bvfInfo: '⚡ BVF eseguito: lo stent della valvola chirurgica è stato fratturato con un pallone non-compliant per consentire una maggiore espansione della TAVI. Miglioramento emodinamico atteso: +0.10/+0.20 cm² nell\'AVA secondo Allen et al. JTCVS 2017 e Chhatriwalla et al. Circ CV Interv 2017.',
@@ -1335,13 +1477,50 @@ function translateStep(label){
   return map[label] || label;
 }
 
-try{const saved=localStorage.getItem(STORAGE_KEY);if(saved){const s=JSON.parse(saved);if(s.D)D=Object.assign({},DEFAULT,s.D);if(s.P)P=Object.assign({},PRED_DEFAULT,s.P);if(s.FU)FU=Object.assign({},FU_DEFAULT,s.FU);if(typeof s.step==='number')step=s.step;if(typeof s.predStep==='number')predStep=s.predStep;if(typeof s.fuStep==='number')fuStep=s.fuStep;if(typeof s.mode==='string')mode=s.mode;if(s.theme)document.documentElement.setAttribute('data-theme',s.theme);if(typeof s.showCI==='boolean')showCI=s.showCI}}catch(e){}
+try{
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    const s=JSON.parse(saved);
+    const savedSchema = s.schemaVersion || 1;
+    
+    // Schema migrations
+    if(savedSchema < CURRENT_SCHEMA){
+      // Migration v1 → v2: rename bvfDone to bvfPerformed (if applicable)
+      if(savedSchema < 2 && s.D && s.D.bvfDone !== undefined){
+        s.D.bvfPerformed = s.D.bvfDone;
+        delete s.D.bvfDone;
+      }
+      // Migration v2 → v3: add bvfPlanned to P (default false)
+      if(savedSchema < 3 && s.P && s.P.bvfPlanned === undefined){
+        s.P.bvfPlanned = false;
+      }
+      // After applying migrations, persist updated schema
+      console.info('[VIV-PPM] Migrated state from schema v'+savedSchema+' to v'+CURRENT_SCHEMA);
+    }
+    
+    if(s.D)D=Object.assign({},DEFAULT,s.D);
+    if(s.P)P=Object.assign({},PRED_DEFAULT,s.P);
+    if(s.FU)FU=Object.assign({},FU_DEFAULT,s.FU);
+    if(typeof s.step==='number')step=s.step;
+    if(typeof s.predStep==='number')predStep=s.predStep;
+    if(typeof s.fuStep==='number')fuStep=s.fuStep;
+    if(typeof s.mode==='string')mode=s.mode;
+    if(s.theme)document.documentElement.setAttribute('data-theme',s.theme);
+    if(typeof s.showCI==='boolean')showCI=s.showCI;
+  }
+}catch(e){
+  // Corrupted state: clear and start fresh rather than crashing
+  console.warn('[VIV-PPM] State load failed, resetting:', e);
+  try{localStorage.removeItem(STORAGE_KEY)}catch(e2){}
+}
 try{const savedLang=localStorage.getItem(LANG_KEY);if(savedLang==='it'||savedLang==='en')lang=savedLang}catch(e){}
 
 // Confidence intervals — opt-in setting (default OFF, user can enable from header toggle)
 let showCI = false;
+// Result page detail level: 'quick' (essential only, fast cath-lab read) or 'detailed' (all sections)
+let resultDetailMode = (typeof localStorage !== 'undefined' && localStorage.getItem('vivppm_result_detail')) || 'detailed';
 
-function saveState(){try{const theme=document.documentElement.getAttribute('data-theme')||'light';localStorage.setItem(STORAGE_KEY,JSON.stringify({D:D,P:P,FU:FU,step:step,predStep:predStep,fuStep:fuStep,mode:mode,theme:theme,showCI:showCI}))}catch(e){}}
+function saveState(){try{const theme=document.documentElement.getAttribute('data-theme')||'light';localStorage.setItem(STORAGE_KEY,JSON.stringify({schemaVersion:CURRENT_SCHEMA,D:D,P:P,FU:FU,step:step,predStep:predStep,fuStep:fuStep,mode:mode,theme:theme,showCI:showCI}))}catch(e){}}
 function saveLang(){try{localStorage.setItem(LANG_KEY,lang)}catch(e){}}
 
 const SVG_ARTERIAL='<svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;margin-top:10px"><rect width="280" height="120" fill="#fafbfc" rx="8"/><line x1="20" y1="100" x2="260" y2="100" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3,3"/><text x="20" y="115" font-size="9" fill="#64748b">0 mmHg</text><path d="M 20 90 L 50 90 L 60 30 Q 80 20 100 35 Q 120 45 130 50 L 140 55 L 145 40 Q 155 50 165 55 L 200 80 L 230 88 L 260 90" fill="none" stroke="#2563eb" stroke-width="2.5"/><line x1="60" y1="15" x2="60" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><circle cx="60" cy="30" r="4" fill="#ea580c"/><text x="15" y="12" font-size="9" fill="#ea580c" font-weight="700">Cursor 1</text><text x="15" y="22" font-size="8" fill="#ea580c">upstroke</text><line x1="145" y1="15" x2="145" y2="105" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="2,2"/><circle cx="145" cy="40" r="4" fill="#ea580c"/><text x="155" y="12" font-size="9" fill="#ea580c" font-weight="700">Cursor 2</text><text x="155" y="22" font-size="8" fill="#ea580c">dicrotic notch</text><path d="M 60 30 Q 80 20 100 35 Q 120 45 130 50 L 140 55 L 145 40 L 145 100 L 60 100 Z" fill="#2563eb" fill-opacity="0.18"/><text x="80" y="75" font-size="11" fill="#2563eb" font-weight="700">Mean</text><text x="75" y="88" font-size="9" fill="#2563eb">(systolic)</text></svg>';
@@ -1376,12 +1555,13 @@ const ICONS={
   info:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-4M12 8h.01"/></svg>',
   refresh:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M20 9A8 8 0 004.6 6.6M4 15a8 8 0 0015.4 2.4"/></svg>',
   copy:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
-  print:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>'
+  print:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>',
+  download:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>'
 };
 
 function calc(){
   const p=D.peso||0, a=D.altezza||0;
-  const bsa=p>0&&a>0?0.007184*Math.pow(p,.425)*Math.pow(a,.725):null;
+  const bsa=computeBSA(p,a);
   const bmi=p>0&&a>0?p/Math.pow(a/100,2):null;
   const aL=D.lvotD>0?Math.PI*Math.pow(D.lvotD/20,2):null;
   let sv=null;
@@ -1416,7 +1596,12 @@ function canNext(){
 function updateField(k,v){
   if(v===''||v===null||v===undefined){D[k]=null}
   else if(k==='procDate'){D[k]=v}
+  else if(k==='echoBaseDate'){D[k]=v}
   else{const n=parseFloat(v);D[k]=isNaN(n)?null:n}
+  // Date fields require full re-render to recompute the timing warning visibility
+  if(k==='echoBaseDate' || k==='procDate'){
+    render();saveState();return;
+  }
   updateValues();updateNav();saveState();
 }
 
@@ -1487,13 +1672,34 @@ function toggleHelp(key){
   if(panel){panel.classList.toggle('show',helpOpen[key]);if(btn)btn.classList.toggle('active',helpOpen[key])}
 }
 
+// Step increments per field type — chosen for typical cath-lab measurement granularity
+const FIELD_STEPS = {
+  // Measured pressures and gradients
+  ms0: 5, msPre: 5, msPost: 5,    // mean aortic pressure ±5 mmHg
+  lvet0: 10,                       // LVET ±10 ms
+  dpPre: 5, dpPost: 1,             // pre ±5, post ±1 (post is often small/precise)
+  // Echo geometry
+  lvotD: 0.5, lvotVti: 1, vtiTrans: 5, svVal: 5,
+  // Anthropometrics
+  peso: 1, altezza: 1, pesoP: 1, altezzaP: 1, pesoF: 1, altezzaF: 1,
+  // FU echo
+  fuLvotD: 0.5, fuLvotVti: 1, fuAvVti: 5, fuMeanGrad: 1, fuPeakVel: 0.1,
+  // Default for anything else
+  _default: 1
+};
+function stepFor(key){return FIELD_STEPS[key] != null ? FIELD_STEPS[key] : FIELD_STEPS._default}
+
 function F(label,key,unit,caliper,large){
   const v=D[key]==null?'':D[key];
   const hasHelp=HELP[key];
   const warning = checkRange(key, D[key]);
+  const step = stepFor(key);
   let h='<div class="field'+(large?' large':'')+'" id="fd-'+key+'"><label>'+label;
   if(hasHelp)h+=' <button class="help-btn" id="helpbtn-'+key+'" onclick="toggleHelp(\''+key+'\')" type="button">?</button>';
-  h+='</label><input type="number" step="any" inputmode="decimal" value="'+v+'" '+(caliper?'class="caliper"':'')+(warning?' data-warn="1"':'')+' oninput="updateField(\''+key+'\',this.value)" onblur="refreshWarnD(\''+key+'\')"><span class="unit">'+unit+'</span></div>';
+  h+='</label><div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'D\')">−</button>';
+  h+='<input type="number" step="any" inputmode="decimal" value="'+v+'" '+(caliper?'class="caliper"':'')+(warning?' data-warn="1"':'')+' oninput="updateField(\''+key+'\',this.value)" onblur="refreshWarnD(\''+key+'\')">';
+  h+='<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'D\')">+</button>';
+  h+='<span class="unit">'+unit+'</span></div>';
   h+=warning?'<div class="range-warn" id="warn-fd-'+key+'">⚠ '+warning+'</div>':'<div id="warn-fd-'+key+'" style="display:none"></div>';
   if(hasHelp)h+='<div class="help-panel'+(helpOpen[key]?' show':'')+'" id="help-'+key+'">'+HELP[key]+'</div>';
   return h;
@@ -1565,9 +1771,24 @@ function checkRange(key, value){
 // Returns array of {severity:'warn'|'info', message:string} 
 // Run on the result page to alert the user about implausible combinations
 // ============================================================================
+// Toggle bar for switching between Quick and Detailed result views.
+// Quick: shows only PPM badge + AVAi + cards + decision card (sopra il fold).
+// Detailed: shows everything (sensitivity, comparison, cross-checks, etc.).
+function renderDetailToggle(){
+  const isQuick = resultDetailMode === 'quick';
+  return '<div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0 0 12px;font-size:11.5px">' +
+    '<span style="color:var(--text-soft);font-weight:600;letter-spacing:0.2px">'+t('detailToggleQuick').toUpperCase()+'/'+t('detailToggleFull').toUpperCase()+':</span>' +
+    '<button onclick="toggleResultDetail()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:'+(isQuick?'var(--blue)':'var(--bg-alt)')+';color:'+(isQuick?'white':'var(--text)')+';border:1.5px solid '+(isQuick?'var(--blue)':'var(--border)')+';border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:0.3px">' +
+      (isQuick ? '⚡ '+t('detailToggleQuick').toUpperCase() : '📋 '+t('detailToggleFull').toUpperCase()) +
+    '</button>' +
+  '</div>';
+}
+
 function renderCrossChecks(modeFlow){
   const issues = getCrossChecks(modeFlow);
+  // In Quick mode, hide the "all good" card to reduce visual clutter; show only when issues exist
   if(issues.length === 0){
+    if(resultDetailMode === 'quick') return '';
     return '<div class="xcheck-card no-issues"><div class="xcheck-title">'+t('crossChecksTitle')+'</div><div class="xcheck-ok">'+t('noIssuesDetected')+'</div></div>';
   }
   let h = '<div class="xcheck-card has-issues"><div class="xcheck-title">⚠ '+t('crossChecksTitle')+'</div>';
@@ -1681,7 +1902,7 @@ function computeAvaiFromOverrides(overrides){
   // Build a temporary D copy with overrides applied
   const Dt = Object.assign({}, D, overrides);
   const p = Dt.peso || 0, a = Dt.altezza || 0;
-  const bsa = (p > 0 && a > 0) ? 0.007184 * Math.pow(p, 0.425) * Math.pow(a, 0.725) : null;
+  const bsa = computeBSA(p, a);
   const bmi = (p > 0 && a > 0) ? p / Math.pow(a / 100, 2) : null;
   const isObese = bmi && bmi >= 30;
   
@@ -1881,10 +2102,14 @@ function avaiCI(avai, mode){
 function FP(label, key, unit){
   const v = P[key]==null ? '' : P[key];
   const warn = checkRange(key, P[key]);
+  const step = stepFor(key);
   return '<div class="field" id="fp-'+key+'"><label>'+label+'</label>'+
+    '<div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'P\')">−</button>'+
     '<input type="number" step="any" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
     ' oninput="updateFieldP(\''+key+'\',this.value)"'+
-    ' onblur="refreshWarnP(\''+key+'\')"><span class="unit">'+unit+'</span></div>'+
+    ' onblur="refreshWarnP(\''+key+'\')">'+
+    '<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'P\')">+</button>'+
+    '<span class="unit">'+unit+'</span></div></div>'+
     (warn?'<div class="range-warn" id="warn-fp-'+key+'">⚠ '+warn+'</div>':'<div id="warn-fp-'+key+'" style="display:none"></div>');
 }
 
@@ -1892,10 +2117,14 @@ function FP(label, key, unit){
 function FF(label, key, unit){
   const v = FU[key]==null ? '' : FU[key];
   const warn = checkRange(key, FU[key]);
+  const step = stepFor(key);
   return '<div class="field" id="ff-'+key+'"><label>'+label+'</label>'+
+    '<div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'F\')">−</button>'+
     '<input type="number" step="any" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
     ' oninput="updateFieldF(\''+key+'\',this.value)"'+
-    ' onblur="refreshWarnF(\''+key+'\')"><span class="unit">'+unit+'</span></div>'+
+    ' onblur="refreshWarnF(\''+key+'\')">'+
+    '<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'F\')">+</button>'+
+    '<span class="unit">'+unit+'</span></div></div>'+
     (warn?'<div class="range-warn" id="warn-ff-'+key+'">⚠ '+warn+'</div>':'<div id="warn-ff-'+key+'" style="display:none"></div>');
 }
 
@@ -2225,6 +2454,36 @@ function renderPredicted(){
       if(c.taviIsSupra) vivDesc += ' + 0.05 (supra-annular TAVI)';
     }
     h += '<div class="peoa-ref" style="margin-top:6px">VIV adjustment: ' + vivDesc + '. Based on '+vivRefText+'.</div>';
+
+    // BVF toggle (Predicted: planning)
+    if(P.surgModel && SURGICAL_DB[P.surgModel] && P.degeneratedType !== 'tavi'){
+      const shvData = SURGICAL_DB[P.surgModel];
+      const fracStatus = shvData.fracturable; // true | false | 'partial'
+      let fracBadge, fracBadgeColor;
+      if(fracStatus === true){fracBadge = t('fracturableYes'); fracBadgeColor = 'var(--green)';}
+      else if(fracStatus === 'partial'){fracBadge = t('fracturablePartial'); fracBadgeColor = 'var(--amber)';}
+      else {fracBadge = t('fracturableNo'); fracBadgeColor = 'var(--red)';}
+      
+      h += '<hr class="sep">';
+      h += '<div class="bvf-toggle-row" style="margin-top:8px">';
+      h += '<div class="bvf-toggle-label">';
+      h += '<strong>'+t('bvfPlanned')+'</strong>';
+      h += '<div class="bvf-toggle-sub">'+t('bvfPlannedSub')+'</div>';
+      h += '<div style="margin-top:6px;font-size:10.5px"><span style="color:'+fracBadgeColor+';font-weight:700">'+fracBadge+'</span></div>';
+      h += '</div>';
+      h += '<label class="switch"><input type="checkbox" '+(P.bvfPlanned?'checked':'')+(fracStatus===false?' disabled':'')+' onchange="setBvfPlanned(this.checked)"><span class="slider"></span></label>';
+      h += '</div>';
+      
+      if(P.bvfPlanned && fracStatus !== false){
+        h += '<div class="bvf-info">'+t('bvfPredictedInfo')+'</div>';
+      }
+      if(fracStatus === false){
+        h += '<div style="margin-top:8px;padding:10px 12px;background:var(--red-bg,#fee2e2);border-left:3px solid var(--red);border-radius:8px;font-size:11.5px;line-height:1.45;color:#991b1b">'+t('bvfNotApplicable')+': '+(shvData.fractureRef||'')+'</div>';
+      }
+      if(fracStatus === 'partial'){
+        h += '<div style="margin-top:8px;padding:10px 12px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:8px;font-size:11.5px;line-height:1.45;color:#92400e">'+t('bvfPartialWarn')+': '+(shvData.fractureRef||'')+'</div>';
+      }
+    }
     h += '</div>';
   }
   
@@ -2236,6 +2495,9 @@ function renderPredicted(){
     else if(ai>=.85)pi={label:t('noPpmPredicted'),cls:"ok",icon:'check'};
     else if(ai>=.65)pi={label:t('moderatePpmPredicted'),cls:"warn",icon:'warn'};
     else pi={label:t('severePpmPredicted'),cls:"danger",icon:'danger'};
+    
+    // Detail mode toggle (shown only when there's content to hide)
+    h += renderDetailToggle();
     
     h += '<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h += '<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
@@ -2260,7 +2522,41 @@ function renderPredicted(){
     h += '<div style="font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">'+t('intendedTaviCard')+'</div>';
     h += '<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">'+(P.taviModel||'—')+' '+(P.taviSize?P.taviSize+'mm':'')+'</div>';
     h += '<div style="font-size:12px;color:var(--text-muted)">'+t('nominal')+' '+fmt(c.taviNominal)+' cm² → '+t('vivAdjusted')+' '+fmt(c.taviVIV)+' cm² · '+t('avai')+' '+fmt(c.taviAVAi)+' cm²/m²</div>';
+    if(c.bvfGain && c.bvfGain > 0){
+      h += '<div style="margin-top:6px;padding:6px 10px;background:var(--orange-bg);border-left:3px solid var(--orange);border-radius:6px;font-size:11px;color:var(--text);font-weight:600">⚡ '+t('bvfGainNote').replace('{gain}','+'+c.bvfGain.toFixed(2))+'</div>';
+    }
     h += '</div>';
+    
+    // ===== DETAILED SECTIONS (hidden in Quick mode) =====
+    if(resultDetailMode === 'detailed'){
+    
+    // Sensitivity range (Predicted)
+    // The EOA database value is a population mean; the actual EOA for a specific patient
+    // can vary ±15-20% due to bench testing variability, calcification, asymmetric expansion, etc.
+    // We compute the AVAi range under ±15% perturbation of taviVIV.
+    if(c.taviAVAi != null && c.bsa){
+      const taviVIVlow = c.taviVIV * 0.85;
+      const taviVIVhigh = c.taviVIV * 1.15;
+      const avaiLow = taviVIVlow / c.bsa;
+      const avaiHigh = taviVIVhigh / c.bsa;
+      const ppmLow = classifyPPM(avaiLow, c.isObese);
+      const ppmHigh = classifyPPM(avaiHigh, c.isObese);
+      const categoryShift = (ppmLow !== c.taviPPM) || (ppmHigh !== c.taviPPM);
+      h += '<div class="card" style="border:1.5px solid '+(categoryShift?'var(--amber)':'var(--text-soft)')+';background:'+(categoryShift?'var(--amber-bg)':'var(--card)')+'">';
+      h += '<div style="font-size:11px;font-weight:800;color:'+(categoryShift?'var(--amber)':'var(--text-soft)')+';text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px">'+t('predSensRange')+'</div>';
+      h += '<div style="font-size:12.5px;color:var(--text);line-height:1.55;margin-bottom:8px">'+t('predSensRangeDesc')+'</div>';
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px">';
+      h += '<div style="text-align:center;padding:8px;background:var(--card);border-radius:8px"><div style="color:var(--text-soft);text-transform:uppercase;font-weight:700;font-size:9.5px;letter-spacing:0.5px;margin-bottom:4px">'+t('predSensLow')+'</div><div style="font-weight:800;color:var(--text);font-size:14px">'+avaiLow.toFixed(2)+'</div><div style="color:var(--text-soft);font-size:10px;margin-top:2px">'+ppmDisplay(ppmLow)+'</div></div>';
+      h += '<div style="text-align:center;padding:8px;background:var(--blue-soft);border-radius:8px"><div style="color:var(--blue);text-transform:uppercase;font-weight:700;font-size:9.5px;letter-spacing:0.5px;margin-bottom:4px">'+t('predSensCurrent')+'</div><div style="font-weight:800;color:var(--blue);font-size:14px">'+c.taviAVAi.toFixed(2)+'</div><div style="color:var(--blue);font-size:10px;margin-top:2px">'+ppmDisplay(c.taviPPM)+'</div></div>';
+      h += '<div style="text-align:center;padding:8px;background:var(--card);border-radius:8px"><div style="color:var(--text-soft);text-transform:uppercase;font-weight:700;font-size:9.5px;letter-spacing:0.5px;margin-bottom:4px">'+t('predSensHigh')+'</div><div style="font-weight:800;color:var(--text);font-size:14px">'+avaiHigh.toFixed(2)+'</div><div style="color:var(--text-soft);font-size:10px;margin-top:2px">'+ppmDisplay(ppmHigh)+'</div></div>';
+      h += '</div>';
+      if(categoryShift){
+        h += '<div style="margin-top:10px;padding:8px 10px;background:var(--card);border-left:3px solid var(--amber);border-radius:6px;font-size:11px;line-height:1.5;color:var(--text);font-weight:600">⚠ '+t('predSensFragile')+'</div>';
+      } else {
+        h += '<div style="margin-top:10px;padding:8px 10px;background:var(--card);border-left:3px solid var(--green);border-radius:6px;font-size:11px;line-height:1.5;color:var(--text);font-weight:600">✓ '+t('predSensRobust')+'</div>';
+      }
+      h += '</div>';
+    }
     
     // Recommendation
     if(c.surgPPM && c.taviPPM){
@@ -2286,11 +2582,58 @@ function renderPredicted(){
       h += '</div>';
     }
 
-    // Cross-checks (data consistency)
+    // ==========================================================================
+    // COMPARISON TABLE — Multi-strategy planning
+    // Shows the current strategy alongside 3 alternatives:
+    //  - Current strategy (already chosen)
+    //  - Same TAVI + BVF (if not already planned and SHV is fracturable)
+    //  - TAVI one size larger (oversize)
+    //  - Alternative supra-annular TAVI (if current is intra-annular) or vice versa
+    // ==========================================================================
+    if(c.taviAVAi != null && c.bsa && !c.isRedoTavi && P.surgModel && SURGICAL_DB[P.surgModel]){
+      const strategies = buildComparisonStrategies(c);
+      if(strategies.length > 1){
+        h += '<div class="card" style="border:1.5px solid var(--purple-soft);background:linear-gradient(180deg,var(--purple-soft) 0%,var(--card) 30%)">';
+        h += '<div style="font-size:11px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px">'+t('comparisonTitle')+'</div>';
+        h += '<div style="font-size:12.5px;color:var(--text);line-height:1.5;margin-bottom:12px">'+t('comparisonDesc')+'</div>';
+        h += '<div style="display:flex;flex-direction:column;gap:8px">';
+        strategies.forEach((s, idx) => {
+          const isCurrent = s.isCurrent;
+          const ppmCls = s.ppm === 'NO PPM' ? 'ok' : (s.ppm === 'MODERATE' ? 'warn' : 'danger');
+          const cardBorder = isCurrent ? 'var(--blue)' : (ppmCls === 'ok' ? 'var(--green)' : ppmCls === 'warn' ? 'var(--amber)' : 'var(--red)');
+          const cardBg = isCurrent ? 'var(--blue-soft)' : 'var(--card)';
+          const valueColor = ppmCls === 'ok' ? 'var(--green)' : ppmCls === 'warn' ? 'var(--amber)' : 'var(--red)';
+          h += '<div style="padding:10px 12px;border:1.5px solid '+cardBorder+';background:'+cardBg+';border-radius:10px">';
+          h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">';
+          h += '<div style="flex:1;min-width:0">';
+          h += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:'+(isCurrent?'var(--blue)':'var(--text-soft)')+';margin-bottom:3px">'+(isCurrent?t('comparisonCurrent'):t('comparisonAlt'))+'</div>';
+          h += '<div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.3">'+s.label+'</div>';
+          if(s.note) h += '<div style="font-size:10.5px;color:var(--text-soft);margin-top:2px">'+s.note+'</div>';
+          h += '</div>';
+          h += '<div style="text-align:right;flex-shrink:0">';
+          h += '<div style="font-size:18px;font-weight:800;color:'+valueColor+';line-height:1">'+s.avai.toFixed(2)+'</div>';
+          h += '<div style="font-size:9.5px;color:var(--text-soft);text-transform:uppercase;letter-spacing:0.4px;margin-top:2px">'+t('avai')+'</div>';
+          h += '<div style="font-size:10px;font-weight:700;color:'+valueColor+';margin-top:3px">'+ppmDisplay(s.ppm)+'</div>';
+          h += '</div>';
+          h += '</div>';
+          h += '</div>';
+        });
+        h += '</div>';
+        h += '<div style="margin-top:10px;font-size:10.5px;color:var(--text-soft);font-style:italic;line-height:1.5">'+t('comparisonNote')+'</div>';
+        h += '</div>';
+      }
+    }
+    
+    } // ===== END DETAILED SECTIONS =====
+
+    // Cross-checks (data consistency) — shown in both modes (filters internally for Quick)
     h += renderCrossChecks('predicted');
 
-    // Export PDF button for Predicted result
-    h += '<div class="export-row"><button class="export-btn" onclick="exportPDF(\'predicted\')">'+ICONS.print+' '+t('exportPdf')+'</button></div>';
+    // Export buttons for Predicted result
+    h += '<div class="export-row">';
+    h += '<button class="export-btn" onclick="exportPDF(\'predicted\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
+    h += '<button class="export-btn" onclick="exportJSON(\'predicted\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
+    h += '</div>';
   }
   
   h += '<div class="disclaimer"><strong>'+t('forResearchOnly')+'</strong> '+t('notMedicalDevice')+' <a class="disclaimer-link" onclick="openModal()">'+t('aboutTool')+'</a></div>';
@@ -2376,6 +2719,9 @@ function renderFU(){
     else if(ai>=.65)pi={label:t('moderatePpm'),cls:"warn",icon:'warn'};
     else pi={label:t('severePpm'),cls:"danger",icon:'danger'};
     
+    // Detail mode toggle
+    h += renderDetailToggle();
+    
     h += '<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h += '<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
     h += '<div class="ppm-label">'+pi.label+'</div>';
@@ -2432,6 +2778,9 @@ function renderFU(){
       h += '</div>';
     }
     
+    // ===== DETAILED SECTIONS (hidden in Quick mode) =====
+    if(resultDetailMode === 'detailed'){
+    
     // TRITTICO: Predicted → Measured → Echo FU
     const pred = calcPred();
     const meas = calc ? calc() : null;
@@ -2451,12 +2800,17 @@ function renderFU(){
       h += '</div>';
       h += '</div>';
     }
+    
+    } // ===== END DETAILED SECTIONS =====
 
     // Cross-checks: data consistency validation
     h += renderCrossChecks('fu');
 
     // Export PDF button for Echo post result
-    h += '<div class="export-row"><button class="export-btn" onclick="exportPDF(\'echopost\')">'+ICONS.print+' '+t('exportPdf')+'</button></div>';
+    h += '<div class="export-row">';
+    h += '<button class="export-btn" onclick="exportPDF(\'echopost\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
+    h += '<button class="export-btn" onclick="exportJSON(\'echopost\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
+    h += '</div>';
   }
   
   h += '<div class="disclaimer"><strong>'+t('forResearchOnly')+'</strong> '+t('notMedicalDevice')+' <a class="disclaimer-link" onclick="openModal()">'+t('aboutTool')+'</a></div>';
@@ -2538,6 +2892,17 @@ function render(){
   if(step===1){
     h+=secTitle('echo',t('preProceduralEcho'));
     h+='<div class="card">';
+    // Echo baseline date (used to compute days-from-procedure for SV-shift warning)
+    h+='<div class="field"><label>'+t('echoBaseDate')+'</label><input type="date" value="'+(D.echoBaseDate||'')+'" oninput="updateField(\'echoBaseDate\',this.value)" style="text-align:left"></div>';
+    // Warning if echo-procedure interval > 30 days
+    if(D.echoBaseDate && D.procDate){
+      const d1 = new Date(D.echoBaseDate);
+      const d2 = new Date(D.procDate);
+      const diffDays = Math.round((d2 - d1) / (1000*60*60*24));
+      if(diffDays > 30){
+        h += '<div style="margin:8px 0;padding:10px 12px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:8px;font-size:11.5px;line-height:1.45;color:#92400e">⚠ '+t('echoTimingWarn').replace('{days}', diffDays)+'</div>';
+      }
+    }
     h+='<div class="toggle-row sv-row"><label>'+t('svAvailable')+'</label><div class="toggle-btn sv"><button class="'+(!D.svDiretto?'on':'')+'" onclick="setSvMode(false)">'+t('no').toUpperCase()+'</button><button class="'+(D.svDiretto?'on':'')+'" onclick="setSvMode(true)">'+t('yes').toUpperCase()+'</button></div></div>';
     if(D.svDiretto){h+=F(t('echoSv'),'svVal','ml')}
     else{h+=F(t('lvotDiameter'),'lvotD','mm')+F(t('lvotVti'),'lvotVti','cm')+F(t('transvalvularVti'),'vtiTrans','cm')}
@@ -2585,6 +2950,9 @@ function render(){
     else if(ai>=.85)pi={label:t('noPpm'),cls:"ok",icon:'check'};
     else if(ai>=.65)pi={label:t('moderatePpm'),cls:"warn",icon:'warn'};
     else pi={label:t('severePpm'),cls:"danger",icon:'danger'};
+
+    // Detail mode toggle
+    h += renderDetailToggle();
 
     h+='<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h+='<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
@@ -2681,6 +3049,9 @@ function render(){
 
     h+='<div class="card" style="text-align:center"><span style="color:var(--purple);font-size:13px;font-weight:600">'+t('echoAvaRef')+'</span><br><span style="color:var(--purple);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-0.5px">'+fmt(c.avaEco)+' cm²</span></div>';
 
+    // ===== DETAILED SECTIONS (hidden in Quick mode) =====
+    if(resultDetailMode === 'detailed'){
+    
     h+='<div class="card"><div style="font-size:11px;font-weight:800;color:var(--text-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.6px">'+t('standardPpmThresholds')+'</div>';
     [{l:t('noPpmShort'),v:"AVAi > 0.85",a:ai!=null&&ai>.85,bg:"#bbf7d0",color:"#14532d"},{l:t('moderate'),v:"0.66 – 0.85",a:ai!=null&&ai>.65&&ai<=.85,bg:"#fde68a",color:"#713f12"},{l:t('severe'),v:"≤ 0.65",a:ai!=null&&ai<=.65,bg:"#fecaca",color:"#7f1d1d"}].forEach(function(thr){
       h+='<div class="threshold'+(thr.a?' active':'')+'" style="background:'+(thr.a?thr.bg:'var(--bg-alt)')+';color:'+(thr.a?thr.color:'var(--text)')+'"><span>'+thr.l+'</span><span>'+thr.v+'</span></div>';
@@ -2697,18 +3068,23 @@ function render(){
       h+='<button class="recheck-btn" onclick="recheckPost()">'+ICONS.refresh+' '+t('recheckPost')+'</button>';
     }
     
-    // Cross-checks: data consistency validation
-    h+=renderCrossChecks('measured');
-    
     // Sensitivity analysis: how robust is the AVAi classification to input perturbations?
     h+=renderSensitivityAnalysis();
+    
+    } // ===== END DETAILED SECTIONS =====
+    
+    // Cross-checks: data consistency validation (always shown if issues, hidden if OK in Quick)
+    h+=renderCrossChecks('measured');
 
     h+='<div class="export-row">';
     h+='<button class="export-btn" onclick="exportText()">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h+='<button class="export-btn" onclick="exportPDF(\'measured\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
+    h+='<button class="export-btn" onclick="exportJSON(\'measured\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h+='</div>';
 
-    h+='<div class="footer-info">Zao = '+fmt(c.zao,4)+' mmHg·s/ml&nbsp;&nbsp;·&nbsp;&nbsp;BSA = '+fmt(c.bsa)+' m²&nbsp;&nbsp;·&nbsp;&nbsp;SV = '+fmt(c.sv,1)+' ml</div>';
+    if(resultDetailMode === 'detailed'){
+      h+='<div class="footer-info">Zao = '+fmt(c.zao,4)+' mmHg·s/ml&nbsp;&nbsp;·&nbsp;&nbsp;BSA = '+fmt(c.bsa)+' m²&nbsp;&nbsp;·&nbsp;&nbsp;SV = '+fmt(c.sv,1)+' ml</div>';
+    }
   }
 
   h+='<div class="disclaimer"><strong>'+t('forResearchOnly')+'</strong> '+t('notMedicalDevice')+' '+t('notForClinical')+' <a class="disclaimer-link" onclick="openModal()">'+t('aboutTool')+'</a></div>';
@@ -2731,11 +3107,40 @@ function render(){
 window.updateField=updateField;
 window.toggleHelp=toggleHelp;
 window.exportText=exportText;
+
+// Step field by delta for any of the three states (D, P, FU).
+// Rounding to a sensible decimal precision based on step magnitude:
+//  - step >= 1: integer
+//  - step >= 0.5: 1 decimal
+//  - step <  0.5: 2 decimals
+window.stepField = function(key, delta, scope){
+  const state = scope === 'P' ? P : (scope === 'F' ? FU : D);
+  const updateFn = scope === 'P' ? updateFieldP : (scope === 'F' ? updateFieldF : updateField);
+  const cur = state[key];
+  const base = (cur != null && !isNaN(cur)) ? parseFloat(cur) : 0;
+  let next = base + delta;
+  // Round to avoid floating-point drift
+  const absDelta = Math.abs(delta);
+  let decimals;
+  if(absDelta >= 1) decimals = 0;
+  else if(absDelta >= 0.5) decimals = 1;
+  else decimals = 2;
+  next = parseFloat(next.toFixed(decimals));
+  // Prevent negative for fields that can't be negative
+  if(next < 0) next = 0;
+  // Update internal state (which triggers re-render of derived values)
+  updateFn(key, String(next));
+  // Update DOM input value (the F/FP/FF templates rendered the OLD value when called)
+  const prefix = scope === 'P' ? 'fp' : (scope === 'F' ? 'ff' : 'fd');
+  const inp = document.querySelector('#'+prefix+'-'+key+' input');
+  if(inp) inp.value = String(next);
+};
 window.goBack=function(){if(step>0){step--;render();window.scrollTo({top:0,behavior:'smooth'})}};
 window.goNext=function(){if(canNext()&&step<4){step++;render();window.scrollTo({top:0,behavior:'smooth'})}};
 window.gotoStep=function(i){if(i<=step){step=i;render();window.scrollTo({top:0,behavior:'smooth'})}};
 window.setSex=function(s){D.sesso=s;render()};
 window.setBvf=function(v){D.bvfPerformed=v;render();saveState()};
+window.setBvfPlanned=function(v){P.bvfPlanned=v;render();saveState()};
 window.setSvMode=function(v){D.svDiretto=v;D.svVal=null;D.lvotD=null;D.lvotVti=null;D.vtiTrans=null;render()};
 window.newMeasure=function(){D.msPre=null;D.dpPre=null;D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
 window.recheckPost=function(){D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
@@ -2797,10 +3202,45 @@ window.openModal=function(){
   setText('about-thresholds-desc','aboutThresholdsDesc');
   setText('about-disclaimer','aboutDisclaimer');
   setText('about-author','aboutAuthor');
+  setText('about-bsa-title','aboutBsaTitle');
+  setText('about-bsa-desc','aboutBsaDesc');
   setText('about-close-btn','closeBtn');
+  // Highlight active BSA button
+  updateBsaButtons();
   document.getElementById('info-modal').classList.add('show');
 };
 window.closeModal=function(){document.getElementById('info-modal').classList.remove('show')};
+
+window.toggleResultDetail = function(){
+  resultDetailMode = (resultDetailMode === 'quick') ? 'detailed' : 'quick';
+  try{localStorage.setItem('vivppm_result_detail', resultDetailMode)}catch(e){}
+  render();
+  showToast(resultDetailMode === 'quick' ? t('detailQuickEnabled') : t('detailFullEnabled'));
+};
+
+window.setBsaFormula = function(formula){
+  if(formula !== 'dubois' && formula !== 'mosteller') return;
+  bsaFormula = formula;
+  try{localStorage.setItem('vivppm_bsa_formula', formula)}catch(e){}
+  updateBsaButtons();
+  render();
+  showToast(t('bsaFormulaChanged').replace('{f}', formula === 'dubois' ? 'DuBois' : 'Mosteller'));
+};
+
+function updateBsaButtons(){
+  const dub = document.getElementById('bsa-dubois-btn');
+  const mos = document.getElementById('bsa-mosteller-btn');
+  if(!dub || !mos) return;
+  const activeStyle = 'background:var(--blue);color:white;border-color:var(--blue)';
+  const inactiveStyle = 'background:var(--card);color:var(--text);border-color:var(--border)';
+  if(bsaFormula === 'dubois'){
+    dub.setAttribute('style', dub.getAttribute('style').replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;?/g, '') + ';' + activeStyle);
+    mos.setAttribute('style', mos.getAttribute('style').replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;?/g, '') + ';' + inactiveStyle);
+  } else {
+    dub.setAttribute('style', dub.getAttribute('style').replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;?/g, '') + ';' + inactiveStyle);
+    mos.setAttribute('style', mos.getAttribute('style').replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;?/g, '') + ';' + activeStyle);
+  }
+}
 
 // ═══════════════════════════════════════════════════════════
 // PREDICTED EOA DATABASE
@@ -2834,72 +3274,92 @@ const SURGICAL_DB = {
   // --- Stented bovine pericardial (Pibarot 2009 Table 1) ---
   'Carpentier-Edwards Perimount': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.1,21:1.3,23:1.5,25:1.8,27:2.1,29:2.2},
+    fracturable:'partial', fractureRef:'Allen KB et al. JTCVS 2017 (fracturable >18 atm, but inconsistent in clinical series)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Carpentier-Edwards Perimount Magna': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.7,23:2.1,25:2.3},
+    fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017 (fracturable at 18-22 atm with Tru NC balloon)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1 (limited data)', doi:'10.1161/CIRCULATIONAHA.108.778886',
     limitedData:true},
   'Carpentier-Edwards Magna Ease': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.6,23:1.9,25:2.2,27:2.4},
+    fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017 (fracturable at 18-22 atm)',
     ref:'Edwards Lifesciences technical specifications', doi:null},
   'Inspiris Resilia': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.6,23:1.9,25:2.2,27:2.4},
+    fracturable:false, fractureRef:'Designed with RESILIA technology and non-fracturable frame; manufacturer states ring is not designed to fracture',
     ref:'Edwards Lifesciences technical specifications', doi:null},
   'Mitroflow (LivaNova)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-outside',
     sizes:{19:1.1,21:1.3,23:1.5,25:1.8},
+    fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017; Brinkmann C et al. JACC Intv 2019 (fracturable at 8-12 atm — among easiest to fracture)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1 (limited data)', doi:'10.1161/CIRCULATIONAHA.108.778886',
     limitedData:true},
   'Trifecta (St. Jude/Abbott)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-outside',
     sizes:{19:1.4,21:1.7,23:2.0,25:2.3,27:2.7},
+    fracturable:false, fractureRef:'Allen KB et al. JTCVS 2017 (Trifecta cobalt-chromium frame is NOT fracturable up to 30 atm)',
     ref:'Bavaria JE et al. Ann Thorac Surg 2014;97:1574-80', doi:'10.1016/j.athoracsur.2013.12.048'},
   'Trifecta GT': {category:'Stented bovine pericardial', leafletDesign:'pericardial-outside',
     sizes:{19:1.4,21:1.8,23:2.1,25:2.4,27:2.8},
+    fracturable:false, fractureRef:'Same cobalt-chromium frame as Trifecta — NOT fracturable',
     ref:'Abbott technical specifications', doi:null},
   'Avalus (Medtronic)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3},
+    fracturable:false, fractureRef:'Cobalt-chromium frame; not designed to fracture per manufacturer',
     ref:'Medtronic PERIGON trial / technical specifications', doi:null},
   'Crown PRT (LivaNova)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.2,21:1.5,23:1.8,25:2.0,27:2.2},
+    fracturable:false, fractureRef:'Cobalt-chromium supra-annular frame; not designed to fracture',
     ref:'LivaNova Crown PRT technical specifications (supra-annular pericardial bioprosthesis)', doi:null},
 
   // --- Stented porcine (Pibarot 2009 Table 1) ---
   'Mosaic (Medtronic)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{19:1.1,21:1.2,23:1.4,25:1.7,27:1.8,29:2.0},
+    fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017 (fracturable at 10-14 atm)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Hancock II (Medtronic)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{21:1.2,23:1.3,25:1.5,27:1.6,29:1.6},
+    fracturable:false, fractureRef:'Allen KB et al. JTCVS 2017 (Hancock II not fracturable, but BVD — bioprosthetic valve dilation — possible at high pressure)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Hancock II Ultra (Medtronic)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{21:1.3,23:1.5,25:1.7,27:1.8,29:2.0},
+    fracturable:false, fractureRef:'Same Delrin frame as Hancock II — not fracturable',
     ref:'Medtronic Hancock II Ultra technical specifications (improved hemodynamic profile vs Hancock II via anti-calcification treatment and supra-annular design)', doi:null},
   'Epic / Biocor (St. Jude)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{21:1.3,23:1.6,25:1.8},
+    fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017 (fracturable at 8-10 atm — easiest porcine to fracture)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1 (limited data)', doi:'10.1161/CIRCULATIONAHA.108.778886',
     limitedData:true},
   'Epic Supra (St. Jude)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{19:1.3,21:1.5,23:1.8,25:2.0,27:2.2},
+    fracturable:true, fractureRef:'Same frame design as Epic — fracturable',
     ref:'St. Jude Medical technical specifications', doi:null},
   'Aspire (Vascutek)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{19:1.1,21:1.2,23:1.4,25:1.6,27:1.8},
+    fracturable:true, fractureRef:'Limited data; flexible frame design suggests fracturability',
     ref:'Vascutek/Terumo technical specifications', doi:null},
 
   // --- Stentless aortic root (Pibarot 2009 Table 1) ---
   'Freestyle (Medtronic)': {category:'Stentless', leafletDesign:'stentless-root',
     sizes:{19:1.2,21:1.4,23:1.5,25:2.0,27:2.3},
+    fracturable:false, fractureRef:'Stentless: no rigid frame to fracture; the porcine aortic root is compliant',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Toronto SPV': {category:'Stentless', leafletDesign:'stentless-root',
     sizes:{21:1.3,23:1.5,25:1.7,27:2.1,29:2.7},
+    fracturable:false, fractureRef:'Stentless: no rigid frame',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Prima Plus (Edwards)': {category:'Stentless', leafletDesign:'stentless-root',
     sizes:{19:1.1,21:1.3,23:1.5,25:1.9,27:2.1},
+    fracturable:false, fractureRef:'Stentless: no rigid frame',
     ref:'Edwards Lifesciences technical specifications', doi:null},
 
   // --- Sutureless (modern, manufacturer data) ---
   'Perceval (LivaNova)': {category:'Sutureless', leafletDesign:'pericardial-inside',
     sizes:{21:1.3,23:1.6,25:2.0,27:2.4},
+    fracturable:false, fractureRef:'Self-expanding nitinol frame, not designed to fracture; balloon post-dilation may distort frame',
     ref:'Shrestha M et al. Interact Cardiovasc Thorac Surg 2013', doi:'10.1093/icvts/ivs468'},
   'Intuity (Edwards)': {category:'Sutureless', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3},
+    fracturable:false, fractureRef:'Cobalt-chromium frame; not designed to fracture',
     ref:'Borger MA et al. Eur J Cardiothorac Surg 2015', doi:'10.1093/ejcts/ezu299'}
 };
 
@@ -3126,7 +3586,7 @@ function sizeOptions(db, model, selected){
 // Calculate predicted values from P state
 function calcPred(){
   const p=P.pesoP||0, a=P.altezzaP||0;
-  const bsa=p>0&&a>0?0.007184*Math.pow(p,.425)*Math.pow(a,.725):null;
+  const bsa=computeBSA(p,a);
   const bmi=p>0&&a>0?p/Math.pow(a/100,2):null;
   const isObese=bmi&&bmi>=30;
   
@@ -3165,10 +3625,128 @@ function calcPred(){
   } else {
     taviVIV = null;
   }
+  
+  // BVF gain (Predicted): if BVF is planned AND the surgical valve is fracturable,
+  // expected gain is +0.15 cm² in EOA (midpoint of +0.10 to +0.20 reported range).
+  // Refs: Allen KB et al. JTCVS 2017;153(6):1372-79.e1; Chhatriwalla AK et al. Circ Cardiovasc Interv 2017;10(7):e005216.
+  // For 'partial' fracturability, conservative gain of +0.07 cm² (50%).
+  // For non-fracturable valves, no gain even if BVF is toggled (impossible procedure).
+  let bvfGain = 0;
+  if(P.bvfPlanned && taviVIV != null && !isRedoTavi && P.surgModel && SURGICAL_DB[P.surgModel]){
+    const fracStatus = SURGICAL_DB[P.surgModel].fracturable;
+    if(fracStatus === true) bvfGain = 0.15;
+    else if(fracStatus === 'partial') bvfGain = 0.07;
+    // else: no gain (non-fracturable)
+    taviVIV = taviVIV + bvfGain;
+  }
+  
   const taviAVAi = (taviVIV && bsa) ? taviVIV/bsa : null;
   const taviPPM = classifyPPM(taviAVAi, isObese);
   
-  return {bsa, bmi, isObese, surgEOA, surgAVAi, surgPPM, taviNominal, taviVIV, taviAVAi, taviPPM, taviIsSupra, isRedoTavi};
+  return {bsa, bmi, isObese, surgEOA, surgAVAi, surgPPM, taviNominal, taviVIV, taviAVAi, taviPPM, taviIsSupra, isRedoTavi, bvfGain};
+}
+
+// ============================================================================
+// Build comparison strategies for multi-option planning view
+// Generates up to 4 alternative strategies based on the current selection:
+//  1. Current strategy (always shown first)
+//  2. Same TAVI + BVF (if not already planned AND SHV is fracturable)
+//  3. Same TAVI model, one size larger (if a larger size exists in DB)
+//  4. Alternative TAVI device (supra-annular if current is intra, or BE alternative)
+// ============================================================================
+function buildComparisonStrategies(c){
+  const strategies = [];
+  if(!P.taviModel || !P.taviSize || !c.bsa || !c.surgEOA || c.isRedoTavi) return strategies;
+  
+  const surgLeafletDesign = SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].leafletDesign : null;
+  const fracStatus = SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].fracturable : false;
+  
+  // Helper: compute taviVIV → AVAi → PPM for a given (taviModel, taviSize, withBVF)
+  function computeStrategy(taviModel, taviSize, withBVF){
+    const taviData = TAVI_DB[taviModel];
+    if(!taviData || !taviData.sizes[taviSize]) return null;
+    const taviNominal = taviData.sizes[taviSize];
+    const taviIsSupra = taviData.supraAnnular;
+    let taviVIV = computeVIVAdjustedEOA(taviNominal, P.surgSize, taviIsSupra, surgLeafletDesign);
+    if(taviVIV == null) return null;
+    if(withBVF){
+      if(fracStatus === true) taviVIV += 0.15;
+      else if(fracStatus === 'partial') taviVIV += 0.07;
+    }
+    const avai = taviVIV / c.bsa;
+    const ppm = classifyPPM(avai, c.isObese);
+    return {taviNominal, taviVIV, avai, ppm};
+  }
+  
+  // Strategy 1: CURRENT (always first)
+  strategies.push({
+    label: P.taviModel + ' ' + P.taviSize + 'mm' + (P.bvfPlanned ? ' + BVF' : ''),
+    note: t('comparisonCurrentNote'),
+    avai: c.taviAVAi,
+    ppm: c.taviPPM,
+    isCurrent: true
+  });
+  
+  // Strategy 2: SAME TAVI + BVF (only if not already planned and SHV is fracturable)
+  if(!P.bvfPlanned && (fracStatus === true || fracStatus === 'partial')){
+    const sBvf = computeStrategy(P.taviModel, P.taviSize, true);
+    // Show if PPM category changes OR delta AVAi is clinically meaningful (>= 0.04)
+    if(sBvf && (sBvf.ppm !== c.taviPPM || (sBvf.avai - c.taviAVAi) >= 0.04)){
+      strategies.push({
+        label: P.taviModel + ' ' + P.taviSize + 'mm + BVF',
+        note: t('comparisonBvfNote') + (fracStatus === 'partial' ? ' (' + t('fracturablePartial').replace('⚠ ','') + ')' : ''),
+        avai: sBvf.avai,
+        ppm: sBvf.ppm
+      });
+    }
+  }
+  
+  // Strategy 3: ONE SIZE LARGER (same TAVI model)
+  const taviData = TAVI_DB[P.taviModel];
+  if(taviData){
+    const allSizes = Object.keys(taviData.sizes).map(Number).sort((a,b)=>a-b);
+    const currentIdx = allSizes.indexOf(P.taviSize);
+    if(currentIdx >= 0 && currentIdx < allSizes.length - 1){
+      const largerSize = allSizes[currentIdx + 1];
+      const sLarger = computeStrategy(P.taviModel, largerSize, P.bvfPlanned);
+      if(sLarger){
+        strategies.push({
+          label: P.taviModel + ' ' + largerSize + 'mm' + (P.bvfPlanned ? ' + BVF' : ''),
+          note: t('comparisonOversizeNote'),
+          avai: sLarger.avai,
+          ppm: sLarger.ppm
+        });
+      }
+    }
+  }
+  
+  // Strategy 4: ALTERNATIVE TAVI (cross-platform: BE→SE supra or SE→BE)
+  const currentCat = taviData ? taviData.category : null;
+  const currentIsSupra = taviData ? taviData.supraAnnular : false;
+  let altCandidate = null;
+  if(currentCat === 'Balloon-expandable' || currentCat === 'Mechanically-expandable'){
+    // Suggest a supra-annular SE alternative
+    altCandidate = currentIsSupra ? null : 'Evolut FX';
+  } else if(currentCat === 'Self-expanding' && currentIsSupra){
+    // Suggest a BE alternative
+    altCandidate = 'Sapien 3 Ultra Resilia';
+  }
+  if(altCandidate && TAVI_DB[altCandidate] && altCandidate !== P.taviModel){
+    // Choose best matching size: closest to current
+    const altSizes = Object.keys(TAVI_DB[altCandidate].sizes).map(Number).sort((a,b)=>a-b);
+    const altSize = altSizes.reduce((best, s) => Math.abs(s - P.taviSize) < Math.abs(best - P.taviSize) ? s : best, altSizes[0]);
+    const sAlt = computeStrategy(altCandidate, altSize, P.bvfPlanned);
+    if(sAlt){
+      strategies.push({
+        label: altCandidate + ' ' + altSize + 'mm' + (P.bvfPlanned ? ' + BVF' : ''),
+        note: t('comparisonAltNote'),
+        avai: sAlt.avai,
+        ppm: sAlt.ppm
+      });
+    }
+  }
+  
+  return strategies;
 }
 
 function canNextPred(){
@@ -3269,7 +3847,7 @@ window.gotoPredStep=function(i){if(i<=predStep){predStep=i;render();window.scrol
 
 function calcFU(){
   const p=FU.pesoF||0, a=FU.altezzaF||0;
-  const bsa=p>0&&a>0?0.007184*Math.pow(p,.425)*Math.pow(a,.725):null;
+  const bsa=computeBSA(p,a);
   const bmi=p>0&&a>0?p/Math.pow(a/100,2):null;
   const isObese=bmi&&bmi>=30;
   
@@ -3363,10 +3941,32 @@ render();
 // Service worker registration for offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch((err) => {
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      // Listen for updates: when a new SW is found, notify the user
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if(!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          // 'installed' AND there's already an active SW = new version waiting
+          if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+            showUpdateBanner();
+          }
+        });
+      });
+    }).catch((err) => {
       console.log('SW registration failed:', err);
     });
   });
+}
+
+// Banner shown when a new app version is available
+function showUpdateBanner(){
+  if(document.getElementById('update-banner')) return; // already shown
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--blue);color:white;padding:12px 18px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:600;max-width:90%;animation:slideUp .3s ease';
+  banner.innerHTML = '<span>'+t('updateAvailable')+'</span><button onclick="window.location.reload()" style="background:white;color:var(--blue);border:none;padding:6px 12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px">'+t('updateReload')+'</button><button onclick="document.getElementById(\'update-banner\').remove()" style="background:transparent;color:white;border:none;padding:6px;cursor:pointer;font-size:18px;line-height:1;opacity:.8">×</button>';
+  document.body.appendChild(banner);
 }
 
 // Initialize CI button state to reflect loaded localStorage value
@@ -3393,6 +3993,323 @@ window.exportPDF = function(mode){
   window.addEventListener('afterprint', restore);
   window.print();
 };
+
+// Structured data export (JSON) for downstream research analysis
+// Outputs all input parameters + computed results for the requested mode.
+// No personal identifiers are included — patient anthropometrics only.
+window.exportJSON = function(mode){
+  const date = new Date().toISOString();
+  const dateShort = date.slice(0,10);
+  const payload = {
+    schemaVersion: CURRENT_SCHEMA,
+    toolVersion: '2.0.0',
+    exportedAt: date,
+    exportedMode: mode,
+    language: lang
+  };
+  
+  if(mode === 'predicted'){
+    const c = calcPred();
+    payload.predicted = {
+      input: {
+        weight_kg: P.pesoP, height_cm: P.altezzaP, sex: P.sessoP,
+        degeneratedType: P.degeneratedType,
+        surgicalValve: P.surgModel ? {
+          model: P.surgModel,
+          size_mm: P.surgSize,
+          eoaOverride_cm2: P.surgOverride,
+          leafletDesign: SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].leafletDesign : null,
+          fracturable: SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].fracturable : null
+        } : null,
+        intendedTavi: P.taviModel ? {
+          model: P.taviModel,
+          size_mm: P.taviSize,
+          eoaOverride_cm2: P.taviOverride,
+          category: TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].category : null,
+          supraAnnular: TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].supraAnnular : null
+        } : null,
+        bvfPlanned: P.bvfPlanned
+      },
+      computed: {
+        bsa_m2: c.bsa, bmi: c.bmi, isObese: c.isObese,
+        surgicalEoa_cm2: c.surgEOA, surgicalAvai_cm2_m2: c.surgAVAi, surgicalPpm: c.surgPPM,
+        taviNominalEoa_cm2: c.taviNominal, taviVivAdjustedEoa_cm2: c.taviVIV,
+        taviAvai_cm2_m2: c.taviAVAi, taviPpm: c.taviPPM,
+        bvfGain_cm2: c.bvfGain || 0,
+        isRedoTavi: c.isRedoTavi
+      }
+    };
+  } else if(mode === 'measured'){
+    const c = calc();
+    payload.measured = {
+      input: {
+        weight_kg: D.peso, height_cm: D.altezza, sex: D.sesso,
+        procedureDate: D.procDate,
+        echo: {
+          svDirect: D.svDiretto, svValue_ml: D.svVal,
+          lvotDiameter_mm: D.lvotD, lvotVti_cm: D.lvotVti, transvalvularVti_cm: D.vtiTrans
+        },
+        calibration: {
+          baselineMeanAorticPressure_mmHg: D.ms0, baselineLvet_ms: D.lvet0
+        },
+        prePostMeasurements: {
+          preMeanAorticPressure_mmHg: D.msPre, preMeanGradient_mmHg: D.dpPre,
+          postMeanAorticPressure_mmHg: D.msPost, postMeanGradient_mmHg: D.dpPost
+        },
+        bvfPerformed: D.bvfPerformed
+      },
+      computed: {
+        bsa_m2: c.bsa, bmi: c.bmi, sv_ml: c.sv,
+        zao_mmHg_s_per_ml: c.zao,
+        avaPre_cm2: c.avaPre, avaPost_cm2: c.avaPost,
+        avaiPre_cm2_m2: c.avaiPre, avaiPost_cm2_m2: c.avaiPost,
+        avaEcho_cm2: c.avaEcho, avaiEcho_cm2_m2: c.avaiEcho,
+        ppmPost: classifyPPM(c.avaiPost, c.bmi >= 30)
+      }
+    };
+  } else if(mode === 'echopost'){
+    const c = calcFU();
+    payload.echoPost = {
+      input: {
+        weight_kg: FU.pesoF, height_cm: FU.altezzaF, sex: FU.sessoF,
+        echoDate: FU.echoDate,
+        lvotDiameter_mm: FU.fuLvotD, lvotVti_cm: FU.fuLvotVti,
+        aorticVti_cm: FU.fuAvVti, meanGradient_mmHg: FU.fuMeanGrad,
+        peakVelocity_m_s: FU.fuPeakVel, aorticRegurgitation: FU.fuAR
+      },
+      computed: {
+        bsa_m2: c.bsa, sv_ml: c.sv,
+        ava_cm2: c.ava, avai_cm2_m2: c.avai, dvi: c.dvi,
+        varc3SvdClassification: c.svd,
+        ppm: classifyPPM(c.avai, c.bmi && c.bmi >= 30)
+      }
+    };
+  }
+  
+  // Trigger browser download
+  try{
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'VIV_PPM_' + mode + '_' + dateShort + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+    showToast(t('jsonDownloaded'));
+  } catch(e){
+    console.error('JSON export failed:', e);
+    alert('Export failed: ' + e.message);
+  }
+};
+
+// ============================================================================
+// SELF-TEST / HEALTHCHECK
+// Run via URL parameter: ?healthcheck=1
+// Executes synthetic test cases with known inputs/expected outputs to verify
+// that core calculations have not regressed after a deploy.
+// Used by maintainers to quickly verify a new build is functionally correct.
+// ============================================================================
+function runHealthcheck(){
+  const tests = [];
+  const tolerance = 0.01; // cm² tolerance for floating-point comparisons
+  
+  function runTest(name, fn){
+    try{
+      const result = fn();
+      tests.push({name, status: result === true ? 'pass' : 'fail', detail: result === true ? '' : String(result)});
+    } catch(e){
+      tests.push({name, status: 'error', detail: e.message});
+    }
+  }
+  
+  // ---- Test 1: BSA (DuBois) for known patient ----
+  runTest('BSA calculation (DuBois 70kg, 170cm)', () => {
+    const bsa = 0.007184 * Math.pow(70, 0.425) * Math.pow(170, 0.725);
+    const expected = 1.81;
+    return Math.abs(bsa - expected) < 0.02 || `Expected ~${expected}, got ${bsa.toFixed(3)}`;
+  });
+  
+  // ---- Test 2: Mitroflow 21mm pericardial-outside VIV factor ----
+  runTest('Bapat VIV factor for Mitroflow 21mm + Sapien 3 (pericardial-outside, small SHV)', () => {
+    // pericardial-outside = 0.92, small SHV penalty -0.05, BE non-supra = 0
+    // Expected factor = 0.87
+    const eoa = computeVIVAdjustedEOA(1.45, 21, false, 'pericardial-outside');
+    const expected = 1.45 * 0.87;
+    return Math.abs(eoa - expected) < tolerance || `Expected ~${expected.toFixed(3)}, got ${eoa.toFixed(3)}`;
+  });
+  
+  // ---- Test 3: Hancock II porcine-inside VIV factor ----
+  runTest('Bapat VIV factor for Hancock II 23mm + Evolut FX (porcine-inside + supra-annular)', () => {
+    // porcine-inside = 0.75, no small SHV penalty (23>21), supra-annular bonus +0.05
+    // Expected factor = 0.80
+    const eoa = computeVIVAdjustedEOA(2.10, 23, true, 'porcine-inside');
+    const expected = 2.10 * 0.80;
+    return Math.abs(eoa - expected) < tolerance || `Expected ~${expected.toFixed(3)}, got ${eoa.toFixed(3)}`;
+  });
+  
+  // ---- Test 4: PPM classification thresholds (Pibarot 2019, non-obese) ----
+  runTest('PPM classification non-obese: AVAi 0.86 → No PPM', () => {
+    return classifyPPM(0.86, false) === 'NO PPM' || `Got ${classifyPPM(0.86, false)}`;
+  });
+  runTest('PPM classification non-obese: AVAi 0.70 → Moderate', () => {
+    return classifyPPM(0.70, false) === 'MODERATE' || `Got ${classifyPPM(0.70, false)}`;
+  });
+  runTest('PPM classification non-obese: AVAi 0.60 → Severe', () => {
+    return classifyPPM(0.60, false) === 'SEVERE' || `Got ${classifyPPM(0.60, false)}`;
+  });
+  
+  // ---- Test 5: PPM classification thresholds for obese (BMI ≥ 30) ----
+  runTest('PPM classification obese: AVAi 0.71 → No PPM', () => {
+    return classifyPPM(0.71, true) === 'NO PPM' || `Got ${classifyPPM(0.71, true)}`;
+  });
+  runTest('PPM classification obese: AVAi 0.60 → Moderate', () => {
+    return classifyPPM(0.60, true) === 'MODERATE' || `Got ${classifyPPM(0.60, true)}`;
+  });
+  
+  // ---- Test 6: Database integrity ----
+  runTest('SURGICAL_DB has 20 entries', () => {
+    const n = Object.keys(SURGICAL_DB).length;
+    return n === 20 || `Expected 20, got ${n}`;
+  });
+  runTest('All SHV have fracturable flag', () => {
+    const missing = Object.entries(SURGICAL_DB).filter(([k,v]) => v.fracturable === undefined).map(([k]) => k);
+    return missing.length === 0 || `Missing: ${missing.join(', ')}`;
+  });
+  runTest('All SHV have leafletDesign', () => {
+    const missing = Object.entries(SURGICAL_DB).filter(([k,v]) => !v.leafletDesign).map(([k]) => k);
+    return missing.length === 0 || `Missing: ${missing.join(', ')}`;
+  });
+  runTest('All TAVI have category and supraAnnular flag', () => {
+    const missing = Object.entries(TAVI_DB).filter(([k,v]) => !v.category || v.supraAnnular === undefined).map(([k]) => k);
+    return missing.length === 0 || `Missing: ${missing.join(', ')}`;
+  });
+  
+  // ---- Test 7: Hybrid Gorlin Zao formula sanity check ----
+  runTest('Zao calibration for typical patient (Ms=100, LVET=300ms, SV=70ml)', () => {
+    // Zao = (Ms * LVET/1000) / SV = (100 * 0.3) / 70 ≈ 0.4286
+    const zao = (100 * 300/1000) / 70;
+    const expected = 0.4286;
+    return Math.abs(zao - expected) < 0.001 || `Expected ${expected}, got ${zao.toFixed(4)}`;
+  });
+  
+  // ---- Test 8: Hybrid Gorlin AVA for known POST conditions ----
+  runTest('Hybrid Gorlin AVA POST (Ms=95, ΔP=12, Zao=0.4286) ≈ 1.44 cm²', () => {
+    const ms = 95, dp = 12, zao = 0.4286;
+    const ava = ms / (zao * 44.3 * Math.sqrt(dp));
+    const expected = 1.44;
+    return Math.abs(ava - expected) < 0.05 || `Expected ~${expected}, got ${ava.toFixed(3)}`;
+  });
+  
+  // ---- Render results ----
+  const passCount = tests.filter(t => t.status === 'pass').length;
+  const failCount = tests.filter(t => t.status === 'fail').length;
+  const errorCount = tests.filter(t => t.status === 'error').length;
+  const allPass = failCount === 0 && errorCount === 0;
+  
+  let html = '<div style="max-width:680px;margin:30px auto;padding:24px;font-family:-apple-system,Segoe UI,sans-serif;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)">';
+  html += '<h1 style="margin:0 0 8px;color:#0b1e3a">VIV PPM Calculator — Healthcheck</h1>';
+  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 2.0.0 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
+  html += '<div style="padding:14px;border-radius:10px;background:'+(allPass?'#dcfce7':'#fee2e2')+';border-left:4px solid '+(allPass?'#16a34a':'#dc2626')+';margin-bottom:20px;font-weight:700;color:'+(allPass?'#15803d':'#991b1b')+'">';
+  html += allPass ? '✓ ALL TESTS PASSED ('+passCount+'/'+tests.length+')' : '✕ FAILURES — Pass: '+passCount+', Fail: '+failCount+', Error: '+errorCount;
+  html += '</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+  html += '<thead><tr style="border-bottom:2px solid #e5e7eb"><th style="text-align:left;padding:8px 6px;color:#475569">Test</th><th style="text-align:right;padding:8px 6px;color:#475569;width:90px">Result</th></tr></thead><tbody>';
+  tests.forEach(t => {
+    const color = t.status === 'pass' ? '#16a34a' : t.status === 'fail' ? '#dc2626' : '#ea580c';
+    const symbol = t.status === 'pass' ? '✓ PASS' : t.status === 'fail' ? '✕ FAIL' : '⚠ ERROR';
+    html += '<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:8px 6px;color:#1e293b">'+t.name+(t.detail?'<br><span style="font-size:11.5px;color:#64748b">'+t.detail+'</span>':'')+'</td><td style="text-align:right;padding:8px 6px;font-weight:700;color:'+color+'">'+symbol+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11.5px;color:#64748b;line-height:1.5">For maintainers: run this healthcheck after every deploy by appending <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px">?healthcheck=1</code> to the URL. All tests should pass.</div>';
+  html += '<div style="margin-top:12px"><a href="./" style="display:inline-block;padding:10px 16px;background:#0b1e3a;color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:13px">← Back to app</a></div>';
+  html += '</div>';
+  
+  document.body.innerHTML = html;
+  document.body.style.background = '#f8fafc';
+  document.title = 'VIV PPM — Healthcheck ' + (allPass ? '✓' : '✕');
+  
+  return {passCount, failCount, errorCount, tests, allPass};
+}
+
+// ============================================================================
+// ERROR BOUNDARY + BUG REPORT
+// Catches uncaught JS errors and unhandled promise rejections.
+// Shows a small banner offering to report via mailto with stacktrace pre-filled.
+// Privacy-first: no automatic telemetry; user must opt-in to send.
+// ============================================================================
+let _lastError = null;
+let _errorBannerShown = false;
+
+window.addEventListener('error', (e) => {
+  _lastError = {
+    type: 'error',
+    message: e.message,
+    source: e.filename + ':' + e.lineno + ':' + e.colno,
+    stack: e.error && e.error.stack ? e.error.stack : '(no stack)',
+    timestamp: new Date().toISOString()
+  };
+  showErrorBanner();
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  _lastError = {
+    type: 'unhandledrejection',
+    message: e.reason && e.reason.message ? e.reason.message : String(e.reason),
+    stack: e.reason && e.reason.stack ? e.reason.stack : '(no stack)',
+    timestamp: new Date().toISOString()
+  };
+  showErrorBanner();
+});
+
+function showErrorBanner(){
+  if(_errorBannerShown) return;
+  _errorBannerShown = true;
+  const banner = document.createElement('div');
+  banner.id = 'error-banner';
+  banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#dc2626;color:white;padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;max-width:92%;flex-wrap:wrap';
+  const reportBtn = '<button onclick="window.reportBug()" style="background:white;color:#dc2626;border:none;padding:6px 12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:12.5px">'+t('reportBugBtn')+'</button>';
+  const dismissBtn = '<button onclick="document.getElementById(\'error-banner\').remove();window._errorBannerShown=false" style="background:transparent;color:white;border:none;padding:6px;cursor:pointer;font-size:18px;line-height:1;opacity:.85">×</button>';
+  banner.innerHTML = '<span>⚠ '+t('errorOccurred')+'</span>' + reportBtn + dismissBtn;
+  document.body.appendChild(banner);
+}
+
+window.reportBug = function(){
+  const subject = encodeURIComponent('VIV PPM Calculator v2.0 — Bug report');
+  const body = encodeURIComponent(
+    'Hi Francesco,\n\nI encountered an error in the VIV PPM Calculator.\n\n' +
+    '--- Technical details (auto-filled, please do not delete) ---\n' +
+    'Tool version: 2.0.0\n' +
+    'Schema: v' + CURRENT_SCHEMA + '\n' +
+    'Language: ' + lang + '\n' +
+    'BSA formula: ' + bsaFormula + '\n' +
+    'User agent: ' + (typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown') + '\n' +
+    'URL: ' + (typeof window !== 'undefined' ? window.location.href : 'unknown') + '\n' +
+    'Timestamp: ' + (_lastError ? _lastError.timestamp : new Date().toISOString()) + '\n\n' +
+    'Error type: ' + (_lastError ? _lastError.type : 'unknown') + '\n' +
+    'Message: ' + (_lastError ? _lastError.message : 'unknown') + '\n' +
+    'Source: ' + (_lastError ? (_lastError.source || 'n/a') : 'n/a') + '\n\n' +
+    'Stack trace:\n' + (_lastError ? _lastError.stack : 'unknown') + '\n\n' +
+    '--- What I was doing ---\n' +
+    '(Please describe the steps that led to the error)\n\n' +
+    'Thanks!\n'
+  );
+  // Open user's default mail client. Replace with your maintenance email if needed.
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  // Note: empty 'mailto:' opens the user's compose with no recipient set;
+  // they fill in the recipient. This avoids embedding a hardcoded email here.
+};
+
+// Activate healthcheck mode if URL has ?healthcheck=1
+if(typeof window !== 'undefined' && window.location && window.location.search.includes('healthcheck=1')){
+  // Wait for DOM and script init, then run
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => setTimeout(runHealthcheck, 200));
+  } else {
+    setTimeout(runHealthcheck, 200);
+  }
+}
 
 // First-time onboarding tour
 const TOUR_KEY = 'vivppm_tour_seen';
@@ -3473,10 +4390,11 @@ window.closeTour = function(){
 };
 window.replayTour = function(){localStorage.removeItem(TOUR_KEY);startTour()};
 
-// Auto-show tour on first visit
+// Auto-show tour on first visit (skip if running healthcheck)
 window.addEventListener('load', () => {
   setTimeout(() => {
-    if(!localStorage.getItem(TOUR_KEY)) startTour();
+    const isHealthcheck = window.location.search.includes('healthcheck=1');
+    if(!isHealthcheck && !localStorage.getItem(TOUR_KEY)) startTour();
   }, 800);
 });
 

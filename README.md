@@ -221,6 +221,19 @@ A BibTeX entry is available in [`CITATION.cff`](CITATION.cff).
 ## Changelog
 
 ### v2.0 (April 2025)
+- **Numeric input steppers (+/−)**: every numeric input field across all three modes now has compact ± buttons with intelligent step sizes (gradient ±5, AVAi ±0.05, pressures ±5, LVET ±10, peak velocity ±0.1). Speeds up small adjustments in cath-lab where typing on mobile keypads is slow. Values clamp at 0 (no negatives).
+- **Quick / Detailed result view toggle**: switch between essential clinical readout (PPM badge, AVAi, decision card, cross-checks if issues) and full detail (sensitivity range, comparison table, thresholds tables, footer info). Preference persisted in localStorage. Reduces scrolling time during cath-lab use.
+- **Echo-procedure timing warning**: when the gap between baseline echo and procedure exceeds 30 days, an amber alert flags the increased uncertainty of the hybrid Gorlin assumption (constant stroke volume between echo and cath-lab).
+- **BSA formula toggle (DuBois / Mosteller)**: configurable in About modal; persisted in localStorage. DuBois (default) is most cited; Mosteller performs better in extreme body sizes (BMI <18 or >35). Affects all AVAi and PPM classification calculations.
+- **Schema versioning + automatic migrations**: localStorage state has a `schemaVersion` field; old states are migrated forward seamlessly when the data structure evolves (e.g., new fields added). Corrupted state triggers graceful reset rather than crash.
+- **JSON structured export**: alongside PDF, results can now be exported as machine-readable JSON for downstream research/analysis (R, Python, SPSS). Contains tool version, schema version, all inputs, and computed outputs.
+- **Service Worker update notification**: when a new app version is deployed, a non-intrusive banner offers the user to reload (avoids stuck-on-old-version PWA installations).
+- **Self-test healthcheck page**: accessible via `?healthcheck=1` URL parameter; runs synthetic tests for BSA, Bapat factors, PPM thresholds, hybrid Gorlin, and database integrity. Used by maintainers to verify deploys.
+- **Error boundary + bug-report**: uncaught JS errors trigger a discrete banner with a one-click `mailto:` button pre-filled with stack trace, tool version, schema, and user agent. No passive telemetry.
+- **Fracturable flag** annotated for all 20 surgical bioprostheses (`true` / `false` / `'partial'`) with literature references (Allen 2017, Brinkmann 2019, Lewis 2020) — drives BVF feasibility logic
+- **BVF planning toggle in Predicted mode**: pre-procedural BVF planning with automatic fracturability check; expected EOA gain (+0.15 cm² fracturable, +0.07 cm² partial) applied to predicted AVAi; toggle disabled with red warning when SHV is non-fracturable
+- **Sensitivity range in Predicted result**: AVAi shown at ±15% EOA-VIV perturbation (3-column display: worst case / estimated / best case); auto-detection of "Fragile" (PPM category may shift) vs "Robust" (stable)
+- **Strategy Comparison Table in Predicted**: shows up to 4 alternative strategies side-by-side — current selection, same TAVI + BVF (if applicable), one size larger, alternative platform (BE↔SE cross-class) — with PPM category color-coded for at-a-glance pre-procedural decision support
 - **EOA database expanded**: Crown PRT (LivaNova) and Hancock II Ultra (Medtronic) added to surgical bioprostheses; Lotus / Lotus Edge (Boston Scientific) added to TAVI devices with visible withdrawn-device warning
 - **TAVI EOA references upgraded** from manufacturer specs to Hahn 2018 peer-reviewed (PARTNER + CoreValve US Pivotal + Evolut R IDE) for Sapien family, CoreValve, Evolut R
 - **TAV-in-TAV mode** for redo-TAVI scenarios with empirical constraining factors (Akodad 2023, Sathananthan 2021)
