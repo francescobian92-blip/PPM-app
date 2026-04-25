@@ -1,6 +1,6 @@
 # VIV PPM Calculator
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Web App](https://img.shields.io/badge/Web%20App-Live-brightgreen)](https://francescobian92-blip.github.io/PPM-app/)
@@ -209,7 +209,7 @@ If you are interested in collaborating on validation, please open an issue.
 If you use this tool in your research, please cite:
 
 ```
-Bianchini F. VIV PPM Calculator [Software]. Version 2.0. 2025.
+Bianchini F. VIV PPM Calculator [Software]. Version 3.0. 2026.
 DOI: 10.5281/zenodo.XXXXXXX
 Available at: https://francescobian92-blip.github.io/PPM-app/
 ```
@@ -220,16 +220,27 @@ A BibTeX entry is available in [`CITATION.cff`](CITATION.cff).
 
 ## Changelog
 
-### v2.0 (April 2025)
-- **Numeric input steppers (+/−)**: every numeric input field across all three modes now has compact ± buttons with intelligent step sizes (gradient ±5, AVAi ±0.05, pressures ±5, LVET ±10, peak velocity ±0.1). Speeds up small adjustments in cath-lab where typing on mobile keypads is slow. Values clamp at 0 (no negatives).
+### v3.0 (April 2026)
+
+**Cath-lab ergonomics & UX**
 - **Quick / Detailed result view toggle**: switch between essential clinical readout (PPM badge, AVAi, decision card, cross-checks if issues) and full detail (sensitivity range, comparison table, thresholds tables, footer info). Preference persisted in localStorage. Reduces scrolling time during cath-lab use.
+- **Numeric input steppers (+/−)**: every numeric input field across all three modes now has compact ± buttons with intelligent step sizes (gradient ±5, AVAi ±0.05, pressures ±5, LVET ±10, peak velocity ±0.1). Speeds up small adjustments in cath-lab where typing on mobile keypads is slow. Values clamp at 0 (no negatives).
+
+**Scientific robustness**
 - **Echo-procedure timing warning**: when the gap between baseline echo and procedure exceeds 30 days, an amber alert flags the increased uncertainty of the hybrid Gorlin assumption (constant stroke volume between echo and cath-lab).
 - **BSA formula toggle (DuBois / Mosteller)**: configurable in About modal; persisted in localStorage. DuBois (default) is most cited; Mosteller performs better in extreme body sizes (BMI <18 or >35). Affects all AVAi and PPM classification calculations.
+
+**Engineering & infrastructure**
 - **Schema versioning + automatic migrations**: localStorage state has a `schemaVersion` field; old states are migrated forward seamlessly when the data structure evolves (e.g., new fields added). Corrupted state triggers graceful reset rather than crash.
 - **JSON structured export**: alongside PDF, results can now be exported as machine-readable JSON for downstream research/analysis (R, Python, SPSS). Contains tool version, schema version, all inputs, and computed outputs.
 - **Service Worker update notification**: when a new app version is deployed, a non-intrusive banner offers the user to reload (avoids stuck-on-old-version PWA installations).
 - **Self-test healthcheck page**: accessible via `?healthcheck=1` URL parameter; runs synthetic tests for BSA, Bapat factors, PPM thresholds, hybrid Gorlin, and database integrity. Used by maintainers to verify deploys.
 - **Error boundary + bug-report**: uncaught JS errors trigger a discrete banner with a one-click `mailto:` button pre-filled with stack trace, tool version, schema, and user agent. No passive telemetry.
+
+**Bug fixes**
+- **Reset (Azzera)** now correctly clears all three modes (Measured, Predicted, Echo FU), all step counters, all open help panels, and the modal. Previously only Measured was being reset, leaving stale data in the other two modes.
+
+### v2.0 (April 2025)
 - **Fracturable flag** annotated for all 20 surgical bioprostheses (`true` / `false` / `'partial'`) with literature references (Allen 2017, Brinkmann 2019, Lewis 2020) — drives BVF feasibility logic
 - **BVF planning toggle in Predicted mode**: pre-procedural BVF planning with automatic fracturability check; expected EOA gain (+0.15 cm² fracturable, +0.07 cm² partial) applied to predicted AVAi; toggle disabled with red warning when SHV is non-fracturable
 - **Sensitivity range in Predicted result**: AVAi shown at ±15% EOA-VIV perturbation (3-column display: worst case / estimated / best case); auto-detection of "Fragile" (PPM category may shift) vs "Robust" (stable)
