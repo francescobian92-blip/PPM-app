@@ -1,18 +1,27 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "VIV PPM Calculator"
-version: "1.0.0"
-date-released: "2025-04-24"
+version: "2.0.0"
+date-released: "2026-04-25"
 license: CC-BY-NC-4.0
 type: software
 abstract: >-
-  A real-time calculator for predicting patient-prosthesis mismatch (PPM)
-  during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI).
-  Uses a hybrid Gorlin approach that combines pre-procedural echocardiographic
-  stroke volume with intra-procedural invasive hemodynamics to compute aortic
-  valve area and indexed AVA in real time. Includes a database of 23 surgical
-  bioprostheses and 18 TAVI devices with peer-reviewed effective orifice area
-  reference values and a VIV-adjustment model.
+  A calculator for predicting and assessing patient-prosthesis mismatch (PPM)
+  in valve-in-valve transcatheter aortic valve implantation (VIV-TAVI). The
+  tool offers three independent modes: a pre-procedural Predicted mode based
+  on the Pibarot 2009 EOA reference database for surgical bioprostheses and
+  the Hahn 2018 EOA reference database for TAVI devices, with the Bapat 2014
+  true-ID VIV constraining model; an intra-procedural Measured mode that uses
+  a hybrid Gorlin approach combining pre-procedural echo stroke volume with
+  invasive cath-lab hemodynamics; and a post-procedural Echo post mode using
+  the continuity equation with VARC-3 SVD classification. Version 2.0
+  introduces TAV-in-TAV mode for redo-TAVI scenarios (Akodad 2023, Sathananthan
+  2021), a what-if sensitivity analysis on AVAi, logical cross-checks for data
+  consistency, BVF (bioprosthetic valve fracture) modeling per Allen 2017 and
+  Chhatriwalla 2017, opt-in confidence intervals, and full bilingual interface
+  (English/Italian). Database expanded to 21 surgical bioprostheses and 19 TAVI
+  devices including Crown PRT, Hancock II Ultra, and Lotus Edge. PPM thresholds
+  follow Pibarot 2019 (EACVI/VARC-2 endorsed).
 keywords:
   - cardiology
   - TAVI
@@ -23,12 +32,16 @@ keywords:
   - aortic valve area
   - interventional cardiology
   - medical calculator
+  - VARC-3
+  - bioprosthetic valve fracture
+  - sensitivity analysis
+  - TAV-in-TAV
 authors:
   - family-names: "Bianchini"
     given-names: "Francesco"
     affiliation: "Fondazione Policlinico Universitario A. Gemelli IRCCS, Rome, Italy"
-repository-code: "https://github.com/francescobian92-blip/viv-tavi-ppm"
-url: "https://francescobian92-blip.github.io/viv-tavi-ppm/"
+repository-code: "https://github.com/francescobian92-blip/PPM-app"
+url: "https://francescobian92-blip.github.io/PPM-app/"
 references:
   - type: article
     authors:
@@ -37,3 +50,158 @@ references:
     title: "A hybrid approach to estimate aortic valve area during valve-in-valve transcatheter aortic valve implantation"
     journal: "Cardiovascular Revascularization Medicine"
     year: 2024
+    notes: "Methodological basis for the Measured mode (hybrid Gorlin)."
+  - type: article
+    authors:
+      - family-names: "Pibarot"
+        given-names: "Philippe"
+      - family-names: "Dumesnil"
+        given-names: "Jean G."
+    title: "Prosthetic heart valves: selection of the optimal prosthesis and long-term management"
+    journal: "Circulation"
+    volume: 119
+    issue: 7
+    start: 1034
+    end: 1048
+    year: 2009
+    doi: "10.1161/CIRCULATIONAHA.108.778886"
+    notes: "Source for the EOA reference database of surgical prostheses (Table 1)."
+  - type: article
+    authors:
+      - family-names: "Hahn"
+        given-names: "Rebecca T."
+      - family-names: "Leipsic"
+        given-names: "Jonathon"
+      - family-names: "Douglas"
+        given-names: "Pamela S."
+      - family-names: "Jaber"
+        given-names: "Wael A."
+      - family-names: "Weissman"
+        given-names: "Neil J."
+      - family-names: "Pibarot"
+        given-names: "Philippe"
+      - family-names: "Blanke"
+        given-names: "Philipp"
+      - family-names: "Oh"
+        given-names: "Jae K."
+    title: "Comprehensive Echocardiographic Assessment of Normal Transcatheter Valve Function"
+    journal: "JACC: Cardiovascular Imaging"
+    volume: 12
+    issue: 1
+    start: 25
+    end: 34
+    year: 2019
+    doi: "10.1016/j.jcmg.2018.04.010"
+    notes: "Source for the EOA reference database of TAVI devices (Tables 2 & 4)."
+  - type: article
+    authors:
+      - family-names: "Bapat"
+        given-names: "Vinayak N."
+      - family-names: "Attia"
+        given-names: "Rizwan"
+      - family-names: "Thomas"
+        given-names: "Martyn"
+    title: "Effect of valve design on the stent internal diameter of a bioprosthetic valve: a concept of true internal diameter and its implications for the valve-in-valve procedure"
+    journal: "JACC: Cardiovascular Interventions"
+    volume: 7
+    issue: 2
+    start: 115
+    end: 127
+    year: 2014
+    doi: "10.1016/j.jcin.2013.10.012"
+    notes: "Source for the VIV-adjusted EOA constraining factors (Figure 6, Table 2)."
+  - type: article
+    authors:
+      - family-names: "Pibarot"
+        given-names: "Philippe"
+      - family-names: "Magne"
+        given-names: "Julien"
+      - family-names: "Leipsic"
+        given-names: "Jonathon"
+      - family-names: "Côté"
+        given-names: "Nancy"
+      - family-names: "Blanke"
+        given-names: "Philippe"
+      - family-names: "Thourani"
+        given-names: "Vinod H."
+      - family-names: "Hahn"
+        given-names: "Rebecca"
+    title: "Imaging for predicting and assessing prosthesis-patient mismatch after aortic valve replacement"
+    journal: "JACC: Cardiovascular Imaging"
+    volume: 12
+    issue: 1
+    start: 149
+    end: 162
+    year: 2019
+    doi: "10.1016/j.jcmg.2018.10.020"
+    notes: "Source for the PPM thresholds (Table 1)."
+  - type: article
+    authors:
+      - name: "VARC-3 Writing Committee"
+      - family-names: "Généreux"
+        given-names: "Philippe"
+      - family-names: "Piazza"
+        given-names: "Nicolo"
+    title: "Valve Academic Research Consortium 3: updated endpoint definitions for aortic valve clinical research"
+    journal: "European Heart Journal"
+    volume: 42
+    issue: 19
+    start: 1825
+    end: 1857
+    year: 2021
+    doi: "10.1093/eurheartj/ehab395"
+    notes: "Source for the SVD classification in Echo post mode."
+  - type: article
+    authors:
+      - family-names: "Akodad"
+        given-names: "Mariama"
+    title: "Bench testing of valve-in-valve transcatheter aortic valve implantation following self-expanding TAVI"
+    journal: "EuroIntervention"
+    volume: 19
+    issue: 1
+    start: 93
+    end: 102
+    year: 2023
+    doi: "10.4244/EIJ-D-22-00769"
+    notes: "Bench evidence for TAV-in-TAV constraining factors (added in v2.0)."
+  - type: article
+    authors:
+      - family-names: "Sathananthan"
+        given-names: "Janarthanan"
+    title: "Repeat transcatheter aortic valve implantation: bench evaluation of valve-in-valve combinations"
+    journal: "EuroIntervention"
+    volume: 17
+    start: 856
+    end: 864
+    year: 2021
+    doi: "10.4244/EIJ-D-20-00697"
+    notes: "Bench data informing TAV-in-TAV factor selection (added in v2.0)."
+  - type: article
+    authors:
+      - family-names: "Allen"
+        given-names: "Keith B."
+      - family-names: "Chhatriwalla"
+        given-names: "Adnan K."
+    title: "Bioprosthetic valve fracture to facilitate transcatheter valve-in-valve implantation"
+    journal: "Annals of Thoracic Surgery"
+    year: 2017
+    doi: "10.1016/j.athoracsur.2017.06.028"
+    notes: "Clinical foundation for the BVF toggle (added in v2.0)."
+  - type: article
+    authors:
+      - family-names: "Chhatriwalla"
+        given-names: "Adnan K."
+    title: "Bioprosthetic Valve Fracture Improves the Hemodynamic Results of Valve-in-Valve Transcatheter Aortic Valve Replacement"
+    journal: "Circulation: Cardiovascular Interventions"
+    year: 2017
+    doi: "10.1161/CIRCINTERVENTIONS.117.005216"
+    notes: "Hemodynamic evidence supporting BVF modeling (added in v2.0)."
+  - type: article
+    authors:
+      - family-names: "Asgar"
+        given-names: "Anita W."
+    title: "Transcatheter Aortic Valve Replacement With the LOTUS Edge System: Early European Experience"
+    journal: "JACC: Cardiovascular Interventions"
+    year: 2020
+    doi: "10.1016/j.jcin.2020.09.044"
+    notes: "EOA reference for the Lotus Edge mechanically-expandable TAVI (added in v2.0; device withdrawn from market in 2020 — relevant for VIV scenarios in patients with prior implant)."

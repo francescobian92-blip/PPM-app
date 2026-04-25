@@ -1,7 +1,9 @@
 // VIV-TAVI PPM Calculator — Service Worker
 // Enables offline functionality by caching the app shell
+// Cache name MUST be bumped on every release to force users to receive updates.
+// See activate handler below — old caches are deleted automatically.
 
-const CACHE_NAME = 'viv-tavi-v1';
+const CACHE_NAME = 'viv-tavi-v2';
 const ASSETS = [
   './',
   './index.html',

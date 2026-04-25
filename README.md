@@ -1,12 +1,13 @@
 # VIV PPM Calculator
 
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
-[![Web App](https://img.shields.io/badge/Web%20App-Live-brightgreen)](https://francescobian92-blip.github.io/viv-tavi-ppm/)
+[![Web App](https://img.shields.io/badge/Web%20App-Live-brightgreen)](https://francescobian92-blip.github.io/PPM-app/)
 
-A real-time calculator for predicting patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI). Uses a hybrid Gorlin approach combining pre-procedural echocardiographic stroke volume with intra-procedural invasive hemodynamics.
+A calculator for predicting and assessing patient-prosthesis mismatch (PPM) in valve-in-valve transcatheter aortic valve implantation (VIV-TAVI). The tool offers three independent modes — predicted (pre-procedural), measured (intra-procedural via hybrid Gorlin), and echo post (post-procedural via continuity equation).
 
-**🌐 Live app:** [https://francescobian92-blip.github.io/viv-tavi-ppm/](https://francescobian92-blip.github.io/viv-tavi-ppm/)
+**🌐 Live app:** [https://francescobian92-blip.github.io/PPM-app/](https://francescobian92-blip.github.io/PPM-app/)
 
 ---
 
@@ -16,11 +17,23 @@ A real-time calculator for predicting patient-prosthesis mismatch (PPM) during v
 
 ---
 
-## Overview
+## Modes of operation
 
-During a VIV-TAVI procedure, predicting patient-prosthesis mismatch in real time is clinically valuable because it can guide the decision to perform additional maneuvers (post-dilation, bioprosthetic valve fracture) before the patient leaves the cath lab.
+| Mode | When | Inputs | Method |
+|------|------|--------|--------|
+| **Predicted** | Before procedure | Surgical valve OR previous TAVI (redo-TAVI) + intended TAVI | EOA database (Pibarot 2009 / Hahn 2018) + VIV adjustment (Bapat 2014) |
+| **Measured** | During procedure | Echo SV + invasive hemodynamics (mean Pao, mean ΔP) + optional BVF | Hybrid Gorlin |
+| **Echo post** | After procedure | Echo TTE (LVOT, VTI, gradient, AR) | Continuity equation + VARC-3 SVD classification |
 
-This tool operationalizes a hybrid Gorlin methodology: it uses the stroke volume measured at baseline by echocardiography to calibrate a patient-specific aortic impedance (Z<sub>ao</sub>), then computes aortic valve area from intra-procedural mean aortic pressure and mean transvalvular gradient alone.
+When all three modes are completed in the same session, the tool displays a comparative panel: **Predicted → Measured → Echo post**.
+
+The Predicted mode also supports **TAV-in-TAV** scenarios (failed previous TAVI), with empirical constraining factors based on Akodad 2023 and Sathananthan 2021 bench data.
+
+---
+
+## Hybrid Gorlin methodology
+
+The intra-procedural mode operationalizes a hybrid Gorlin approach: it uses the stroke volume measured at baseline by echocardiography to calibrate a patient-specific aortic impedance (Z<sub>ao</sub>), then computes aortic valve area from intra-procedural mean aortic pressure and mean transvalvular gradient alone.
 
 ### Key formula
 
@@ -37,24 +50,87 @@ AVAi = AVA / BSA
 
 Where `ms` is the mean systolic aortic pressure and `ΔP_mean` is the mean transvalvular gradient, both measured on the cath-lab polygraph.
 
-### PPM classification
+---
 
-Following ESC/EACTS 2025 guidelines:
+## PPM classification
 
-| AVAi | Standard | BMI ≥ 30 |
-|------|----------|----------|
-| No PPM | ≥ 0.85 | ≥ 0.70 |
-| Moderate | 0.65 – 0.85 | 0.55 – 0.70 |
-| Severe | < 0.65 | < 0.55 |
+Following Pibarot et al. JACC Cardiovasc Imaging 2019 (Table 1), endorsed by VARC-3 and EACVI:
+
+| AVAi (cm²/m²) | Standard | BMI ≥ 30 |
+|---------------|----------|----------|
+| **No PPM** | > 0.85 | > 0.70 |
+| **Moderate** | 0.66 – 0.85 | 0.56 – 0.70 |
+| **Severe** | ≤ 0.65 | ≤ 0.55 |
+
+---
+
+## Predicted-EOA database
+
+The Predicted mode uses a tiered evidence base for EOA reference values:
+
+### Surgical bioprostheses (21 models)
+
+**Primary source — Pibarot & Dumesnil 2009 Circulation (Table 1):**
+- Carpentier-Edwards Perimount, Magna *(limited data)*
+- Mosaic, Hancock II, Epic / Biocor *(limited data)*
+- Mitroflow *(limited data)*
+- Freestyle, Toronto SPV (stentless aortic root)
+
+**Secondary source — Manufacturer technical specifications:**
+- Magna Ease, Inspiris Resilia, Trifecta, Trifecta GT, Avalus, Epic Supra, Aspire, Prima Plus, Perceval, Intuity
+- **Crown PRT (LivaNova)** — added in v2.0 (supra-annular pericardial)
+- **Hancock II Ultra (Medtronic)** — added in v2.0 (improved porcine with anti-calcification + supra-annular design)
+
+### TAVI devices (19 models)
+
+**Primary source — Hahn et al. 2018 JACC Cardiovasc Imaging (Tables 2 & 4):**
+Pooled core-lab data from PARTNER trials (Sapien family) and CoreValve US Pivotal + Evolut R IDE studies:
+- Sapien (1st gen): n=2342
+- Sapien XT: n=1471
+- Sapien 3: n=1470 (size 20mm based on n=47, flagged as limited data)
+- Sapien 3 Ultra / Ultra Resilia: hemodynamic profile assumed equivalent to Sapien 3
+- CoreValve (classic): n=835 (size 23mm excluded due to n=19, flagged in paper as "requires confirmation")
+- Evolut R: n=255 (size 23mm excluded due to n=3, insufficient data per Hahn 2018)
+
+These are EOA values measured in TAVR for native annular aortic stenosis, used as the **nominal THV EOA** on which the Bapat 2014 VIV constraining factor is then applied.
+
+**Secondary source — Manufacturer technical specifications and registry data:**
+Myval / Myval Octacor, Evolut PRO/PRO+/FX/FX+, Acurate neo/neo2, Portico, Navitor, JenaValve Trilogy, Allegra (NVT). For Acurate neo, secondary source includes Möllmann et al. EuroIntervention 2018 (SAVI-TF registry).
+
+**Withdrawn devices (added in v2.0 for VIV scenarios in patients with prior implant):**
+- **Lotus / Lotus Edge (Boston Scientific)** — mechanically-expandable, intra-annular. EOA values from Asgar 2020 (RESPOND post-market) + REPRISE III FDA SSED. Device withdrawn from market in 2020. The app shows a visible warning when this device is selected.
+
+Balloon-expandable: Sapien (1st gen), Sapien XT, Sapien 3, Sapien 3 Ultra, Sapien 3 Ultra Resilia, Myval, Myval Octacor
+
+Self-expanding: CoreValve (classic), Evolut R/PRO/PRO+/FX/FX+, Acurate neo/neo2, Portico, Navitor, JenaValve Trilogy, Allegra
+
+Mechanically-expandable: Lotus / Lotus Edge (withdrawn)
+
+### VIV constraining model (Bapat 2014)
+
+When TAVI is deployed inside a degenerated surgical bioprosthesis, the achievable EOA is constrained by the leaflet design (true ID < stent ID). Adjustment factors based on Bapat et al. (Figure 6, Table 2):
+
+| Surgical valve design | Examples | True ID vs Stent ID | Factor |
+|------------------------|----------|---------------------|--------|
+| Pericardial leaflets **outside** stent | Trifecta, Mitroflow | = stent ID | **0.92** |
+| Pericardial leaflets **inside** stent | Perimount, Magna, Inspiris, Avalus, Perceval, Intuity | −1 mm | **0.85** |
+| Porcine leaflets inside stent | Hancock II, Mosaic, Epic, Aspire | −2 mm | **0.75** |
+| Stentless aortic root | Freestyle, Toronto SPV root, Prima Plus | variable | **0.90** |
+
+**Modifiers:**
+- −0.05 if SHV label size ≤ 21 mm (Bapat caveat for borderline sizes)
+- +0.05 if TAVI is supra-annular (Evolut series, Acurate neo, JenaValve)
 
 ---
 
 ## Features
 
-- **5-step guided workflow**: Patient → Echo → Z<sub>ao</sub> calibration → PRE/POST measurements → Result
-- **Real-time calculation** with visual PPM badge and scale marker
+- **3 independent modes** (Predicted, Measured, Echo post), each saved separately and viewable side-by-side
+- **Auto-calculated time interval** between procedure date and echo post date
+- **Real-time calculation** with visual PPM badge and AVAi scale marker
+- **VARC-3 SVD classification** in echo post mode (no/moderate/severe hemodynamic SVD)
 - **Clinical decision support** with context-aware recommended actions for each PPM category
-- **Predicted EOA database**: 23 surgical bioprostheses and 18 TAVI devices with peer-reviewed EOA reference values and a VIV-adjustment model
+- **Predicted-EOA database**: 19 surgical bioprostheses + 18 TAVI devices with traceable references (DOI per model where applicable)
 - **Offline support** via service worker (installable as PWA on iPhone/iPad/Android/desktop)
 - **Dark mode** with premium navy-blue palette
 - **Exportable results** (copy to clipboard + printable A4 layout)
@@ -64,41 +140,56 @@ Following ESC/EACTS 2025 guidelines:
 
 ## How to use
 
-1. Open the [web app](https://francescobian92-blip.github.io/viv-tavi-ppm/).
+1. Open the [web app](https://francescobian92-blip.github.io/PPM-app/).
 2. On iPhone/iPad: Safari → Share → Add to Home Screen (works offline afterwards).
 3. On Android: Chrome → menu → Install app.
 4. On desktop: Chrome/Edge → address bar → install icon.
 
 ### Input workflow
 
+#### Predicted (4 steps, ~30 seconds)
 1. **Patient**: weight, height, sex
-2. **Echo (pre-procedure)**: LVOT diameter, LVOT-VTI, transvalvular VTI (or direct SV)
-3. **Calibration (baseline, before deployment)**: mean systolic aortic pressure + LVET from the Philips polygraph (Freeze → Measure → read Mean and Δt)
-4. **PRE/POST deployment**: mean pressure and mean ΔP before and after TAVI release
-5. **Result**: PPM classification, AVAi position on scale, and recommended clinical actions
+2. **Surgical valve**: model, size *(or override EOA manually)*
+3. **Intended TAVI**: model, size *(or override VIV-adjusted EOA)*
+4. **Result**: predicted PPM with AVAi scale, vulnerability assessment
+
+#### Measured (5 steps, ~1 min during procedure)
+1. **Patient**: weight, height, sex, procedure date
+2. **Echo (pre-procedure)**: LVOT diameter, LVOT-VTI, transvalvular VTI *(or direct SV)*
+3. **Calibration (baseline)**: mean Pao + LVET from polygraph (Freeze → Measure → read Mean and Δt)
+4. **PRE/POST deployment**: mean Pao and mean ΔP before and after TAVI release
+5. **Result**: real-time PPM with clinical actions
+
+#### Echo post (3 steps)
+1. **Patient**: weight, height, sex, echo date
+2. **Echo**: LVOT D, LVOT VTI, AV VTI, mean gradient, peak velocity, AR severity
+3. **Result**: PPM + DVI + VARC-3 SVD classification + months post-procedure
 
 ---
 
 ## Scientific basis
 
-The hybrid Gorlin methodology used by this tool is based on:
+The hybrid Gorlin methodology underlying the **Measured** mode is based on:
 
 > **Bianchini F**, et al. *A hybrid approach to estimate aortic valve area during valve-in-valve transcatheter aortic valve implantation.* Cardiovasc Revasc Med. 2024.
 
-Additional references for the predicted EOA database:
-- Pibarot P, Dumesnil JG. *Prosthesis-patient mismatch: definition, clinical impact, and prevention.* JACC 2009;53:1883-96
-- Dvir D, et al. *Transcatheter aortic valve implantation in failed bioprosthetic surgical valves* (VIVID registry). JAMA 2014;312:162-70
-- Webb JG, et al. *Transcatheter aortic valve implantation within degenerated aortic surgical bioprostheses: PARTNER 2 valve-in-valve registry.* JACC 2017;69:2253-62
-- Bapat VN, et al. *Effect of valve design on the stent internal diameter of a bioprosthetic valve.* JACC Cardiovasc Interv 2014;7:115-27
-- ESC/EACTS 2025 Guidelines for the management of valvular heart disease
+The **Predicted** mode and **PPM thresholds** are based on the following peer-reviewed sources (DOIs verified):
+
+| Reference | Use in this tool | DOI |
+|-----------|------------------|-----|
+| **Pibarot P & Dumesnil JG.** *Prosthetic heart valves: selection of the optimal prosthesis and long-term management.* Circulation 2009;119:1034-48 | EOA reference values for surgical prostheses (Table 1) | [`10.1161/CIRCULATIONAHA.108.778886`](https://doi.org/10.1161/CIRCULATIONAHA.108.778886) |
+| **Hahn RT, Leipsic J, Douglas PS, et al.** *Comprehensive Echocardiographic Assessment of Normal Transcatheter Valve Function.* JACC Cardiovasc Imaging 2019;12(1):25-34 | EOA reference values for TAVI devices (Tables 2 & 4) — Sapien family, CoreValve, Evolut R | [`10.1016/j.jcmg.2018.04.010`](https://doi.org/10.1016/j.jcmg.2018.04.010) |
+| **Bapat VN, Attia R, Thomas M.** *Effect of valve design on the stent internal diameter of a bioprosthetic valve.* JACC Cardiovasc Interv 2014;7:115-27 | VIV-adjusted EOA model (true-ID concept by leaflet design) | [`10.1016/j.jcin.2013.10.012`](https://doi.org/10.1016/j.jcin.2013.10.012) |
+| **Pibarot P, Magne J, Leipsic J, et al.** *Imaging for predicting and assessing prosthesis-patient mismatch after aortic valve replacement.* JACC Cardiovasc Imaging 2019;12:149-62 | PPM thresholds (Table 1, EACVI/VARC-2 endorsed) | [`10.1016/j.jcmg.2018.10.020`](https://doi.org/10.1016/j.jcmg.2018.10.020) |
+| **VARC-3 Writing Committee, Généreux P, Piazza N, et al.** *Valve Academic Research Consortium 3: updated endpoint definitions for aortic valve clinical research.* Eur Heart J 2021;42:1825-57 | SVD classification in Echo post mode | [`10.1093/eurheartj/ehab395`](https://doi.org/10.1093/eurheartj/ehab395) |
 
 ---
 
 ## Validation status
 
-⚠ **Prospective validation is ongoing.** This tool should not be used for clinical decision-making until its accuracy has been validated against reference standards in a prospective cohort.
+⚠ **Prospective validation of the Measured mode is ongoing.** This tool should not be used for clinical decision-making until its accuracy has been validated against reference standards in a prospective cohort.
 
-If you are interested in collaborating on validation, please open an issue or contact the author.
+If you are interested in collaborating on validation, please open an issue.
 
 ---
 
@@ -109,7 +200,7 @@ If you are interested in collaborating on validation, please open an issue or co
 - Uses `localStorage` for session persistence (no data leaves the device)
 - Service worker enables full offline functionality after first load
 - Installable as Progressive Web App (PWA) on all modern browsers
-- File size: ~65 KB uncompressed
+- File size: ~120 KB uncompressed
 
 ---
 
@@ -118,12 +209,40 @@ If you are interested in collaborating on validation, please open an issue or co
 If you use this tool in your research, please cite:
 
 ```
-Bianchini F. VIV PPM Calculator [Software]. Version 1.0. 2025.
+Bianchini F. VIV PPM Calculator [Software]. Version 2.0. 2025.
 DOI: 10.5281/zenodo.XXXXXXX
-Available at: https://francescobian92-blip.github.io/viv-tavi-ppm/
+Available at: https://francescobian92-blip.github.io/PPM-app/
 ```
 
 A BibTeX entry is available in [`CITATION.cff`](CITATION.cff).
+
+---
+
+## Changelog
+
+### v2.0 (April 2025)
+- **EOA database expanded**: Crown PRT (LivaNova) and Hancock II Ultra (Medtronic) added to surgical bioprostheses; Lotus / Lotus Edge (Boston Scientific) added to TAVI devices with visible withdrawn-device warning
+- **TAVI EOA references upgraded** from manufacturer specs to Hahn 2018 peer-reviewed (PARTNER + CoreValve US Pivotal + Evolut R IDE) for Sapien family, CoreValve, Evolut R
+- **TAV-in-TAV mode** for redo-TAVI scenarios with empirical constraining factors (Akodad 2023, Sathananthan 2021)
+- **Sensitivity analysis "What if"** in Measured mode: identifies AVAi fragility against ±% perturbations of LVOT VTI, LVOT diameter, SV, mean ΔP, baseline pressure, POST aortic pressure
+- **Cross-checks (data consistency)** active in all three modes: gradient direction, AVA direction, Bernoulli coherence, DVI plausibility, Zao physiological range, EOA-size mismatch detection
+- **Bioprosthetic Valve Fracture (BVF) toggle** in Measured mode (refs Allen 2017, Chhatriwalla 2017)
+- **Confidence intervals (opt-in)** with mode-specific coefficients of variation (cv 0.18 Predicted, 0.14 Measured, 0.13 Echo post)
+- **Internationalization**: complete IT/EN with persistent language preference
+- **Override EOA fields** for both surgical valve and intended TAVI (with informational tooltips)
+- **Procedure date / echo date** with auto-calculated days/months interval
+- **Onboarding tour** (5-step) and **dark mode** with premium navy palette
+- **Range warnings** on input fields with physiological out-of-range detection
+
+### v1.0 (initial release)
+- Three independent modes (Predicted, Measured, Echo post)
+- Hybrid Gorlin methodology in Measured mode
+- Pibarot 2009 EOA database for surgical valves; manufacturer data for TAVI devices
+- Bapat 2014 VIV constraining model
+- VARC-3 SVD classification
+- PPM thresholds per Pibarot 2019 (standard + BMI ≥ 30)
+- Privacy-first design (localStorage only, no telemetry)
+- Installable as PWA with offline support
 
 ---
 
