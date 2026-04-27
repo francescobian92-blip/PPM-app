@@ -1637,7 +1637,7 @@ function calc(){
   const avaiPost=avaPost&&bsa>0?avaPost/bsa:null;
   const w=[];
   if(zao!==null&&(zao<.3||zao>.8))w.push("Zao out of range (0.3–0.8) — check SV and baseline mean pressure");
-  if(D.lvet0&&(D.lvet0<200||D.lvet0>400))w.push("Baseline LVET out of range (200–400 ms)");
+  if(D.lvet0&&(D.lvet0<200||D.lvet0>450))w.push("Baseline LVET out of range (200–450 ms)");
   if(D.ms0&&(D.ms0<50||D.ms0>200))w.push("Baseline mean pressure out of range (50–200 mmHg)");
   if(D.dpPre!==null&&D.dpPre<=0)w.push("PRE ΔP must be > 0");
   if(D.dpPost!==null&&D.dpPost<=0)w.push("POST ΔP must be > 0 (a null gradient is unusual after TAVI)");
@@ -3717,19 +3717,14 @@ function calcPred(){
     taviVIV = P.taviOverride;
   } else if(taviNominal && P.surgSize){
     if(isRedoTavi){
-      // TAV-in-TAV: empirical constraining factor
-      // Reference: Akodad M et al. EuroIntervention 2023;19(1):93-102 (DOI: 10.4244/EIJ-D-22-00769)
-      // Sathananthan J et al. EuroIntervention 2021;17:856-64 (DOI: 10.4244/EIJ-D-20-00697)
-      // Bench testing data: BE-in-SE generally preserves better hemodynamics than BE-in-BE.
-      const indexIsSE = P.surgModel && TAVI_DB[P.surgModel] && TAVI_DB[P.surgModel].category === 'Self-expanding';
-      // Mechanically-expandable (Lotus) treated as BE-like for VIV constraining: forced expansion via mechanical lock vs balloon, similar bench behavior in TAV-in-TAV.
-      const newCat = TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].category : null;
-      const newIsBE = newCat === 'Balloon-expandable' || newCat === 'Mechanically-expandable';
-      let factor = 0.80; // default for unfavorable combinations
-      if(indexIsSE && newIsBE) factor = 0.85; // favorable: BE in SE
-      if(taviIsSupra) factor += 0.03; // small bonus for supra-annular new valve
-      factor = Math.max(0.60, Math.min(factor, 0.95));
-      taviVIV = taviNominal * factor;
+      // TAV-in-TAV: empirical constraining via size-dependent factors.
+      // Smaller prior THV = more constraining.
+      // Refs:
+      //   Akodad M et al. EuroIntervention 2023;19(1):93-102 (DOI: 10.4244/EIJ-D-22-00769)
+      //   Sathananthan J et al. EuroIntervention 2021;17:856-64 (DOI: 10.4244/EIJ-D-20-00697)
+      //   Landes U et al. JACC 2020;75:1882-93 (redo-TAVR registry)
+      const priorTaviIsSupra = P.surgModel && TAVI_DB[P.surgModel] ? TAVI_DB[P.surgModel].supraAnnular : false;
+      taviVIV = computeTAVinTAVAdjustedEOA(taviNominal, P.surgSize, priorTaviIsSupra, taviIsSupra);
     } else {
       taviVIV = computeVIVAdjustedEOA(taviNominal, P.surgSize, taviIsSupra, surgLeafletDesign);
     }
