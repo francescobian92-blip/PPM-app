@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "VIV PPM Calculator"
-version: "3.0.0"
-date-released: "2026-04-25"
+version: "3.1.0"
+date-released: "2026-04-27"
 license: CC-BY-NC-4.0
 type: software
 abstract: >-
@@ -15,25 +15,30 @@ abstract: >-
   a hybrid Gorlin approach combining pre-procedural echo stroke volume with
   invasive cath-lab hemodynamics; and a post-procedural Echo post mode using
   the continuity equation with VARC-3 SVD classification.
-  Version 3.0 introduces a Quick / Detailed result-view toggle for cath-lab
-  ergonomics, numeric input steppers (+/−) across all fields, schema versioning
-  with automatic localStorage migrations, structured JSON export for downstream
-  research analysis, a self-test healthcheck page, service-worker update
-  notifications, an error boundary with privacy-first bug-report mailto,
-  configurable BSA formula (DuBois / Mosteller), and an echo-procedure timing
-  warning that flags hybrid-Gorlin uncertainty when the baseline echo is more
-  than 30 days before the procedure.
-  Earlier (v2.0) features remain: TAV-in-TAV mode for redo-TAVI scenarios
-  (Akodad 2023, Sathananthan 2021), what-if sensitivity analysis on AVAi (in
-  both Predicted and Measured modes), logical cross-checks for data
-  consistency, BVF (bioprosthetic valve fracture) modeling in both Predicted
-  (planning) and Measured modes per Allen 2017 and Chhatriwalla 2017,
+  Version 3.1 fixes a critical PPM color-coding inconsistency in obese
+  patients (BMI ≥ 30): the result-card colors and exported text now
+  consistently respect the obese-adjusted thresholds (NoPPM > 0.70,
+  Moderate 0.55–0.70, Severe ≤ 0.55) per Pibarot 2019 ESC/EACTS guidelines.
+  Also fixes a structural HTML defect in the F() input helper that broke
+  desktop layout (input fields appearing nested inside one another), and a
+  cross-check false-positive when BVF is planned (the VIV-greater-than-nominal
+  warning now correctly subtracts the BVF EOA gain before checking).
+  Version 3.0 introduced cath-lab ergonomics (Quick / Detailed result-view
+  toggle, numeric input steppers +/−), scientific robustness (configurable
+  BSA formula DuBois / Mosteller, echo-procedure timing warning), and
+  engineering infrastructure (schema versioning with automatic migrations,
+  structured JSON export for downstream research, self-test healthcheck page,
+  service-worker update notifications, error boundary with privacy-first
+  bug-report mailto). Version 2.0 introduced TAV-in-TAV mode for redo-TAVI
+  scenarios (Akodad 2023, Sathananthan 2021), what-if sensitivity analysis,
+  logical cross-checks, BVF (bioprosthetic valve fracture) modeling in both
+  Predicted (planning) and Measured modes per Allen 2017 and Chhatriwalla 2017,
   fracturable-flag annotation across all surgical bioprostheses (Brinkmann
-  2019, Lewis 2020), strategy comparison table for multi-option pre-procedural
-  planning, opt-in confidence intervals, and full bilingual interface
-  (English/Italian). Database includes 20 surgical bioprostheses and 19 TAVI
-  devices (Crown PRT, Hancock II Ultra, Lotus Edge included). PPM thresholds
-  follow Pibarot 2019 (EACVI/VARC-2 endorsed).
+  2019, Lewis 2020), strategy comparison table, opt-in confidence intervals,
+  and full bilingual interface (English/Italian). Database includes 20
+  surgical bioprostheses and 19 TAVI devices (Crown PRT, Hancock II Ultra,
+  Lotus Edge included). PPM thresholds follow Pibarot 2019 (EACVI/VARC-2
+  endorsed).
 keywords:
   - cardiology
   - TAVI
@@ -51,6 +56,8 @@ keywords:
   - PWA
   - cath-lab tool
   - hybrid Gorlin
+  - obesity
+  - patch release
 authors:
   - family-names: "Bianchini"
     given-names: "Francesco"

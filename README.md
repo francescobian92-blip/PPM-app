@@ -1,6 +1,6 @@
 # VIV PPM Calculator
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
+[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Web App](https://img.shields.io/badge/Web%20App-Live-brightgreen)](https://francescobian92-blip.github.io/PPM-app/)
@@ -209,7 +209,7 @@ If you are interested in collaborating on validation, please open an issue.
 If you use this tool in your research, please cite:
 
 ```
-Bianchini F. VIV PPM Calculator [Software]. Version 3.0. 2026.
+Bianchini F. VIV PPM Calculator [Software]. Version 3.1. 2026.
 DOI: 10.5281/zenodo.XXXXXXX
 Available at: https://francescobian92-blip.github.io/PPM-app/
 ```
@@ -219,6 +219,15 @@ A BibTeX entry is available in [`CITATION.cff`](CITATION.cff).
 ---
 
 ## Changelog
+
+### v3.1 (April 2026) — bug fix release
+
+**Critical fixes**
+- **PPM color-coding now correctly respects obese (BMI ≥ 30) thresholds** in all three modes (Predicted, Measured, Echo post). Previously the result-card color used hardcoded thresholds (0.65 / 0.85) that ignored the obese-adjusted thresholds (0.55 / 0.70). For obese patients, an AVAi of 0.62 was incorrectly displayed in red (Severe) when it should have been amber (Moderate). The textual label was also affected. Now the central `classifyPPM()` function is used everywhere for consistent classification.
+- **HTML structural fix** in the F() input helper for Measured mode: a missing closing `</div>` caused all input fields to be DOM-nested inside one another. On mobile this was invisible (vertical stacking), but on desktop (≥720px viewport) the wrapped fields appeared side-by-side with units floating between them. Layout now renders correctly across all viewports.
+- **Cross-check false-positive** when BVF is planned: the "VIV-adjusted EOA > nominal EOA is impossible" warning now correctly subtracts the BVF EOA gain (+0.15 cm² for fracturable, +0.07 for partial) before checking, since BVF legitimately recovers some of the constrained EOA.
+- **exportText (Copy results)** now respects obese thresholds — previously the copied/pasted text always used non-obese cutoffs.
+- **BMI ≥ 30 threshold line** in Measured result now uses `classifyPPM()` for consistency (was using `>=` while the function uses `>` strictly).
 
 ### v3.0 (April 2026)
 

@@ -2,7 +2,7 @@
   "name": "VIV PPM Calculator",
   "short_name": "VIV PPM",
   "description": "Predicted and measured patient-prosthesis mismatch for valve-in-valve TAVI procedures",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
