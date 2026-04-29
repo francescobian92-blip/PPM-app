@@ -1,0 +1,32 @@
+v4.1.1 — Data integrity audit + Acurate neo cleanup
+
+Data fixes (all monotonicity violations + reference mismatches):
+- Trifecta 27mm/29mm EOA values were swapped (FDA P100029 + Bavaria 2014):
+    27mm: 2.7 → 2.34 cm²
+    29mm: 2.35 → 2.50 cm²
+  Full Trifecta range now: 1.58/1.83/2.07/2.30/2.34/2.50 (sizes 19-29mm)
+- Trifecta GT recalibrated alongside Trifecta classico (Glide tech offset)
+- Hancock II 29mm corrected: 1.6 → 1.9 cm² (Pibarot 2009 Circulation Table 1)
+- Evolut R 26mm corrected: 1.69 → 1.85 cm² (Hahn 2019 JACC Imaging Table 4)
+
+Device cleanup:
+- Acurate neo (1st gen) removed from TAVI_DB
+- Acurate neo2 retained as current model
+- Schema bumped v4 → v5 with auto-migration for legacy saved state
+
+UX:
+- Re-check POST CTA now visible in Quick mode (was Detailed-only)
+- Mobile header no longer overflows on iPhone 12 Pro / SE viewports
+
+Algorithms verified analytically:
+- BSA DuBois 1916 + Mosteller 1987
+- Hybrid Gorlin (Bianchini 2024 Cardiovasc Revasc Med):
+    AVA = MAP / (Zao × 44.3 × √ΔP), Zao = MAP × LVET / SV
+- Bapat 2014 VIV factors: 0.92/0.85/0.75/0.90
+- Pibarot 2019 PPM thresholds (standard + obese)
+- All 40 valve definitions: monotonicity + sanity check pass
+
+Regression: 5/5 tests pass, 0 JS errors, 0 monotonicity violations.
+
+Files synced (md5-verified):
+  index.html, sw.js, manifest.json, CITATION.cff, README.md
