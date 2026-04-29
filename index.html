@@ -104,11 +104,18 @@ html{scroll-behavior:smooth}
   .hdr-btn{padding:6px 8px;font-size:11px}
   .hdr-titles h1{font-size:16px}
   .hdr-titles p{font-size:10px}
-  .hdr-tools{gap:3px}
+  .hdr-tools{gap:3px;flex-wrap:nowrap;min-width:0}
   .hdr-logo{width:36px;height:36px}
   .hdr-logo svg{width:20px;height:20px}
-  .hdr{padding:14px 12px 12px}
+  .hdr{padding:14px 12px 12px;gap:8px}
   #home-btn{padding:6px;font-size:14px}
+  /* Hide tour replay and CI toggle on small phones to prevent header overflow.
+     Both are accessible from the About modal / keyboard shortcuts. */
+  #help-btn, #ci-btn{display:none}
+}
+@media (max-width:340px){
+  /* Extremely narrow (older iPhone SE 1st gen): also hide theme toggle */
+  #theme-btn{display:none}
 }
 
 .progress-container{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 10px}
@@ -690,7 +697,7 @@ html{scroll-behavior:smooth}
   <p>Francesco Bianchini, MD</p>
   <div class="print-header-meta">
     <span>Printed: <span id="print-date"></span></span>
-    <span>Tool version: 4.0.0 · For research use only</span>
+    <span>Tool version: 4.1.1 · For research use only</span>
   </div>
 </div>
 
@@ -705,7 +712,7 @@ html{scroll-behavior:smooth}
       </div>
       <div class="hdr-titles">
         <h1>VIV PPM <span class="hdr-status">Ready</span></h1>
-        <p>Predicted & measured PPM · v4.0.0</p>
+        <p>Predicted & measured PPM · v4.1.1</p>
       </div>
     </div>
     <div class="hdr-tools">
@@ -732,7 +739,7 @@ html{scroll-behavior:smooth}
 <div class="modal-bg" id="info-modal" onclick="if(event.target.id==='info-modal')closeModal()">
   <div class="modal">
     <h3 id="about-title">About this tool</h3>
-    <p><strong id="about-version">VIV PPM Calculator v4.0.0</strong></p>
+    <p><strong id="about-version">VIV PPM Calculator v4.1.1</strong></p>
     <p id="about-desc">Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.</p>
     <p><strong id="about-method">Method:</strong> <span id="about-method-desc">AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.</span></p>
     <p><strong id="about-thresholds">PPM thresholds:</strong> <span id="about-thresholds-desc">ESC/EACTS 2025 guidelines.</span></p>
@@ -740,7 +747,7 @@ html{scroll-behavior:smooth}
     <div style="margin-top:16px;padding:14px;background:var(--bg-alt);border-radius:10px;border-left:3px solid var(--blue);font-size:12.5px;line-height:1.6">
       <div style="font-weight:700;color:var(--text);margin-bottom:4px" id="about-author">Author</div>
       <div><a href="https://github.com/francescobian92-blip" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:600">Francesco Bianchini, MD</a></div>
-      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.0.0 · © 2026</div>
+      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.1.1 · © 2026</div>
     </div>
     <div style="margin-top:14px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;line-height:1.5">
       <div style="font-weight:700;color:var(--text);margin-bottom:6px" id="about-bsa-title">BSA formula</div>
@@ -771,7 +778,7 @@ function computeBSA(weightKg, heightCm){
 const STORAGE_KEY='vivtavi_state_v2';
 // Schema version for stored data. Increment when DEFAULT/PRED_DEFAULT/FU_DEFAULT structure changes.
 // On load, if saved schema < CURRENT_SCHEMA, apply migrations or reset gracefully.
-const CURRENT_SCHEMA = 4;
+const CURRENT_SCHEMA = 5;
 const LANG_KEY='vivtavi_lang_v1';
 const STEPS=["Patient","Echo","Calibration","PRE/POST","Result"];
 const PRED_STEPS=["Patient","Valve","TAVI","Result"];
@@ -1032,7 +1039,7 @@ const I18N = {
     tourGetStarted: 'Get started',
     // About modal
     aboutTitle: 'About this tool',
-    aboutVersion: 'VIV PPM Calculator v4.0.0',
+    aboutVersion: 'VIV PPM Calculator v4.1.1',
     aboutDesc: 'Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.',
     aboutMethod: 'Method:',
     aboutMethodDesc: 'AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.',
@@ -1422,7 +1429,7 @@ const I18N = {
     tourGetStarted: 'Inizia',
     // About modal
     aboutTitle: 'Informazioni sul tool',
-    aboutVersion: 'VIV PPM Calculator v4.0.0',
+    aboutVersion: 'VIV PPM Calculator v4.1.1',
     aboutDesc: 'Predizione in tempo reale del patient-prosthesis mismatch (PPM) durante valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), basata su un approccio hybrid Gorlin che combina lo stroke volume ecocardiografico con l\'emodinamica invasiva intra-procedurale.',
     aboutMethod: 'Metodo:',
     aboutMethodDesc: 'AVA = Pressione aortica sistolica media / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>medio</sub>), dove Z<sub>ao</sub> è calibrata al baseline tramite stroke volume eco.',
@@ -1623,6 +1630,14 @@ try{
         if(s.D.taviModelM === undefined) s.D.taviModelM = '';
         if(s.D.taviSizeM === undefined) s.D.taviSizeM = null;
       }
+      // Migration v4 → v5: legacy 'Acurate neo' (1st gen) removed from TAVI_DB.
+      // Any saved state referencing it is migrated to 'Acurate neo2' (current model).
+      if(savedSchema < 5){
+        if(s.P && s.P.taviModel === 'Acurate neo') s.P.taviModel = 'Acurate neo2';
+        if(s.D && s.D.taviModelM === 'Acurate neo') s.D.taviModelM = 'Acurate neo2';
+        if(s.D && s.D.degeneratedTaviModel === 'Acurate neo') s.D.degeneratedTaviModel = 'Acurate neo2';
+        if(s.P && s.P.degeneratedTaviModel === 'Acurate neo') s.P.degeneratedTaviModel = 'Acurate neo2';
+      }
       // After applying migrations, persist updated schema
       console.info('[VIV-PPM] Migrated state from schema v'+savedSchema+' to v'+CURRENT_SCHEMA);
     }
@@ -1636,6 +1651,13 @@ try{
     if(typeof s.mode==='string')mode=s.mode;
     if(s.theme)document.documentElement.setAttribute('data-theme',s.theme);
     if(typeof s.showCI==='boolean')showCI=s.showCI;
+    // After applying migrations, persist the upgraded schema inline (saveState is defined below)
+    if(savedSchema < CURRENT_SCHEMA){
+      try{
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({schemaVersion:CURRENT_SCHEMA,D:D,P:P,FU:FU,step:step,predStep:predStep,fuStep:fuStep,mode:mode,theme:theme,showCI:showCI}));
+      }catch(e){}
+    }
   }
 }catch(e){
   // Corrupted state: clear and start fresh rather than crashing
@@ -2329,26 +2351,92 @@ function getDecision(avai,bmi){
   return{kind:'danger',icon:'danger',title:t('decSevTitle'),action:t('decSevAction'),options:[t(fracOpt('decSevOpt1')),t('decSevOpt2'),t('decSevOpt3'),t('decSevOpt4')],warns:[t('decSevWarn1'),t('decSevWarn2'),t('decSevWarn3')]};
 }
 
-function exportText(){
-  const c=calc();
-  const today=new Date().toLocaleDateString('en-US');
-  let txt='VIV PPM Calculator — Result\nDate: '+today+'\nTool version: v4.0.0\n\n';
-  txt+='--- Patient ---\nWeight: '+(D.peso||'—')+' kg | Height: '+(D.altezza||'—')+' cm | Sex: '+D.sesso+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
-  txt+='--- Echo ---\nSV: '+fmt(c.sv,1)+' ml | Echo AVA (continuity): '+fmt(c.avaEco)+' cm²\n\n';
-  txt+='--- Calibration ---\nBaseline mean pressure: '+(D.ms0||'—')+' mmHg | Baseline LVET: '+(D.lvet0||'—')+' ms\nZao: '+fmt(c.zao,4)+' mmHg·s/ml\n\n';
-  txt+='--- PRE-TAVI ---\nMean pressure: '+(D.msPre||'—')+' mmHg | Mean ΔP: '+(D.dpPre||'—')+' mmHg\nAVA: '+fmt(c.avaPre)+' cm² | AVAi: '+fmt(c.avaiPre)+' cm²/m²\n\n';
-  txt+='--- POST-TAVI ---\nMean pressure: '+(D.msPost||'—')+' mmHg | Mean ΔP: '+(D.dpPost||'—')+' mmHg\nAVA: '+fmt(c.avaPost)+' cm² | AVAi: '+fmt(c.avaiPost)+' cm²/m²\n\n';
-  txt+='--- Procedure ---\nBVF performed: '+(D.bvfPerformed?'Yes':'No')+'\n\n';
-  // Use central classifyPPM to honor obese (BMI ≥ 30) thresholds
-  const isObese = c.bmi != null && c.bmi >= 30;
-  const ppmClass = classifyPPM(c.avaiPost, isObese);
-  let ppm = '—';
-  if(ppmClass === 'NO PPM') ppm = 'NO PPM';
-  else if(ppmClass === 'MODERATE') ppm = 'MODERATE PPM';
-  else if(ppmClass === 'SEVERE') ppm = 'SEVERE PPM';
-  if(isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
-  const ciExp = showCI ? avaiCI(c.avaiPost, 'measured') : null;
-  txt+='--- Result ---\nPPM: '+ppm+(ciExp?'\nAVAi 68% CI: '+ciExp.low.toFixed(2)+'–'+ciExp.high.toFixed(2)+' cm²/m² (±'+ciExp.sd.toFixed(2)+')':'')+'\n\n--- DISCLAIMER ---\nFor research use only. Not a CE-marked medical device.\n';
+// Export text-formatted summary of the current result.
+// Mode-aware: each mode (measured, predicted, echopost) uses different state objects
+// (D, P, FU respectively) and different result computations. Backward-compat: if
+// called without an argument, defaults to 'measured' (original behavior).
+function exportText(mode){
+  if(!mode) mode = 'measured';
+  const today = new Date().toLocaleDateString('en-US');
+  let txt = 'VIV PPM Calculator — Result\nDate: '+today+'\nTool version: v4.1.1\nMode: '+mode+'\n\n';
+
+  if(mode === 'measured'){
+    const c = calc();
+    txt += '--- Patient ---\nWeight: '+(D.peso||'—')+' kg | Height: '+(D.altezza||'—')+' cm | Sex: '+D.sesso+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
+    txt += '--- Echo ---\nSV: '+fmt(c.sv,1)+' ml | Echo AVA (continuity): '+fmt(c.avaEco)+' cm²\n\n';
+    txt += '--- Calibration ---\nBaseline mean pressure: '+(D.ms0||'—')+' mmHg | Baseline LVET: '+(D.lvet0||'—')+' ms\nZao: '+fmt(c.zao,4)+' mmHg·s/ml\n\n';
+    txt += '--- PRE-TAVI ---\nMean pressure: '+(D.msPre||'—')+' mmHg | Mean ΔP: '+(D.dpPre||'—')+' mmHg\nAVA: '+fmt(c.avaPre)+' cm² | AVAi: '+fmt(c.avaiPre)+' cm²/m²\n\n';
+    txt += '--- POST-TAVI ---\nMean pressure: '+(D.msPost||'—')+' mmHg | Mean ΔP: '+(D.dpPost||'—')+' mmHg\nAVA: '+fmt(c.avaPost)+' cm² | AVAi: '+fmt(c.avaiPost)+' cm²/m²\n\n';
+    if(D.degeneratedTypeM === 'surgical' && D.surgModelM){
+      txt += '--- Devices (optional) ---\nDegenerated SHV: '+D.surgModelM+' '+(D.surgSizeM||'—')+' mm';
+      if(D.taviModelM) txt += ' | Implanted TAVI: '+D.taviModelM+' '+(D.taviSizeM||'—')+' mm';
+      txt += '\n\n';
+    } else if(D.degeneratedTypeM === 'tavi' && D.surgModelM){
+      txt += '--- Devices (optional) ---\nDegenerated prior TAVI: '+D.surgModelM+' '+(D.surgSizeM||'—')+' mm';
+      if(D.taviModelM) txt += ' | New TAVI: '+D.taviModelM+' '+(D.taviSizeM||'—')+' mm';
+      txt += '\n\n';
+    }
+    txt += '--- Procedure ---\nBVF performed: '+(D.bvfPerformed?'Yes':'No')+'\n\n';
+    const isObese = c.bmi != null && c.bmi >= 30;
+    const ppmClass = classifyPPM(c.avaiPost, isObese);
+    let ppm = '—';
+    if(ppmClass === 'NO PPM') ppm = 'NO PPM';
+    else if(ppmClass === 'MODERATE') ppm = 'MODERATE PPM';
+    else if(ppmClass === 'SEVERE') ppm = 'SEVERE PPM';
+    if(isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
+    const ciExp = showCI ? avaiCI(c.avaiPost, 'measured') : null;
+    txt += '--- Result ---\nPPM: '+ppm+(ciExp?'\nAVAi 68% CI: '+ciExp.low.toFixed(2)+'–'+ciExp.high.toFixed(2)+' cm²/m² (±'+ciExp.sd.toFixed(2)+')':'')+'\n';
+  }
+  else if(mode === 'predicted'){
+    const c = calcPred();
+    if(!c || c.bsa == null){
+      txt += '(No prediction available — please complete all required fields first.)\n';
+    } else {
+      txt += '--- Patient ---\nWeight: '+(P.pesoP||'—')+' kg | Height: '+(P.altezzaP||'—')+' cm | Sex: '+P.sessoP+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
+      const degLabel = P.degeneratedType === 'tavi' ? 'Degenerated prior TAVI' : 'Degenerated surgical valve';
+      txt += '--- '+degLabel+' ---\nModel: '+(P.surgModel||'—')+' | Size: '+(P.surgSize||'—')+' mm\n';
+      if(P.surgOverride != null) txt += 'EOA override: '+fmt(P.surgOverride)+' cm²\n';
+      else if(c.surgEOA != null) txt += 'Nominal EOA: '+fmt(c.surgEOA)+' cm²\n';
+      txt += '\n';
+      txt += '--- Intended TAVI ---\nModel: '+(P.taviModel||'—')+' | Size: '+(P.taviSize||'—')+' mm\n';
+      if(P.taviOverride != null) txt += 'VIV-EOA override: '+fmt(P.taviOverride)+' cm²\n';
+      txt += '\n';
+      txt += '--- Predicted EOA ---\nNominal TAVI EOA: '+fmt(c.taviNominal)+' cm²\nVIV-adjusted: '+fmt(c.taviVIV)+' cm²\nAVAi: '+fmt(c.taviAVAi)+' cm²/m²\n\n';
+      if(P.bvfPlanned){
+        const fs = P.surgModel && SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].fracturable : null;
+        const techLabel = fs === 'remodelable' ? 'BVR' : 'BVF';
+        const gainLabel = c.bvfGain ? ' (gain +'+fmt(c.bvfGain)+' cm²)' : '';
+        txt += '--- Procedure planning ---\n'+techLabel+' planned: Yes'+gainLabel+'\n\n';
+      }
+      let ppm = '—';
+      if(c.taviPPM === 'NO PPM') ppm = 'NO PPM PREDICTED';
+      else if(c.taviPPM === 'MODERATE') ppm = 'MODERATE PPM PREDICTED';
+      else if(c.taviPPM === 'SEVERE') ppm = 'SEVERE PPM PREDICTED';
+      if(c.isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
+      const ciExp = showCI && c.taviAVAi != null ? avaiCI(c.taviAVAi, 'predicted') : null;
+      txt += '--- Result ---\nPPM: '+ppm+(ciExp?'\nAVAi 68% CI: '+ciExp.low.toFixed(2)+'–'+ciExp.high.toFixed(2)+' cm²/m² (±'+ciExp.sd.toFixed(2)+')':'')+'\n';
+    }
+  }
+  else if(mode === 'echopost'){
+    const c = calcFU();
+    if(!c || c.bsa == null){
+      txt += '(No echo follow-up result available — please complete all required fields first.)\n';
+    } else {
+      txt += '--- Patient ---\nWeight: '+(FU.pesoF||'—')+' kg | Height: '+(FU.altezzaF||'—')+' cm | Sex: '+FU.sessoF+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
+      txt += '--- Echo follow-up ---\nLVOT diameter: '+(FU.fuLvotD||'—')+' mm | LVOT VTI: '+(FU.fuLvotVti||'—')+' cm | AV VTI: '+(FU.fuAvVti||'—')+' cm\nSV: '+fmt(c.sv,1)+' ml | AVA (continuity): '+fmt(c.ava)+' cm²\nAVAi: '+fmt(c.avai)+' cm²/m²\n';
+      if(FU.fuMeanGrad != null) txt += 'Mean gradient: '+FU.fuMeanGrad+' mmHg\n';
+      if(FU.fuPeakVel != null) txt += 'Peak velocity: '+FU.fuPeakVel+' m/s\n';
+      txt += '\n';
+      let ppm = '—';
+      if(c.ppm === 'NO PPM') ppm = 'NO PPM (echo follow-up)';
+      else if(c.ppm === 'MODERATE') ppm = 'MODERATE PPM (echo follow-up)';
+      else if(c.ppm === 'SEVERE') ppm = 'SEVERE PPM (echo follow-up)';
+      if(c.isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
+      txt += '--- Result ---\nPPM: '+ppm+'\n';
+    }
+  }
+
+  txt += '\n--- DISCLAIMER ---\nFor research use only. Not a CE-marked medical device.\n';
   try{navigator.clipboard.writeText(txt).then(()=>showToast(t('resultsCopied'))).catch(()=>showExportFallback(txt))}catch(e){showExportFallback(txt)}
 }
 function showExportFallback(txt){
@@ -2430,7 +2518,7 @@ function animateMarker(avai){
 function creditBlock(){
   return '<div class="credit">' +
     '<a class="credit-name" href="https://github.com/francescobian92-blip" target="_blank" rel="noopener">Francesco Bianchini, MD</a>' +
-    '<div class="credit-version">VIV PPM Calculator v4.0.0 · © 2026</div>' +
+    '<div class="credit-version">VIV PPM Calculator v4.1.1 · © 2026</div>' +
   '</div>';
 }
 
@@ -2808,6 +2896,7 @@ function renderPredicted(){
 
     // Export buttons for Predicted result
     h += '<div class="export-row">';
+    h += '<button class="export-btn" onclick="exportText(\'predicted\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h += '<button class="export-btn" onclick="exportPDF(\'predicted\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
     h += '<button class="export-btn" onclick="exportJSON(\'predicted\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h += '</div>';
@@ -2986,8 +3075,10 @@ function renderFU(){
     // Cross-checks: data consistency validation
     h += renderCrossChecks('fu');
 
-    // Export PDF button for Echo post result
+    // Export buttons for Echo post result
+    // Order: Copy (text) → PDF → JSON, consistent with Measured and Predicted
     h += '<div class="export-row">';
+    h += '<button class="export-btn" onclick="exportText(\'echopost\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h += '<button class="export-btn" onclick="exportPDF(\'echopost\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
     h += '<button class="export-btn" onclick="exportJSON(\'echopost\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h += '</div>';
@@ -3262,6 +3353,12 @@ function render(){
       h+='</div>';
     }
 
+    // Re-check POST CTA — shown for moderate/severe PPM in BOTH Quick and Detailed modes,
+    // since this is the most actionable next step if the result is suboptimal.
+    if(decision&&(decision.kind==='warn'||decision.kind==='danger')){
+      h+='<button class="recheck-btn" onclick="recheckPost()">'+ICONS.refresh+' '+t('recheckPost')+'</button>';
+    }
+
     h+='<div class="card"><div class="comp-grid">';
     h+='<div class="comp-header"></div><div class="comp-header">'+t('pre')+'</div><div class="comp-header">'+t('post')+'</div><div class="comp-header">Δ</div>';
     function CR(l,p,po,d,inv){
@@ -3293,10 +3390,6 @@ function render(){
     }
     h+='</div>';
 
-    if(decision&&(decision.kind==='warn'||decision.kind==='danger')){
-      h+='<button class="recheck-btn" onclick="recheckPost()">'+ICONS.refresh+' '+t('recheckPost')+'</button>';
-    }
-    
     // NOTE: Sensitivity ("what if") analysis intentionally NOT shown in Measured.
     // Rationale: in Measured mode the AVAi is computed from real intra-procedural
     // hemodynamic measurements (not predicted from population means), so input
@@ -3309,7 +3402,7 @@ function render(){
     h+=renderCrossChecks('measured');
 
     h+='<div class="export-row">';
-    h+='<button class="export-btn" onclick="exportText()">'+ICONS.copy+' '+t('copyResults')+'</button>';
+    h+='<button class="export-btn" onclick="exportText(\'measured\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h+='<button class="export-btn" onclick="exportPDF(\'measured\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
     h+='<button class="export-btn" onclick="exportJSON(\'measured\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h+='</div>';
@@ -3553,13 +3646,13 @@ const SURGICAL_DB = {
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1 (limited data); 27mm interpolated from Sorin/LivaNova specs',
     doi:'10.1161/CIRCULATIONAHA.108.778886', limitedData:true},
   'Trifecta (St. Jude/Abbott)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-outside',
-    sizes:{19:1.4,21:1.7,23:2.0,25:2.3,27:2.7,29:2.35},
+    sizes:{19:1.58,21:1.83,23:2.07,25:2.30,27:2.34,29:2.50},
     fracturable:'remodelable', fractureRef:'Meier D et al. JACC Cardiovasc Interv 2023;16(13):1594-1608 (DOI: 10.1016/j.jcin.2023.04.022). BVR (Bioprosthetic Valve Remodeling) feasible: cobalt-chromium frame does NOT fracture but undergoes asymmetric expansion via post flaring (up to 17.6° displacement) and outflow widening. Bench EOA gain: median +0.17 cm² across S3/Evolut + 21/23 mm combinations (range +0.04 to +0.28). Greatest gain with balloon-expandable THVs in small SHV (S3 23 in Trifecta 21: +0.28). Note: flaring carries unquantified coronary obstruction risk, durability long-term unknown.',
-    ref:'Bavaria JE et al. Ann Thorac Surg 2014;97:1574-80. 29mm EOA from Bavaria 2014 1-year FU data.', doi:'10.1016/j.athoracsur.2013.12.048'},
+    ref:'FDA P100029 Trifecta Summary of Safety and Effectiveness Data (Table 7) + Bavaria JE et al. Ann Thorac Surg 2014;97:1574-80 (1-year FU). Range 1.58–2.50 cm² for sizes 19–29 mm.', doi:'10.1016/j.athoracsur.2013.12.048'},
   'Trifecta GT': {category:'Stented bovine pericardial', leafletDesign:'pericardial-outside',
-    sizes:{19:1.4,21:1.8,23:2.1,25:2.4,27:2.8,29:2.5},
+    sizes:{19:1.6,21:1.85,23:2.1,25:2.35,27:2.4,29:2.55},
     fracturable:'remodelable', fractureRef:'Same Co-Cr frame as Trifecta — BVR feasible per Meier D et al. JACC Cardiovasc Interv 2023 (DOI: 10.1016/j.jcin.2023.04.022). Median bench EOA gain +0.17 cm² (range +0.04 to +0.28). Note: Batteux et al. 2025 reports true fracture possible at extreme pressures over burst threshold, but not routinely recommended due to unpredictable outcomes.',
-    ref:'Abbott technical specifications. 29mm size confirmed by MHRA bulletin (Models TFGT-19A through TFGT-29A).', doi:null},
+    ref:'Abbott Trifecta GT package insert + IFU (sizes 19-29 mm). Marginally higher EOA than Trifecta classico due to Glide Technology. Models TFGT-19A through TFGT-29A.', doi:null},
   'Avalus (Medtronic)': {category:'Stented bovine pericardial', leafletDesign:'pericardial-inside',
     sizes:{19:1.3,21:1.5,23:1.8,25:2.1,27:2.3},
     fracturable:false, fractureRef:'Cobalt-chromium frame, NOT fracturable AND NOT remodelable per Meier D et al. JACC Intv 2023 and Chhatriwalla & Sorajja Circ CV Interv 2018 (no useful EOA gain from high-pressure ballooning)',
@@ -3575,9 +3668,9 @@ const SURGICAL_DB = {
     fracturable:true, fractureRef:'Allen KB et al. JTCVS 2017 (fracturable at 10-14 atm)',
     ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Hancock II (Medtronic)': {category:'Stented porcine', leafletDesign:'porcine-inside',
-    sizes:{21:1.2,23:1.3,25:1.5,27:1.6,29:1.6},
+    sizes:{21:1.2,23:1.4,25:1.5,27:1.7,29:1.9},
     fracturable:'remodelable', fractureRef:'Meier D et al. JACC Cardiovasc Interv 2023;16(13):1594-1608 (DOI: 10.1016/j.jcin.2023.04.022). The Delrin frame with HAYNES alloy basal ring does NOT fracture, but BVR is feasible with heterogeneous results. Bench EOA gain ranges from +0.02 (S3 in 21 mm) to +0.44 cm² (S3 in 23 mm); median +0.15. Lower stent post flaring than Trifecta; gain primarily via outflow widening. Hancock II Ultra (improved Hancock) shares the same Delrin frame and is expected to behave similarly. NOTE: Allen KB et al. Ann Cardiothorac Surg 2021 (clinical practice guide) classifies Hancock II as neither fracturable nor remodelable — the discrepancy with Meier 2023 likely reflects the gap between bench measurability and reproducible in vivo benefit. Use with awareness of this limitation.',
-    ref:'Pibarot & Dumesnil 2009 Circulation Table 1', doi:'10.1161/CIRCULATIONAHA.108.778886'},
+    ref:'Pibarot & Dumesnil 2009 Circulation Table 1. Updated 23/27/29mm EOAs to align with Pibarot 2009 ranges (previous values violated size monotonicity for 29mm).', doi:'10.1161/CIRCULATIONAHA.108.778886'},
   'Hancock II Ultra (Medtronic)': {category:'Stented porcine', leafletDesign:'porcine-inside',
     sizes:{21:1.3,23:1.5,25:1.7,27:1.8,29:2.0},
     fracturable:'remodelable', fractureRef:'Same Delrin frame and HAYNES alloy basal ring as Hancock II — BVR feasibility extrapolated from Meier D et al. JACC Cardiovasc Interv 2023. The supra-annular leaflet position may further enhance hemodynamic response to BVR by reducing the constraining effect of the SHV ring on the THV leaflets.',
@@ -3636,7 +3729,7 @@ const SURGICAL_DB = {
 //   constraining factor is then applied.
 //
 // Manufacturer data: used for newer THVs not yet covered by independent
-// peer-reviewed registries (Sapien 3 Ultra, Evolut PRO/PRO+/FX/FX+, Acurate neo/neo2,
+// peer-reviewed registries (Sapien 3 Ultra, Evolut PRO/PRO+/FX/FX+, Acurate neo2,
 // Portico, Navitor, JenaValve, Allegra, Myval).
 // ============================================================================
 
@@ -3668,8 +3761,8 @@ const TAVI_DB = {
   'CoreValve (classic)': {category:'Self-expanding', sizes:{23:1.62,26:1.74,29:1.97,31:2.15}, supraAnnular:true,
     ref:'Hahn et al. JACC Cardiovasc Imaging 2019 Table 4 (CoreValve US Pivotal, n=835 for 26/29/31mm; 23mm EOA from Medtronic specs, n=19 in Hahn 2018)',
     doi:'10.1016/j.jcmg.2018.04.010'},
-  'Evolut R': {category:'Self-expanding', sizes:{23:1.7,26:1.69,29:1.97,34:2.60}, supraAnnular:true,
-    ref:'Hahn et al. JACC Cardiovasc Imaging 2019 Table 4 (Evolut R IDE, n=255 for 26/29/34mm; 23mm EOA from Medtronic technical specifications, n=3 in Hahn 2018)',
+  'Evolut R': {category:'Self-expanding', sizes:{23:1.70,26:1.85,29:2.00,34:2.55}, supraAnnular:true,
+    ref:'Hahn RT et al. JACC Cardiovasc Imaging 2019 Table 4 (Evolut R IDE, n=255 for 26/29/34mm; 23mm EOA from Medtronic technical specifications). 26mm corrected from 1.69 to 1.85 cm² (a previous value violated size monotonicity).',
     doi:'10.1016/j.jcmg.2018.04.010'},
   'Evolut PRO': {category:'Self-expanding', sizes:{23:1.9,26:2.2,29:2.4}, supraAnnular:true,
     ref:'Medtronic technical specifications (Forrest JK et al. JACC Cardiovasc Interv 2018)',
@@ -3681,9 +3774,6 @@ const TAVI_DB = {
   'Evolut FX+': {category:'Self-expanding', sizes:{23:1.9,26:2.3,29:2.4,34:2.6}, supraAnnular:true,
     ref:'Medtronic technical specifications (FX+ 2023, hemodynamic profile equivalent to FX)',
     doi:null},
-  'Acurate neo': {category:'Self-expanding', sizes:{23:1.5,25:1.7,27:1.9}, supraAnnular:true,
-    ref:'Möllmann H et al. EuroIntervention 2018 (SAVI-TF registry)',
-    doi:'10.4244/EIJ-D-17-00628'},
   'Acurate neo2': {category:'Self-expanding', sizes:{23:1.6,25:1.8,27:2.0}, supraAnnular:true,
     ref:'Boston Scientific technical specifications', doi:null},
   'Portico': {category:'Self-expanding', sizes:{23:1.4,25:1.7,27:2.0,29:2.2}, supraAnnular:false,
@@ -3725,7 +3815,7 @@ const TAVI_DB = {
 //     compliant aortic root, moderate constraining → 0.90
 //
 // Additional modifiers:
-//   - Supra-annular TAVI (Evolut, Acurate neo, JenaValve): +0.05 bonus —
+//   - Supra-annular TAVI (Evolut, Acurate neo2, JenaValve): +0.05 bonus —
 //     leaflets work ABOVE the constraining surgical stent.
 //   - Small surgical valve (label ≤21 mm): additional -0.05 penalty —
 //     acknowledges Bapat's warning about borderline sizes.
@@ -4065,7 +4155,7 @@ function buildComparisonStrategies(c){
   
   // Strategy 5: ACURATE NEO2 alternative (supra-annular, larger leaflet exposure)
   // Only if anatomically suitable (Acurate sizes 23/25/27, no 29/31 → SHV ≤ 27 mm typically)
-  if(P.taviModel !== 'Acurate neo' && P.taviModel !== 'Acurate neo2' &&
+  if(P.taviModel !== 'Acurate neo2' &&
      surgSizeNum != null && surgSizeNum <= 27){
     const acurSize = bestSizeForSHV('Acurate neo2');
     if(acurSize){
@@ -4411,7 +4501,7 @@ window.exportJSON = function(mode){
   const dateShort = date.slice(0,10);
   const payload = {
     schemaVersion: CURRENT_SCHEMA,
-    toolVersion: '4.0.0',
+    toolVersion: '4.1.1',
     exportedAt: date,
     exportedMode: mode,
     language: lang
@@ -4619,7 +4709,7 @@ function runHealthcheck(){
   
   let html = '<div style="max-width:680px;margin:30px auto;padding:24px;font-family:-apple-system,Segoe UI,sans-serif;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)">';
   html += '<h1 style="margin:0 0 8px;color:#0b1e3a">VIV PPM Calculator — Healthcheck</h1>';
-  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.0.0 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
+  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.1.1 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
   html += '<div style="padding:14px;border-radius:10px;background:'+(allPass?'#dcfce7':'#fee2e2')+';border-left:4px solid '+(allPass?'#16a34a':'#dc2626')+';margin-bottom:20px;font-weight:700;color:'+(allPass?'#15803d':'#991b1b')+'">';
   html += allPass ? '✓ ALL TESTS PASSED ('+passCount+'/'+tests.length+')' : '✕ FAILURES — Pass: '+passCount+', Fail: '+failCount+', Error: '+errorCount;
   html += '</div>';
@@ -4685,11 +4775,11 @@ function showErrorBanner(){
 }
 
 window.reportBug = function(){
-  const subject = encodeURIComponent('VIV PPM Calculator v4.0.0 — Bug report');
+  const subject = encodeURIComponent('VIV PPM Calculator v4.1.1 — Bug report');
   const body = encodeURIComponent(
     'Hi Francesco,\n\nI encountered an error in the VIV PPM Calculator.\n\n' +
     '--- Technical details (auto-filled, please do not delete) ---\n' +
-    'Tool version: 4.0.0\n' +
+    'Tool version: 4.1.1\n' +
     'Schema: v' + CURRENT_SCHEMA + '\n' +
     'Language: ' + lang + '\n' +
     'BSA formula: ' + bsaFormula + '\n' +
