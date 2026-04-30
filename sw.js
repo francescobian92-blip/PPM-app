@@ -3,7 +3,7 @@
 // Cache name MUST be bumped on every release to force users to receive updates.
 // See activate handler below — old caches are deleted automatically.
 
-const CACHE_NAME = 'viv-tavi-v4-2-1';
+const CACHE_NAME = 'viv-tavi-v4-2-2';
 const ASSETS = [
   './',
   './index.html',

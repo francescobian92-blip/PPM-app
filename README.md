@@ -1,6 +1,6 @@
 # VIV PPM Calculator
 
-[![Version](https://img.shields.io/badge/version-4.2.1-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
+[![Version](https://img.shields.io/badge/version-4.2.2-blue.svg)](https://github.com/francescobian92-blip/PPM-app/releases)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Web App](https://img.shields.io/badge/Web%20App-Live-brightgreen)](https://francescobian92-blip.github.io/PPM-app/)
