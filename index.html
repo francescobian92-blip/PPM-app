@@ -50,13 +50,13 @@
   --text:#eaecf2;--text-muted:#a8adba;--text-soft:#6b7280;
   --brand:#60a5fa;--brand-light:#93c5fd;
   --blue:#60a5fa;--blue-soft:#1e3a8a;--blue-bg:#172554;
-  --green:#4ade80;--green-soft:#14532d;--green-bg:#052e16;
-  --red:#f87171;--red-soft:#7f1d1d;--red-bg:#450a0a;
-  --orange:#fb923c;--orange-soft:#7c2d12;--orange-bg:#431407;
-  --amber:#fbbf24;--amber-soft:#713f12;--amber-bg:#422006;
+  --green:#4ade80;--green-soft:#14532d;--green-bg:rgba(34,197,94,0.10);
+  --red:#f87171;--red-soft:#7f1d1d;--red-bg:rgba(239,68,68,0.10);
+  --orange:#fb923c;--orange-soft:#7c2d12;--orange-bg:rgba(249,115,22,0.10);
+  --amber:#fbbf24;--amber-soft:#713f12;--amber-bg:rgba(245,158,11,0.10);
   --purple:#a78bfa;--purple-soft:#3b1e70;
   --teal:#14b8a6;--teal-soft:#134e4a;--teal-bg:#042f2e;
-  --input-bg:#141a2a;--cal-bg:#2a1810;
+  --input-bg:#141a2a;--cal-bg:#1a2236;--cal-border:#d97706;
   --shadow-xs:0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-sm:0 1px 3px 0 rgb(0 0 0 / 0.4);
   --shadow:0 4px 6px -1px rgb(0 0 0 / 0.4);
@@ -78,13 +78,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,.landing-card:focu
   outline:2px solid var(--blue);outline-offset:2px;border-radius:8px;
 }
 /* Smooth scroll for anchors */
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;background:#0b1e3a}
+/* PWA standalone mode: html background = dark blue (matches header gradient start),
+   so the safe-area above the notch on iPhone shows the brand color, not white.
+   Body covers everything below; html shows through only in the safe-area inset. */
 /* Tabular numerics for data-heavy areas */
 .tabular{font-variant-numeric:tabular-nums}
 /* Selection color */
 ::selection{background:rgb(37 99 235 / 0.2);color:var(--text)}
 
-.hdr{background:linear-gradient(135deg,#0b1e3a 0%,#1e3a5f 50%,#3b82f6 100%);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:20;box-shadow:var(--shadow-md);overflow:hidden}
+.hdr{background:linear-gradient(135deg,#0b1e3a 0%,#1e3a5f 50%,#3b82f6 100%);color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-right,0px)) 14px calc(16px + env(safe-area-inset-left,0px));position:sticky;top:0;z-index:20;box-shadow:var(--shadow-md);overflow:hidden}
 .hdr::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='80' viewBox='0 0 200 80'><path d='M0 40 L30 40 L35 30 L40 50 L45 15 L50 60 L55 40 L100 40 L105 30 L110 50 L115 15 L120 60 L125 40 L200 40' stroke='white' stroke-width='1' fill='none' opacity='0.08'/></svg>");background-repeat:repeat-x;background-size:200px 80px;background-position:center;pointer-events:none;opacity:0.7}
 .hdr-row{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:800px;margin:0 auto;position:relative;z-index:1}
 .hdr-brand{display:flex;align-items:center;gap:12px}
@@ -100,25 +103,62 @@ html{scroll-behavior:smooth}
 .hdr-btn:hover{background:rgba(255,255,255,.20);transform:translateY(-1px)}
 .hdr-btn:active{transform:scale(.96)}
 .hdr-btn.active{background:rgba(96,165,250,.4);border-color:rgba(96,165,250,.6);color:#fff;box-shadow:0 0 0 1px rgba(96,165,250,.3)}
-@media (max-width:420px){
-  .hdr-btn{padding:6px 8px;font-size:11px}
+@media (max-width:480px){
+  .hdr-btn{padding:6px 7px;font-size:11px}
   .hdr-titles h1{font-size:16px}
   .hdr-titles p{font-size:10px}
   .hdr-tools{gap:3px;flex-wrap:nowrap;min-width:0}
   .hdr-logo{width:36px;height:36px}
   .hdr-logo svg{width:20px;height:20px}
-  .hdr{padding:14px 12px 12px;gap:8px}
-  #home-btn{padding:6px;font-size:14px}
+  /* Mobile padding: keep safe-area-inset on top/left/right, reduce horizontal padding */
+  .hdr{padding:calc(14px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 12px calc(12px + env(safe-area-inset-left,0px));gap:8px}
+  #home-btn{padding:5px 7px;font-size:13px}
   /* Hide tour replay and CI toggle on small phones to prevent header overflow.
      Both are accessible from the About modal / keyboard shortcuts. */
   #help-btn, #ci-btn{display:none}
 }
-@media (max-width:340px){
-  /* Extremely narrow (older iPhone SE 1st gen): also hide theme toggle */
+@media (max-width:400px){
+  /* iPhone 12-15 standard / iPhone 14 Pro: very tight, shrink home button further */
+  #home-btn{padding:4px 6px;font-size:12px}
+  .hdr-btn{padding:5px 6px;font-size:10.5px}
+  .hdr-tools{gap:2px}
+  .hdr{padding-left:calc(10px + env(safe-area-inset-left,0px));padding-right:calc(10px + env(safe-area-inset-right,0px))}
+}
+@media (max-width:380px){
+  /* iPhone SE / mini class: hide theme toggle to make room for Home button when navigating. */
   #theme-btn{display:none}
+  .hdr-titles h1{font-size:15px}
+  .hdr-titles p{font-size:9px}
+}
+@media (max-width:340px){
+  /* Extremely narrow (older iPhone SE 1st gen): also hide language toggle */
+  #lang-btn{display:none}
 }
 
 .progress-container{background:var(--card);border-bottom:1px solid var(--border);padding:14px 16px 10px}
+
+/* Sticky recap bar — shown above content during data entry steps.
+   Always visible while user is filling the form, summarizes key derived values.
+   Stays at top below the progress bar. */
+.recap-bar{position:sticky;top:0;z-index:15;background:var(--card);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:center;font-size:11.5px;color:var(--text-soft);max-width:800px;margin:0 auto;line-height:1.3}
+.recap-bar .pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg-soft,rgba(0,0,0,0.03));padding:3px 9px;border-radius:14px;border:1px solid var(--border);font-weight:500;white-space:nowrap;color:var(--text)}
+.recap-bar .pill strong{color:var(--text);font-weight:700}
+.recap-bar .pill.bsa{background:rgb(37 99 235 / 0.08);border-color:rgb(37 99 235 / 0.2);color:#1e40af}
+.recap-bar .pill.bmi{background:rgb(34 197 94 / 0.08);border-color:rgb(34 197 94 / 0.2);color:#15803d}
+.recap-bar .pill.shv{background:rgb(168 85 247 / 0.08);border-color:rgb(168 85 247 / 0.2);color:#7e22ce}
+.recap-bar .pill.tavi{background:rgb(245 158 11 / 0.08);border-color:rgb(245 158 11 / 0.2);color:#b45309}
+[data-theme="dark"] .recap-bar{background:var(--card-soft,#1e293b);border-color:var(--border)}
+[data-theme="dark"] .recap-bar .pill{background:rgba(255,255,255,0.04);color:var(--text)}
+[data-theme="dark"] .recap-bar .pill.bsa{background:rgba(96,165,250,0.10);border-color:rgba(96,165,250,0.25);color:#93c5fd}
+[data-theme="dark"] .recap-bar .pill.bmi{background:rgba(74,222,128,0.10);border-color:rgba(74,222,128,0.25);color:#86efac}
+[data-theme="dark"] .recap-bar .pill.shv{background:rgba(192,132,252,0.10);border-color:rgba(192,132,252,0.25);color:#d8b4fe}
+[data-theme="dark"] .recap-bar .pill.tavi{background:rgba(251,191,36,0.10);border-color:rgba(251,191,36,0.25);color:#fcd34d}
+@media (max-width:480px){
+  .recap-bar{padding:7px 12px;font-size:10.5px;gap:4px 8px}
+  .recap-bar .pill{padding:2px 7px}
+}
+@media print{.recap-bar{display:none}}
+
 .progress-inner{max-width:800px;margin:0 auto}
 .progress-track{height:4px;background:var(--border);border-radius:4px;position:relative;overflow:hidden;margin-bottom:10px}
 .progress-fill{height:100%;background:linear-gradient(90deg,#2563eb 0%,#3b82f6 50%,#60a5fa 100%);border-radius:4px;transition:width .6s cubic-bezier(0.22,1,0.36,1);box-shadow:0 0 12px rgb(59 130 246 / 0.5)}
@@ -134,7 +174,7 @@ html{scroll-behavior:smooth}
 .step-dot.active span{color:var(--blue)}
 [data-theme="dark"] .step-dot.active span{color:var(--brand-light)}
 
-.content{padding:16px;padding-bottom:32px;max-width:800px;margin:0 auto;animation:fadeSlideIn .35s ease}
+.content{padding:16px calc(16px + env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) calc(16px + env(safe-area-inset-left,0px));max-width:800px;margin:0 auto;animation:fadeSlideIn .35s ease}
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .sec-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
@@ -262,6 +302,56 @@ html{scroll-behavior:smooth}
 .range-warn{display:block;font-size:11px;font-weight:600;color:#92400e;background:var(--amber-bg);border-left:3px solid var(--amber);padding:6px 10px;margin:-4px 0 6px 0;border-radius:6px;letter-spacing:-0.1px;animation:warnSlide .25s cubic-bezier(0.22,1,0.36,1)}
 [data-theme="dark"] .range-warn{color:#fde68a}
 
+/* Inline help button next to a field label */
+.help-icon-inline{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--border);color:var(--text-soft);border:none;font-size:11px;font-weight:700;cursor:pointer;margin-left:6px;transition:background .15s ease,color .15s ease;flex-shrink:0;padding:0;line-height:1}
+.help-icon-inline:hover,.help-icon-inline:focus{background:var(--blue);color:#fff;outline:none}
+[data-theme="dark"] .help-icon-inline{background:rgba(255,255,255,0.10);color:var(--text-soft)}
+[data-theme="dark"] .help-icon-inline:hover,[data-theme="dark"] .help-icon-inline:focus{background:var(--blue);color:#fff}
+
+/* Help popover — replaces browser alert() for inline help.
+   Anchored center-screen as a small modal on mobile, dismiss with click outside or Esc. */
+.help-popover-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);animation:fadeIn .2s ease}
+.help-popover-bg.show{display:flex}
+.help-popover{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:18px 20px 16px;max-width:380px;width:100%;box-shadow:0 24px 48px -12px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05) inset;animation:fadeSlideIn .25s cubic-bezier(0.22,1,0.36,1);font-size:13.5px;line-height:1.55;letter-spacing:-0.1px;position:relative}
+.help-popover-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:var(--blue);margin-bottom:8px}
+.help-popover-body{color:var(--text)}
+.help-popover-close{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:transparent;border:none;color:var(--text-soft);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.help-popover-close:hover{background:var(--border);color:var(--text)}
+[data-theme="dark"] .help-popover{background:#1a2236;border-color:var(--border-strong)}
+
+/* Confirm popover Yes/No buttons (used by in-app confirm dialog for destructive actions) */
+.confirm-popover-actions{display:flex;gap:10px;margin-top:18px;justify-content:flex-end;flex-wrap:wrap}
+.confirm-btn{padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .15s ease;letter-spacing:-0.1px;min-width:90px}
+.confirm-btn:active{transform:scale(.97)}
+.confirm-btn-secondary{background:var(--card);color:var(--text);border-color:var(--border-strong)}
+.confirm-btn-secondary:hover,.confirm-btn-secondary:focus{background:var(--bg-alt);border-color:var(--text-soft);outline:none}
+.confirm-btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}
+.confirm-btn-danger:hover,.confirm-btn-danger:focus{background:#b91c1c;border-color:#b91c1c;outline:none}
+[data-theme="dark"] .confirm-btn-secondary{background:#1a2236;color:var(--text);border-color:var(--border-strong)}
+[data-theme="dark"] .confirm-btn-secondary:hover,[data-theme="dark"] .confirm-btn-secondary:focus{background:#243049}
+[data-theme="dark"] .confirm-btn-danger{background:#dc2626;color:#fff}
+[data-theme="dark"] .confirm-btn-danger:hover,[data-theme="dark"] .confirm-btn-danger:focus{background:#ef4444}
+
+/* Inline help text below a field */
+.field-help-inline{font-size:10.5px;color:var(--text-soft);line-height:1.4;margin:-4px 0 8px 0;padding:0 2px;letter-spacing:-0.05px}
+
+/* AF (atrial fibrillation) advisory pill, shown above hemodynamic measurements */
+.af-advisory{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;margin:0 0 10px 0;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:6px;font-size:11.5px;color:#92400e;line-height:1.4;font-weight:500}
+.af-advisory svg{flex-shrink:0;margin-top:1px}
+[data-theme="dark"] .af-advisory{color:#fde68a}
+
+/* Flow state pill on result page */
+.flow-state-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px;letter-spacing:0.4px;text-transform:uppercase;margin-left:8px;vertical-align:middle}
+.flow-state-pill.normal{background:rgb(34 197 94 / 0.12);color:#15803d;border:1px solid rgb(34 197 94 / 0.3)}
+.flow-state-pill.low{background:rgb(245 158 11 / 0.14);color:#b45309;border:1px solid rgb(245 158 11 / 0.35)}
+[data-theme="dark"] .flow-state-pill.normal{background:rgba(74,222,128,0.18);color:#86efac;border-color:rgba(74,222,128,0.4)}
+[data-theme="dark"] .flow-state-pill.low{background:rgba(251,191,36,0.20);color:#fde68a;border-color:rgba(251,191,36,0.45)}
+/* When pill is inside a colored ppm-card, force higher contrast */
+[data-theme="dark"] .ppm-card.danger .flow-state-pill.low{background:rgba(0,0,0,0.30);color:#fde68a;border-color:rgba(251,191,36,0.6)}
+[data-theme="dark"] .ppm-card.warn .flow-state-pill.low{background:rgba(0,0,0,0.25);color:#fef3c7;border-color:rgba(251,191,36,0.6)}
+.ppm-card.danger .flow-state-pill.low{background:rgba(255,255,255,0.65);color:#92400e;border-color:rgb(245 158 11 / 0.5)}
+.ppm-card.warn .flow-state-pill.low{background:rgba(255,255,255,0.65);color:#92400e;border-color:rgb(245 158 11 / 0.5)}
+
 /* Cross-check card on result page */
 .xcheck-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:14px}
 .xcheck-card.has-issues{border-color:var(--amber);background:var(--amber-bg)}
@@ -282,7 +372,7 @@ html{scroll-behavior:smooth}
 .sense-table th{text-align:left;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-soft);padding:6px 4px;border-bottom:1px solid var(--border)}
 .sense-table th.right{text-align:right}
 .sense-table th.center{text-align:center}
-.sense-table td{padding:8px 4px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+.sense-table td{padding:8px 4px;border-bottom:1px solid var(--border);vertical-align:middle}
 .sense-table td.right{text-align:right;font-variant-numeric:tabular-nums}
 .sense-table td.center{text-align:center}
 .sense-table tr.current td{background:var(--blue-bg);font-weight:700}
@@ -380,9 +470,9 @@ html{scroll-behavior:smooth}
 .ppm-card.warn{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-color:var(--amber);color:#713f12;box-shadow:var(--shadow-colored-amber)}
 .ppm-card.danger{background:linear-gradient(135deg,#fee2e2 0%,#fecaca 100%);border-color:var(--red);color:#7f1d1d;box-shadow:var(--shadow-colored-red)}
 .ppm-card.empty{background:var(--bg-alt);border-color:var(--border-strong);color:var(--text-muted)}
-[data-theme="dark"] .ppm-card.ok{background:linear-gradient(135deg,#14532d 0%,#166534 100%);color:#bbf7d0}
-[data-theme="dark"] .ppm-card.warn{background:linear-gradient(135deg,#713f12 0%,#854d0e 100%);color:#fde68a}
-[data-theme="dark"] .ppm-card.danger{background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 100%);color:#fecaca}
+[data-theme="dark"] .ppm-card.ok{background:linear-gradient(135deg,#14532d 0%,#15803d 100%);color:#dcfce7;border-color:#22c55e}
+[data-theme="dark"] .ppm-card.warn{background:linear-gradient(135deg,#78350f 0%,#92400e 100%);color:#fef3c7;border-color:#f59e0b}
+[data-theme="dark"] .ppm-card.danger{background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 100%);color:#fee2e2;border-color:#ef4444}
 [data-theme="dark"] .ppm-card::after{box-shadow:inset 0 1px 0 0 rgb(255 255 255 / 0.06),inset 0 -1px 0 0 rgb(0 0 0 / 0.3)}
 .ppm-icon{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.55);animation:iconPop .6s cubic-bezier(0.22,1,0.36,1) .2s both;box-shadow:0 6px 14px -4px rgb(0 0 0 / 0.15),inset 0 0 0 1px rgb(255 255 255 / 0.4)}
 .ppm-icon svg{width:34px;height:34px;stroke-width:2.5}
@@ -413,6 +503,9 @@ html{scroll-behavior:smooth}
 .decision-card.ok{background:var(--green-bg);border-color:var(--green)}
 .decision-card.warn{background:var(--amber-bg);border-color:var(--amber)}
 .decision-card.danger{background:var(--red-bg);border-color:var(--red)}
+/* Dark mode: clinical priority cards need slightly more presence than the soft default */
+[data-theme="dark"] .decision-card.danger{background:rgba(239,68,68,0.14);box-shadow:0 0 0 1px rgba(239,68,68,0.25),var(--shadow-sm)}
+[data-theme="dark"] .decision-card.warn{background:rgba(245,158,11,0.14);box-shadow:0 0 0 1px rgba(245,158,11,0.20),var(--shadow-sm)}
 .decision-title{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:10px;letter-spacing:-0.3px}
 .decision-card.ok .decision-title{color:#15803d}
 .decision-card.warn .decision-title{color:#854d0e}
@@ -697,7 +790,7 @@ html{scroll-behavior:smooth}
   <p>Francesco Bianchini, MD</p>
   <div class="print-header-meta">
     <span>Printed: <span id="print-date"></span></span>
-    <span>Tool version: 4.1.1 · For research use only</span>
+    <span>Tool version: 4.2.1 · For research use only</span>
   </div>
 </div>
 
@@ -712,7 +805,7 @@ html{scroll-behavior:smooth}
       </div>
       <div class="hdr-titles">
         <h1>VIV PPM <span class="hdr-status">Ready</span></h1>
-        <p>Predicted & measured PPM · v4.1.1</p>
+        <p>Predicted & measured PPM · v4.2.1</p>
       </div>
     </div>
     <div class="hdr-tools">
@@ -726,20 +819,43 @@ html{scroll-behavior:smooth}
   </div>
 </div>
 
-<div class="progress-container">
+<div class="progress-container" role="navigation" aria-label="Procedure progress">
   <div class="progress-inner">
-    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    <div id="steps-bar" class="steps"></div>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Step progress"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div id="steps-bar" class="steps" role="list"></div>
   </div>
 </div>
 
-<div id="app" class="content"></div>
-<div id="nav" class="navbar"></div>
+<div id="recap-bar" class="recap-bar" role="status" aria-live="polite" aria-label="Patient summary" style="display:none"></div>
+
+<div id="app" class="content" role="main"></div>
+<div id="nav" class="navbar" role="navigation" aria-label="Step navigation"></div>
+
+<!-- Help popover: dismissible inline help, shown by showHelpAlert() -->
+<div class="help-popover-bg" id="help-popover-bg" onclick="if(event.target.id==='help-popover-bg')closeHelpPopover()" role="dialog" aria-modal="true" aria-labelledby="help-popover-title">
+  <div class="help-popover">
+    <button class="help-popover-close" onclick="closeHelpPopover()" aria-label="Close help">×</button>
+    <div class="help-popover-title" id="help-popover-title">Info</div>
+    <div class="help-popover-body" id="help-popover-body"></div>
+  </div>
+</div>
+
+<!-- Confirm popover: in-app replacement for native confirm() (which is blocked
+     intermittently on mobile browsers, making the Reset button unresponsive). -->
+<div class="help-popover-bg" id="confirm-popover-bg" onclick="if(event.target.id==='confirm-popover-bg')closeConfirmPopover()" role="alertdialog" aria-modal="true" aria-labelledby="confirm-popover-body">
+  <div class="help-popover">
+    <div class="help-popover-body" id="confirm-popover-body"></div>
+    <div class="confirm-popover-actions">
+      <button class="confirm-btn confirm-btn-secondary" id="confirm-popover-no" type="button">Cancel</button>
+      <button class="confirm-btn confirm-btn-danger" id="confirm-popover-yes" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-bg" id="info-modal" onclick="if(event.target.id==='info-modal')closeModal()">
   <div class="modal">
     <h3 id="about-title">About this tool</h3>
-    <p><strong id="about-version">VIV PPM Calculator v4.1.1</strong></p>
+    <p><strong id="about-version">VIV PPM Calculator v4.2.1</strong></p>
     <p id="about-desc">Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.</p>
     <p><strong id="about-method">Method:</strong> <span id="about-method-desc">AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.</span></p>
     <p><strong id="about-thresholds">PPM thresholds:</strong> <span id="about-thresholds-desc">ESC/EACTS 2025 guidelines.</span></p>
@@ -747,7 +863,7 @@ html{scroll-behavior:smooth}
     <div style="margin-top:16px;padding:14px;background:var(--bg-alt);border-radius:10px;border-left:3px solid var(--blue);font-size:12.5px;line-height:1.6">
       <div style="font-weight:700;color:var(--text);margin-bottom:4px" id="about-author">Author</div>
       <div><a href="https://github.com/francescobian92-blip" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:600">Francesco Bianchini, MD</a></div>
-      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.1.1 · © 2026</div>
+      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.2.1 · © 2026</div>
     </div>
     <div style="margin-top:14px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;line-height:1.5">
       <div style="font-weight:700;color:var(--text);margin-bottom:6px" id="about-bsa-title">BSA formula</div>
@@ -778,7 +894,7 @@ function computeBSA(weightKg, heightCm){
 const STORAGE_KEY='vivtavi_state_v2';
 // Schema version for stored data. Increment when DEFAULT/PRED_DEFAULT/FU_DEFAULT structure changes.
 // On load, if saved schema < CURRENT_SCHEMA, apply migrations or reset gracefully.
-const CURRENT_SCHEMA = 5;
+const CURRENT_SCHEMA = 6;
 const LANG_KEY='vivtavi_lang_v1';
 const STEPS=["Patient","Echo","Calibration","PRE/POST","Result"];
 const PRED_STEPS=["Patient","Valve","TAVI","Result"];
@@ -787,9 +903,9 @@ let mode='home'; // 'home' | 'predicted' | 'measured' | 'fu'
 let step=0;
 let predStep=0;
 let fuStep=0;
-const DEFAULT={peso:null,altezza:null,sesso:'M',procDate:'',echoBaseDate:'',svDiretto:false,svVal:null,lvotD:null,lvotVti:null,vtiTrans:null,ms0:null,lvet0:null,msPre:null,dpPre:null,msPost:null,dpPost:null,bvfPerformed:false,degeneratedTypeM:'surgical',surgModelM:'',surgSizeM:null,taviModelM:'',taviSizeM:null};
-const PRED_DEFAULT={pesoP:null,altezzaP:null,sessoP:'M',degeneratedType:'surgical',surgModel:'',surgSize:null,surgOverride:null,taviModel:'',taviSize:null,taviOverride:null,bvfPlanned:false};
-const FU_DEFAULT={pesoF:null,altezzaF:null,sessoF:'M',fuDate:'',fuLvotD:null,fuLvotVti:null,fuAvVti:null,fuMeanGrad:null,fuPeakVel:null,fuAR:'none'};
+const DEFAULT={peso:null,altezza:null,sesso:'M',rhythm:'SR',lvef:null,procDate:'',echoBaseDate:'',svDiretto:false,svVal:null,lvotD:null,lvotVti:null,vtiTrans:null,ms0:null,lvet0:null,msPre:null,dpPre:null,msPost:null,dpPost:null,bvfPerformed:false,degeneratedTypeM:'surgical',surgModelM:'',surgSizeM:null,taviModelM:'',taviSizeM:null};
+const PRED_DEFAULT={pesoP:null,altezzaP:null,sessoP:'M',rhythmP:'SR',lvefP:null,degeneratedType:'surgical',surgModel:'',surgSize:null,surgOverride:null,taviModel:'',taviSize:null,taviOverride:null,bvfPlanned:false};
+const FU_DEFAULT={pesoF:null,altezzaF:null,sessoF:'M',rhythmF:'SR',lvefF:null,fuDate:'',fuLvotD:null,fuLvotVti:null,fuAvVti:null,fuMeanGrad:null,fuPeakVel:null,fuAR:'none'};
 let D=Object.assign({},DEFAULT);
 let P=Object.assign({},PRED_DEFAULT);
 let FU=Object.assign({},FU_DEFAULT);
@@ -834,6 +950,18 @@ const I18N = {
     weight: 'Weight',
     height: 'Height',
     sex: 'Sex',
+    rhythm: 'Rhythm',
+    rhythmSR: 'Sinus',
+    rhythmAF: 'AF',
+    rhythmHelp: 'Atrial fibrillation produces beat-to-beat variability in LVET and stroke volume — Zao calibration is less reliable. Average over ≥5 beats.',
+    lvef: 'LVEF',
+    lvefHelp: 'Left ventricular ejection fraction (%). Optional but recommended: enables flow-state classification of PPM (low-flow vs normal-flow) per ESC/EACTS 2025 guidelines.',
+    afWarning: 'Atrial fibrillation: Zao and gradient values vary between beats. Use the average of ≥5 beats for each measurement.',
+    lowFlowState: 'low-flow',
+    normalFlowState: 'normal-flow',
+    flowStateLabel: 'Flow state',
+    flowStateHelpLowFlow: 'Low-flow PPM (LVEF <50%): clinical significance is reduced — gradients underestimate severity. Consider DSE if doubt.',
+    flowStateHelpNormalFlow: 'Normal-flow PPM (LVEF ≥50%): standard PPM thresholds fully apply.',
     next: 'Next →',
     back: '← Back',
     showResult: 'Show result →',
@@ -841,14 +969,14 @@ const I18N = {
     calculatePpm: 'Calculate PPM →',
     newPostMeasure: 'New POST measurement',
     confirmReset: 'Clear ALL data from all three modes (Measured, Predicted, Echo FU)?',
+    confirmYes: 'Yes, clear all',
+    confirmNo: 'Cancel',
     resetDone: 'All data cleared',
     modeSaved: 'saved',
     modesComplete: 'of 3 complete',
     modePredicted: 'Predicted',
     modeMeasured: 'Measured',
     modeEchoPost: 'Echo post',
-    resultsCopied: 'Results copied to clipboard',
-    exportFailed: 'Export failed',
     // Disclaimer
     forResearchOnly: 'For research use only.',
     notMedicalDevice: 'Not a CE-marked medical device.',
@@ -946,9 +1074,6 @@ const I18N = {
     // App update banner
     updateAvailable: '🆕 New version available',
     updateReload: 'Update',
-    // JSON export
-    exportJsonTooltip: 'Export structured data as JSON for research/analysis',
-    jsonDownloaded: 'JSON file downloaded',
     // Echo timing warning
     echoBaseDate: 'Baseline echo date',
     echoTimingWarn: 'Baseline echo was {days} days before the procedure. Hybrid Gorlin assumes constant stroke volume between echo and cath-lab — large gaps (>30 days) increase uncertainty due to potential hemodynamic shifts (volume status, BP changes, drug therapy). Consider acquiring an updated echo close to the procedure if feasible.',
@@ -978,14 +1103,14 @@ const I18N = {
     finishTour: 'Got it',
     // Confirm
     confirmReset: 'Clear ALL data from all three modes (Measured, Predicted, Echo FU)?',
+    confirmYes: 'Yes, clear all',
+    confirmNo: 'Cancel',
     resetDone: 'All data cleared',
     modeSaved: 'saved',
     modesComplete: 'of 3 complete',
     modePredicted: 'Predicted',
     modeMeasured: 'Measured',
     modeEchoPost: 'Echo post',
-    resultsCopied: 'Results copied to clipboard',
-    exportFailed: 'Export failed',
     // Echo step (Measured)
     preProceduralEcho: 'Pre-procedural echo',
     svAvailable: 'SV already available?',
@@ -1039,7 +1164,7 @@ const I18N = {
     tourGetStarted: 'Get started',
     // About modal
     aboutTitle: 'About this tool',
-    aboutVersion: 'VIV PPM Calculator v4.1.1',
+    aboutVersion: 'VIV PPM Calculator v4.2.1',
     aboutDesc: 'Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.',
     aboutMethod: 'Method:',
     aboutMethodDesc: 'AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.',
@@ -1077,7 +1202,6 @@ const I18N = {
     recAsPredicted: '= As predicted',
     // Export
     exportPdf: 'Export PDF',
-    copyResults: 'Copy results',
     // Misc
     daysAgo: 'days ago',
     monthsAgo: 'months ago',
@@ -1224,6 +1348,18 @@ const I18N = {
     weight: 'Peso',
     height: 'Altezza',
     sex: 'Sesso',
+    rhythm: 'Ritmo',
+    rhythmSR: 'Sinusale',
+    rhythmAF: 'FA',
+    rhythmHelp: 'La fibrillazione atriale produce variabilità battito-battito di LVET e gittata sistolica — la calibrazione di Zao è meno affidabile. Media su ≥5 battiti.',
+    lvef: 'FE',
+    lvefHelp: 'Frazione di eiezione del ventricolo sinistro (%). Opzionale ma consigliata: abilita la classificazione del PPM in base al flusso (low-flow vs normal-flow) secondo linee guida ESC/EACTS 2025.',
+    afWarning: 'Fibrillazione atriale: i valori di Zao e gradiente variano tra battiti. Usa la media di ≥5 battiti per ciascuna misura.',
+    lowFlowState: 'low-flow',
+    normalFlowState: 'normal-flow',
+    flowStateLabel: 'Stato di flusso',
+    flowStateHelpLowFlow: 'PPM low-flow (FE <50%): significato clinico ridotto — i gradienti sottostimano la severità. Considera DSE in caso di dubbio.',
+    flowStateHelpNormalFlow: 'PPM normal-flow (FE ≥50%): le soglie standard di PPM si applicano pienamente.',
     next: 'Avanti →',
     back: '← Indietro',
     showResult: 'Mostra risultato →',
@@ -1231,14 +1367,14 @@ const I18N = {
     calculatePpm: 'Calcola PPM →',
     newPostMeasure: 'Nuova misurazione POST',
     confirmReset: 'Cancellare TUTTI i dati di tutte le modalità (Misurato, Predetto, Eco FU)?',
+    confirmYes: 'Sì, cancella tutto',
+    confirmNo: 'Annulla',
     resetDone: 'Tutti i dati cancellati',
     modeSaved: 'salvato',
     modesComplete: 'di 3 completati',
     modePredicted: 'Predetto',
     modeMeasured: 'Misurato',
     modeEchoPost: 'Eco post',
-    resultsCopied: 'Risultati copiati negli appunti',
-    exportFailed: 'Esportazione fallita',
     // Disclaimer
     forResearchOnly: 'Solo per uso di ricerca.',
     notMedicalDevice: 'Non è un dispositivo medico CE.',
@@ -1337,8 +1473,6 @@ const I18N = {
     updateAvailable: '🆕 Nuova versione disponibile',
     updateReload: 'Aggiorna',
     // Export JSON
-    exportJsonTooltip: 'Esporta dati strutturati in JSON per ricerca/analisi',
-    jsonDownloaded: 'File JSON scaricato',
     // Avviso timing eco
     echoBaseDate: 'Data eco basale',
     echoTimingWarn: 'L\'eco basale è di {days} giorni prima della procedura. L\'hybrid Gorlin assume stroke volume costante tra eco e sala — intervalli ampi (>30 gg) aumentano l\'incertezza per possibili shift emodinamici (idratazione, pressione, terapia). Considerare un eco aggiornato prossimo alla procedura se fattibile.',
@@ -1368,14 +1502,14 @@ const I18N = {
     finishTour: 'Capito',
     // Confirm
     confirmReset: 'Cancellare TUTTI i dati di tutte le modalità (Misurato, Predetto, Eco FU)?',
+    confirmYes: 'Sì, cancella tutto',
+    confirmNo: 'Annulla',
     resetDone: 'Tutti i dati cancellati',
     modeSaved: 'salvato',
     modesComplete: 'di 3 completati',
     modePredicted: 'Predetto',
     modeMeasured: 'Misurato',
     modeEchoPost: 'Eco post',
-    resultsCopied: 'Risultati copiati negli appunti',
-    exportFailed: 'Esportazione fallita',
     // Echo step (Measured)
     preProceduralEcho: 'Eco pre-procedurale',
     svAvailable: 'SV già disponibile?',
@@ -1429,7 +1563,7 @@ const I18N = {
     tourGetStarted: 'Inizia',
     // About modal
     aboutTitle: 'Informazioni sul tool',
-    aboutVersion: 'VIV PPM Calculator v4.1.1',
+    aboutVersion: 'VIV PPM Calculator v4.2.1',
     aboutDesc: 'Predizione in tempo reale del patient-prosthesis mismatch (PPM) durante valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), basata su un approccio hybrid Gorlin che combina lo stroke volume ecocardiografico con l\'emodinamica invasiva intra-procedurale.',
     aboutMethod: 'Metodo:',
     aboutMethodDesc: 'AVA = Pressione aortica sistolica media / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>medio</sub>), dove Z<sub>ao</sub> è calibrata al baseline tramite stroke volume eco.',
@@ -1467,7 +1601,6 @@ const I18N = {
     recAsPredicted: '= Come previsto',
     // Export
     exportPdf: 'Esporta PDF',
-    copyResults: 'Copia risultati',
     // Misc
     daysAgo: 'giorni fa',
     monthsAgo: 'mesi fa',
@@ -1610,6 +1743,16 @@ try{
     const s=JSON.parse(saved);
     const savedSchema = s.schemaVersion || 1;
     
+    // Schema from the FUTURE (e.g. after a downgrade from a newer build):
+    // We can't safely interpret unknown fields, and stale references to deleted
+    // models would render as "undefined" or sanitize-error. Hard reset is safer.
+    if(savedSchema > CURRENT_SCHEMA){
+      console.warn('[VIV-PPM] State schema v'+savedSchema+' is newer than supported v'+CURRENT_SCHEMA+'. Resetting to defaults.');
+      try{localStorage.removeItem(STORAGE_KEY)}catch(e){}
+      // Skip rest of restore — fall through to defaults
+      throw new Error('schema-from-future');
+    }
+    
     // Schema migrations
     if(savedSchema < CURRENT_SCHEMA){
       // Migration v1 → v2: rename bvfDone to bvfPerformed (if applicable)
@@ -1637,6 +1780,22 @@ try{
         if(s.D && s.D.taviModelM === 'Acurate neo') s.D.taviModelM = 'Acurate neo2';
         if(s.D && s.D.degeneratedTaviModel === 'Acurate neo') s.D.degeneratedTaviModel = 'Acurate neo2';
         if(s.P && s.P.degeneratedTaviModel === 'Acurate neo') s.P.degeneratedTaviModel = 'Acurate neo2';
+      }
+      // Migration v5 → v6: add rhythm (sinus/atrial fibrillation) and lvef (ejection fraction)
+      // fields to D, P, FU. Defaults: rhythm='SR' (sinus rhythm), lvef=null (unknown).
+      if(savedSchema < 6){
+        if(s.D){
+          if(s.D.rhythm === undefined) s.D.rhythm = 'SR';
+          if(s.D.lvef === undefined) s.D.lvef = null;
+        }
+        if(s.P){
+          if(s.P.rhythmP === undefined) s.P.rhythmP = 'SR';
+          if(s.P.lvefP === undefined) s.P.lvefP = null;
+        }
+        if(s.FU){
+          if(s.FU.rhythmF === undefined) s.FU.rhythmF = 'SR';
+          if(s.FU.lvefF === undefined) s.FU.lvefF = null;
+        }
       }
       // After applying migrations, persist updated schema
       console.info('[VIV-PPM] Migrated state from schema v'+savedSchema+' to v'+CURRENT_SCHEMA);
@@ -1728,8 +1887,22 @@ function calc(){
   if(D.ms0&&(D.ms0<50||D.ms0>200))w.push("Baseline mean pressure out of range (50–200 mmHg)");
   if(D.dpPre!==null&&D.dpPre<=0)w.push("PRE ΔP must be > 0");
   if(D.dpPost!==null&&D.dpPost<=0)w.push("POST ΔP must be > 0 (a null gradient is unusual after TAVI)");
+  // Physical impossibility check: mean transvalvular gradient cannot exceed mean aortic pressure,
+  // because mean LV systolic pressure = mean Ao + mean ΔP, and LV pressure must be > 0.
+  // If reported, very likely a units mistake or a transposed measurement.
+  if(D.msPre>0&&D.dpPre>0&&D.dpPre>D.msPre)w.push("PRE ΔP (" + D.dpPre + ") > mean aortic pressure (" + D.msPre + "): physically impossible — verify measurements");
+  if(D.msPost>0&&D.dpPost>0&&D.dpPost>D.msPost)w.push("POST ΔP (" + D.dpPost + ") > mean aortic pressure (" + D.msPost + "): physically impossible — verify measurements");
   if(avaEco&&avaPre&&Math.abs(avaPre-avaEco)>.3)w.push("Echo-invasive PRE discordance > 0.3 cm²");
-  return{bsa,bmi,sv,avaEco,zao,avaPre,avaiPre,avaPost,avaiPost,warnings:w};
+  // Atrial fibrillation: Zao calibration assumes steady-state, beat-to-beat variability
+  // makes single-cycle measurements unreliable. Strongly recommend averaging over 5+ beats.
+  if(D.rhythm === 'AF') w.push("Atrial fibrillation: Zao and gradients vary between beats — average over ≥5 beats for each measurement");
+  // Flow state classification: low-flow PPM (LVEF < 50%) has different clinical significance.
+  // Per ESC/EACTS 2025: classify only if LVEF data is available.
+  let flowState = null;
+  if(D.lvef != null && D.lvef > 0){
+    flowState = D.lvef < 50 ? 'low' : 'normal';
+  }
+  return{bsa,bmi,sv,avaEco,zao,avaPre,avaiPre,avaPost,avaiPost,flowState,lvef:D.lvef,rhythm:D.rhythm,warnings:w};
 }
 
 function fmt(v,d){d=d===undefined?2:d;return(v!=null&&!isNaN(v))?v.toFixed(d):"—"}
@@ -1742,15 +1915,30 @@ function canNext(){
   return true;
 }
 
+// parseDecimal — robust parsing accepting both '70.5' and '70,5' (Italian convention).
+// Replace decimal comma with dot before parseFloat. Returns null for empty/invalid input.
+function parseDecimal(v){
+  if(v == null || v === '' || v === undefined) return null;
+  if(typeof v === 'number') return isNaN(v) ? null : v;
+  // Replace first comma with dot. We avoid replacing all commas to not break thousand separators
+  // (though we don't expect them here).
+  const s = String(v).trim().replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
 function updateField(k,v){
   if(v===''||v===null||v===undefined){D[k]=null}
   else if(k==='procDate'){D[k]=v}
   else if(k==='echoBaseDate'){D[k]=v}
-  else{const n=parseFloat(v);D[k]=isNaN(n)?null:n}
+  else{const n=parseDecimal(v);D[k]=n}
   // Date fields require full re-render to recompute the timing warning visibility
   if(k==='echoBaseDate' || k==='procDate'){
     render();saveState();return;
   }
+  // Refresh range warning IMMEDIATELY on input (was previously only on blur),
+  // so users typing extreme values see the warning before clicking Next.
+  if(typeof window.refreshWarnD === 'function') window.refreshWarnD(k);
   updateValues();updateNav();saveState();
 }
 
@@ -1778,40 +1966,40 @@ function updateValues(){
 function updateNav(){
   let h='';
   if(step>0)h+='<button class="btn btn-back" onclick="goBack()">'+t('back')+'</button>';
-  if(step<4)h+='<button class="btn btn-next '+(canNext()?'':'disabled')+'" onclick="goNext()">'+(step===3?t('calculatePpm'):t('next'))+'</button>';
+  if(step<4)h+='<button class="btn btn-next '+(canNext()?'':'disabled')+'" '+(canNext()?'':'disabled aria-disabled="true"')+' onclick="goNext()">'+(step===3?t('calculatePpm'):t('next'))+'</button>';
   if(step===4)h+='<button class="btn btn-next" onclick="newMeasure()">'+t('newPostMeasure')+'</button>';
   const navEl=document.getElementById('nav');
   navEl.innerHTML=h;
   navEl.classList.toggle('inline',step===4);
   const pct=(step/4)*100;
   const pf=document.getElementById('progress-fill');
-  if(pf)pf.style.width=pct+'%';
+  if(pf){pf.style.width=pct+'%';const tr=pf.parentElement;if(tr)tr.setAttribute('aria-valuenow',Math.round(pct))}
 }
 
 // Refresh Predicted navbar without full re-render (preserves input focus)
 function updateNavP(){
   let nh = '';
   if(predStep>0) nh += '<button class="btn btn-back" onclick="goBackPred()">'+t('back')+'</button>';
-  if(predStep<3) nh += '<button class="btn btn-next '+(canNextPred()?'':'disabled')+'" onclick="goNextPred()">'+(predStep===2?t('showResult'):t('next'))+'</button>';
+  if(predStep<3) nh += '<button class="btn btn-next '+(canNextPred()?'':'disabled')+'" '+(canNextPred()?'':'disabled aria-disabled="true"')+' onclick="goNextPred()">'+(predStep===2?t('showResult'):t('next'))+'</button>';
   if(predStep===3) nh += '<button class="btn btn-next" onclick="goHome()">'+t('backToHome')+'</button>';
   const navEl = document.getElementById('nav');
   if(navEl){navEl.innerHTML = nh; navEl.classList.toggle('inline', predStep===3)}
   const pct = (predStep/3)*100;
   const pf = document.getElementById('progress-fill');
-  if(pf) pf.style.width = pct+'%';
+  if(pf){pf.style.width=pct+'%';const tr=pf.parentElement;if(tr)tr.setAttribute('aria-valuenow',Math.round(pct))}
 }
 
 // Refresh FU navbar without full re-render
 function updateNavF(){
   let nh = '';
   if(fuStep>0) nh += '<button class="btn btn-back" onclick="goBackFU()">'+t('back')+'</button>';
-  if(fuStep<2) nh += '<button class="btn btn-next '+(canNextFU()?'':'disabled')+'" onclick="goNextFU()">'+(fuStep===1?t('showResult'):t('next'))+'</button>';
+  if(fuStep<2) nh += '<button class="btn btn-next '+(canNextFU()?'':'disabled')+'" '+(canNextFU()?'':'disabled aria-disabled="true"')+' onclick="goNextFU()">'+(fuStep===1?t('showResult'):t('next'))+'</button>';
   if(fuStep===2) nh += '<button class="btn btn-next" onclick="goHome()">'+t('backToHome')+'</button>';
   const navEl = document.getElementById('nav');
   if(navEl){navEl.innerHTML = nh; navEl.classList.toggle('inline', fuStep===2)}
   const pct = (fuStep/2)*100;
   const pf = document.getElementById('progress-fill');
-  if(pf) pf.style.width = pct+'%';
+  if(pf){pf.style.width=pct+'%';const tr=pf.parentElement;if(tr)tr.setAttribute('aria-valuenow',Math.round(pct))}
 }
 
 function toggleHelp(key){
@@ -1820,6 +2008,46 @@ function toggleHelp(key){
   const btn=document.getElementById('helpbtn-'+key);
   if(panel){panel.classList.toggle('show',helpOpen[key]);if(btn)btn.classList.toggle('active',helpOpen[key])}
 }
+
+// Safer alternative to inlining alert("...") with embedded translations:
+// reads the translation by key at click-time, so apostrophes/quotes in the
+// translation string can never break the onclick attribute.
+// Also uses an in-page popover instead of the native alert() so the experience
+// looks like the rest of the app (and supports dark mode + keyboard dismiss).
+function showHelpAlert(translationKey){
+  const bg = document.getElementById('help-popover-bg');
+  const body = document.getElementById('help-popover-body');
+  const title = document.getElementById('help-popover-title');
+  if(!bg || !body){
+    // Fallback in case the popover container isn't available yet
+    alert(t(translationKey));
+    return;
+  }
+  body.textContent = t(translationKey);
+  // Title: derived from the key (e.g. 'rhythmHelp' → 'Rhythm', 'lvefHelp' → 'LVEF')
+  const baseKey = translationKey.replace(/Help$/,'');
+  const titleStr = (typeof t === 'function') ? t(baseKey) : baseKey;
+  title.textContent = titleStr || 'Info';
+  bg.classList.add('show');
+  // Focus the close button for keyboard users
+  setTimeout(() => {
+    const closeBtn = bg.querySelector('.help-popover-close');
+    if(closeBtn) closeBtn.focus();
+  }, 50);
+}
+function closeHelpPopover(){
+  const bg = document.getElementById('help-popover-bg');
+  if(bg) bg.classList.remove('show');
+}
+// Dismiss popovers with Escape key
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    const helpBg = document.getElementById('help-popover-bg');
+    if(helpBg && helpBg.classList.contains('show')) closeHelpPopover();
+    const confirmBg = document.getElementById('confirm-popover-bg');
+    if(confirmBg && confirmBg.classList.contains('show')) confirmBg.classList.remove('show');
+  }
+});
 
 // Step increments per field type — chosen for typical cath-lab measurement granularity
 const FIELD_STEPS = {
@@ -1846,7 +2074,7 @@ function F(label,key,unit,caliper,large){
   let h='<div class="field'+(large?' large':'')+'" id="fd-'+key+'"><label>'+label;
   if(hasHelp)h+=' <button class="help-btn" id="helpbtn-'+key+'" onclick="toggleHelp(\''+key+'\')" type="button">?</button>';
   h+='</label><div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'D\')">−</button>';
-  h+='<input type="number" step="any" inputmode="decimal" value="'+v+'" '+(caliper?'class="caliper"':'')+(warning?' data-warn="1"':'')+' oninput="updateField(\''+key+'\',this.value)" onblur="refreshWarnD(\''+key+'\')">';
+  h+='<input type="number" step="any" min="0" inputmode="decimal" value="'+v+'" '+(caliper?'class="caliper"':'')+(warning?' data-warn="1"':'')+' oninput="updateField(\''+key+'\',this.value)" onblur="refreshWarnD(\''+key+'\')">';
   h+='<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'D\')">+</button>';
   h+='<span class="unit">'+unit+'</span></div>';
   h+=warning?'<div class="range-warn" id="warn-fd-'+key+'">⚠ '+warning+'</div>':'<div id="warn-fd-'+key+'" style="display:none"></div>';
@@ -1885,6 +2113,9 @@ const RANGES = {
   altezzaP:{min:120, max:220,  label:'Height'},
   pesoF:   {min:30,  max:200,  label:'Weight'},
   altezzaF:{min:120, max:220,  label:'Height'},
+  lvef:    {min:10,  max:80,   label:'LVEF (%)'},
+  lvefP:   {min:10,  max:80,   label:'LVEF (%)'},
+  lvefF:   {min:10,  max:80,   label:'LVEF (%)'},
   // Echo - LVOT and VTI
   lvotD:   {min:15,  max:30,   label:'LVOT diameter (mm)'},
   lvotVti: {min:10,  max:35,   label:'LVOT VTI (cm)'},
@@ -2260,7 +2491,7 @@ function FP(label, key, unit){
   const step = stepFor(key);
   return '<div class="field" id="fp-'+key+'"><label>'+label+'</label>'+
     '<div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'P\')">−</button>'+
-    '<input type="number" step="any" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
+    '<input type="number" step="any" min="0" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
     ' oninput="updateFieldP(\''+key+'\',this.value)"'+
     ' onblur="refreshWarnP(\''+key+'\')">'+
     '<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'P\')">+</button>'+
@@ -2275,7 +2506,7 @@ function FF(label, key, unit){
   const step = stepFor(key);
   return '<div class="field" id="ff-'+key+'"><label>'+label+'</label>'+
     '<div class="input-stepper-wrap"><button type="button" class="stepper-btn" aria-label="decrease" onclick="stepField(\''+key+'\',-'+step+',\'F\')">−</button>'+
-    '<input type="number" step="any" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
+    '<input type="number" step="any" min="0" inputmode="decimal" value="'+v+'"'+(warn?' data-warn="1"':'')+
     ' oninput="updateFieldF(\''+key+'\',this.value)"'+
     ' onblur="refreshWarnF(\''+key+'\')">'+
     '<button type="button" class="stepper-btn" aria-label="increase" onclick="stepField(\''+key+'\','+step+',\'F\')">+</button>'+
@@ -2351,101 +2582,6 @@ function getDecision(avai,bmi){
   return{kind:'danger',icon:'danger',title:t('decSevTitle'),action:t('decSevAction'),options:[t(fracOpt('decSevOpt1')),t('decSevOpt2'),t('decSevOpt3'),t('decSevOpt4')],warns:[t('decSevWarn1'),t('decSevWarn2'),t('decSevWarn3')]};
 }
 
-// Export text-formatted summary of the current result.
-// Mode-aware: each mode (measured, predicted, echopost) uses different state objects
-// (D, P, FU respectively) and different result computations. Backward-compat: if
-// called without an argument, defaults to 'measured' (original behavior).
-function exportText(mode){
-  if(!mode) mode = 'measured';
-  const today = new Date().toLocaleDateString('en-US');
-  let txt = 'VIV PPM Calculator — Result\nDate: '+today+'\nTool version: v4.1.1\nMode: '+mode+'\n\n';
-
-  if(mode === 'measured'){
-    const c = calc();
-    txt += '--- Patient ---\nWeight: '+(D.peso||'—')+' kg | Height: '+(D.altezza||'—')+' cm | Sex: '+D.sesso+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
-    txt += '--- Echo ---\nSV: '+fmt(c.sv,1)+' ml | Echo AVA (continuity): '+fmt(c.avaEco)+' cm²\n\n';
-    txt += '--- Calibration ---\nBaseline mean pressure: '+(D.ms0||'—')+' mmHg | Baseline LVET: '+(D.lvet0||'—')+' ms\nZao: '+fmt(c.zao,4)+' mmHg·s/ml\n\n';
-    txt += '--- PRE-TAVI ---\nMean pressure: '+(D.msPre||'—')+' mmHg | Mean ΔP: '+(D.dpPre||'—')+' mmHg\nAVA: '+fmt(c.avaPre)+' cm² | AVAi: '+fmt(c.avaiPre)+' cm²/m²\n\n';
-    txt += '--- POST-TAVI ---\nMean pressure: '+(D.msPost||'—')+' mmHg | Mean ΔP: '+(D.dpPost||'—')+' mmHg\nAVA: '+fmt(c.avaPost)+' cm² | AVAi: '+fmt(c.avaiPost)+' cm²/m²\n\n';
-    if(D.degeneratedTypeM === 'surgical' && D.surgModelM){
-      txt += '--- Devices (optional) ---\nDegenerated SHV: '+D.surgModelM+' '+(D.surgSizeM||'—')+' mm';
-      if(D.taviModelM) txt += ' | Implanted TAVI: '+D.taviModelM+' '+(D.taviSizeM||'—')+' mm';
-      txt += '\n\n';
-    } else if(D.degeneratedTypeM === 'tavi' && D.surgModelM){
-      txt += '--- Devices (optional) ---\nDegenerated prior TAVI: '+D.surgModelM+' '+(D.surgSizeM||'—')+' mm';
-      if(D.taviModelM) txt += ' | New TAVI: '+D.taviModelM+' '+(D.taviSizeM||'—')+' mm';
-      txt += '\n\n';
-    }
-    txt += '--- Procedure ---\nBVF performed: '+(D.bvfPerformed?'Yes':'No')+'\n\n';
-    const isObese = c.bmi != null && c.bmi >= 30;
-    const ppmClass = classifyPPM(c.avaiPost, isObese);
-    let ppm = '—';
-    if(ppmClass === 'NO PPM') ppm = 'NO PPM';
-    else if(ppmClass === 'MODERATE') ppm = 'MODERATE PPM';
-    else if(ppmClass === 'SEVERE') ppm = 'SEVERE PPM';
-    if(isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
-    const ciExp = showCI ? avaiCI(c.avaiPost, 'measured') : null;
-    txt += '--- Result ---\nPPM: '+ppm+(ciExp?'\nAVAi 68% CI: '+ciExp.low.toFixed(2)+'–'+ciExp.high.toFixed(2)+' cm²/m² (±'+ciExp.sd.toFixed(2)+')':'')+'\n';
-  }
-  else if(mode === 'predicted'){
-    const c = calcPred();
-    if(!c || c.bsa == null){
-      txt += '(No prediction available — please complete all required fields first.)\n';
-    } else {
-      txt += '--- Patient ---\nWeight: '+(P.pesoP||'—')+' kg | Height: '+(P.altezzaP||'—')+' cm | Sex: '+P.sessoP+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
-      const degLabel = P.degeneratedType === 'tavi' ? 'Degenerated prior TAVI' : 'Degenerated surgical valve';
-      txt += '--- '+degLabel+' ---\nModel: '+(P.surgModel||'—')+' | Size: '+(P.surgSize||'—')+' mm\n';
-      if(P.surgOverride != null) txt += 'EOA override: '+fmt(P.surgOverride)+' cm²\n';
-      else if(c.surgEOA != null) txt += 'Nominal EOA: '+fmt(c.surgEOA)+' cm²\n';
-      txt += '\n';
-      txt += '--- Intended TAVI ---\nModel: '+(P.taviModel||'—')+' | Size: '+(P.taviSize||'—')+' mm\n';
-      if(P.taviOverride != null) txt += 'VIV-EOA override: '+fmt(P.taviOverride)+' cm²\n';
-      txt += '\n';
-      txt += '--- Predicted EOA ---\nNominal TAVI EOA: '+fmt(c.taviNominal)+' cm²\nVIV-adjusted: '+fmt(c.taviVIV)+' cm²\nAVAi: '+fmt(c.taviAVAi)+' cm²/m²\n\n';
-      if(P.bvfPlanned){
-        const fs = P.surgModel && SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].fracturable : null;
-        const techLabel = fs === 'remodelable' ? 'BVR' : 'BVF';
-        const gainLabel = c.bvfGain ? ' (gain +'+fmt(c.bvfGain)+' cm²)' : '';
-        txt += '--- Procedure planning ---\n'+techLabel+' planned: Yes'+gainLabel+'\n\n';
-      }
-      let ppm = '—';
-      if(c.taviPPM === 'NO PPM') ppm = 'NO PPM PREDICTED';
-      else if(c.taviPPM === 'MODERATE') ppm = 'MODERATE PPM PREDICTED';
-      else if(c.taviPPM === 'SEVERE') ppm = 'SEVERE PPM PREDICTED';
-      if(c.isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
-      const ciExp = showCI && c.taviAVAi != null ? avaiCI(c.taviAVAi, 'predicted') : null;
-      txt += '--- Result ---\nPPM: '+ppm+(ciExp?'\nAVAi 68% CI: '+ciExp.low.toFixed(2)+'–'+ciExp.high.toFixed(2)+' cm²/m² (±'+ciExp.sd.toFixed(2)+')':'')+'\n';
-    }
-  }
-  else if(mode === 'echopost'){
-    const c = calcFU();
-    if(!c || c.bsa == null){
-      txt += '(No echo follow-up result available — please complete all required fields first.)\n';
-    } else {
-      txt += '--- Patient ---\nWeight: '+(FU.pesoF||'—')+' kg | Height: '+(FU.altezzaF||'—')+' cm | Sex: '+FU.sessoF+'\nBSA: '+fmt(c.bsa)+' m² | BMI: '+fmt(c.bmi,1)+' kg/m²\n\n';
-      txt += '--- Echo follow-up ---\nLVOT diameter: '+(FU.fuLvotD||'—')+' mm | LVOT VTI: '+(FU.fuLvotVti||'—')+' cm | AV VTI: '+(FU.fuAvVti||'—')+' cm\nSV: '+fmt(c.sv,1)+' ml | AVA (continuity): '+fmt(c.ava)+' cm²\nAVAi: '+fmt(c.avai)+' cm²/m²\n';
-      if(FU.fuMeanGrad != null) txt += 'Mean gradient: '+FU.fuMeanGrad+' mmHg\n';
-      if(FU.fuPeakVel != null) txt += 'Peak velocity: '+FU.fuPeakVel+' m/s\n';
-      txt += '\n';
-      let ppm = '—';
-      if(c.ppm === 'NO PPM') ppm = 'NO PPM (echo follow-up)';
-      else if(c.ppm === 'MODERATE') ppm = 'MODERATE PPM (echo follow-up)';
-      else if(c.ppm === 'SEVERE') ppm = 'SEVERE PPM (echo follow-up)';
-      if(c.isObese && ppm !== '—') ppm += ' (BMI≥30 thresholds)';
-      txt += '--- Result ---\nPPM: '+ppm+'\n';
-    }
-  }
-
-  txt += '\n--- DISCLAIMER ---\nFor research use only. Not a CE-marked medical device.\n';
-  try{navigator.clipboard.writeText(txt).then(()=>showToast(t('resultsCopied'))).catch(()=>showExportFallback(txt))}catch(e){showExportFallback(txt)}
-}
-function showExportFallback(txt){
-  const ta=document.createElement('textarea');
-  ta.value=txt;
-  ta.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;height:300px;z-index:300;padding:16px;border:2px solid #2563eb;border-radius:12px;background:#fff;color:#000;font-family:monospace;font-size:12px;box-shadow:0 20px 50px rgba(0,0,0,.4)';
-  document.body.appendChild(ta);ta.select();setTimeout(()=>ta.remove(),8000);
-}
-
 function renderAvaiScale(avai,bmi){
   if(avai==null)return'';
   const isObese=bmi&&bmi>=30;
@@ -2518,7 +2654,7 @@ function animateMarker(avai){
 function creditBlock(){
   return '<div class="credit">' +
     '<a class="credit-name" href="https://github.com/francescobian92-blip" target="_blank" rel="noopener">Francesco Bianchini, MD</a>' +
-    '<div class="credit-version">VIV PPM Calculator v4.1.1 · © 2026</div>' +
+    '<div class="credit-version">VIV PPM Calculator v4.2.1 · © 2026</div>' +
   '</div>';
 }
 
@@ -2582,11 +2718,14 @@ function renderPredicted(){
     const cls=i===predStep?'active':(i<predStep?'done':'');
     const click=i<=predStep?'onclick="gotoPredStep('+i+')"':'';
     const stepLabel = translateStep(s);
-    return '<button class="step-dot '+cls+'" '+click+'><div class="dot">'+(i<predStep?'✓':(i+1))+'</div><span>'+stepLabel+'</span></button>';
+    const ariaCurrent = i===predStep ? ' aria-current="step"' : '';
+    const ariaLabel = ' aria-label="Step '+(i+1)+': '+stepLabel+(i<predStep?' (completed)':(i===predStep?' (current)':' (locked)'))+'"';
+    const disabled = i>predStep ? ' disabled aria-disabled="true"' : '';
+    return '<button class="step-dot '+cls+'" role="listitem"'+ariaCurrent+ariaLabel+disabled+' '+click+'><div class="dot" aria-hidden="true">'+(i<predStep?'✓':(i+1))+'</div><span>'+stepLabel+'</span></button>';
   }).join('');
   const pct=(predStep/3)*100;
   const pf=document.getElementById('progress-fill');
-  if(pf)pf.style.width=pct+'%';
+  if(pf){pf.style.width=pct+'%';const tr=pf.parentElement;if(tr)tr.setAttribute('aria-valuenow',Math.round(pct))}
   
   let h = '';
   
@@ -2595,7 +2734,10 @@ function renderPredicted(){
     h += '<div class="card">';
     h += FP(t('weight'), 'pesoP', 'kg');
     h += FP(t('height'), 'altezzaP', 'cm');
-    h += '<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(P.sessoP==='M'?'on':'')+'" onclick="setSexP(\'M\')">'+t('male')+'</button><button class="'+(P.sessoP==='F'?'on':'')+'" onclick="setSexP(\'F\')">'+t('female')+'</button></div></div>';
+    h += '<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(P.sessoP==='M'?'on':'')+'" onclick="setSexP(\'M\')" aria-label="'+t('male')+'">'+t('male')+'</button><button class="'+(P.sessoP==='F'?'on':'')+'" onclick="setSexP(\'F\')" aria-label="'+t('female')+'">'+t('female')+'</button></div></div>';
+    h += '<div class="toggle-row"><label>'+t('rhythm')+'<button class="help-icon-inline" onclick="showHelpAlert(\'rhythmHelp\')" aria-label="Help: rhythm">?</button></label><div class="toggle-btn"><button class="'+(P.rhythmP==='SR'?'on':'')+'" onclick="setRhythmP(\'SR\')">'+t('rhythmSR')+'</button><button class="'+(P.rhythmP==='AF'?'on':'')+'" onclick="setRhythmP(\'AF\')">'+t('rhythmAF')+'</button></div></div>';
+    h += FP(t('lvef'), 'lvefP', '%');
+    h += '<div class="field-help-inline">'+t('lvefHelp')+'</div>';
     h += '<hr class="sep">';
     h += '<div class="derived key"><span class="dlabel">BSA</span><span class="dval" data-p="bsa">'+(c.bsa!=null?c.bsa.toFixed(2):'—')+'</span><span class="dunit">m²</span></div>';
     h += '<div class="derived normal"><span class="dlabel">BMI</span><span class="dval" data-p="bmi">'+(c.bmi!=null?c.bmi.toFixed(1):'—')+'</span><span class="dunit">kg/m²</span></div>';
@@ -2623,7 +2765,7 @@ function renderPredicted(){
       h += '<div class="peoa-row"><label>'+t('model')+'</label><select onchange="setSurgModel(this.value)">' + groupedOptions(SURGICAL_DB, P.surgModel) + '</select></div>';
       h += '<div class="peoa-row"><label>'+t('size')+'</label><select onchange="setSurgSize(this.value)">' + sizeOptions(SURGICAL_DB, P.surgModel, P.surgSize) + '</select></div>';
     }
-    h += '<div class="peoa-row"><label>'+t('overrideEoa')+' <button class="help-btn" onclick="toggleOvrHelp(\'surg\')" type="button" id="ovrhelp-surg-btn">?</button></label><input type="number" step="0.1" placeholder="'+t('optional')+'" value="' + (P.surgOverride != null ? P.surgOverride : '') + '" oninput="setSurgOverride(this.value)"></div>';
+    h += '<div class="peoa-row"><label>'+t('overrideEoa')+' <button class="help-btn" onclick="toggleOvrHelp(\'surg\')" type="button" id="ovrhelp-surg-btn">?</button></label><input type="number" step="0.1" min="0" placeholder="'+t('optional')+'" value="' + (P.surgOverride != null ? P.surgOverride : '') + '" oninput="setSurgOverride(this.value)"></div>';
     h += '<div class="help-panel" id="ovrhelp-surg" style="display:none">'+t('overrideTooltip')+'</div>';
     h += '<hr class="sep">';
     h += '<div class="peoa-results">';
@@ -2648,7 +2790,7 @@ function renderPredicted(){
       h += '<div style="margin:8px 0;padding:10px 12px;background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:8px;font-size:11.5px;line-height:1.45;color:#92400e">'+t('withdrawnWarning')+'</div>';
     }
     h += '<div class="peoa-row"><label>'+t('size')+'</label><select onchange="setTaviSize(this.value)">' + sizeOptions(TAVI_DB, P.taviModel, P.taviSize) + '</select></div>';
-    h += '<div class="peoa-row"><label>'+t('overrideVivEoa')+' <button class="help-btn" onclick="toggleOvrHelp(\'tavi\')" type="button" id="ovrhelp-tavi-btn">?</button></label><input type="number" step="0.1" placeholder="'+t('optional')+'" value="' + (P.taviOverride != null ? P.taviOverride : '') + '" oninput="setTaviOverride(this.value)"></div>';
+    h += '<div class="peoa-row"><label>'+t('overrideVivEoa')+' <button class="help-btn" onclick="toggleOvrHelp(\'tavi\')" type="button" id="ovrhelp-tavi-btn">?</button></label><input type="number" step="0.1" min="0" placeholder="'+t('optional')+'" value="' + (P.taviOverride != null ? P.taviOverride : '') + '" oninput="setTaviOverride(this.value)"></div>';
     h += '<div class="help-panel" id="ovrhelp-tavi" style="display:none">'+t('overrideVivTooltip')+'</div>';
     h += '<hr class="sep">';
     h += '<div class="peoa-results">';
@@ -2744,7 +2886,7 @@ function renderPredicted(){
     
     h += '<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h += '<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
-    h += '<div class="ppm-label">'+pi.label+'</div>';
+    h += '<div class="ppm-label">'+pi.label+(c.flowState?'<span class="flow-state-pill '+c.flowState+'" title="'+(c.flowState==='low'?t('flowStateHelpLowFlow'):t('flowStateHelpNormalFlow'))+'">'+(c.flowState==='low'?t('lowFlowState'):t('normalFlowState'))+'</span>':'')+'</div>';
     h += '<div class="ppm-value">'+t('predictedAvai')+' = <strong>'+fmt(ai)+'</strong> cm²/m²</div>';
     if(showCI){
       const ciP = avaiCI(ai, 'predicted');
@@ -2894,11 +3036,9 @@ function renderPredicted(){
     // Cross-checks (data consistency) — shown in both modes (filters internally for Quick)
     h += renderCrossChecks('predicted');
 
-    // Export buttons for Predicted result
+    // Export button for Predicted result
     h += '<div class="export-row">';
-    h += '<button class="export-btn" onclick="exportText(\'predicted\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h += '<button class="export-btn" onclick="exportPDF(\'predicted\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
-    h += '<button class="export-btn" onclick="exportJSON(\'predicted\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h += '</div>';
   }
   
@@ -2906,11 +3046,12 @@ function renderPredicted(){
   if(predStep===3) h += creditBlock();
   
   document.getElementById('app').innerHTML = h;
+  buildRecapBarHTML();
   
   // Navbar for predicted
   let nh = '';
   if(predStep>0) nh += '<button class="btn btn-back" onclick="goBackPred()">'+t('back')+'</button>';
-  if(predStep<3) nh += '<button class="btn btn-next '+(canNextPred()?'':'disabled')+'" onclick="goNextPred()">'+(predStep===2?t('showResult'):t('next'))+'</button>';
+  if(predStep<3) nh += '<button class="btn btn-next '+(canNextPred()?'':'disabled')+'" '+(canNextPred()?'':'disabled aria-disabled="true"')+' onclick="goNextPred()">'+(predStep===2?t('showResult'):t('next'))+'</button>';
   if(predStep===3) nh += '<button class="btn btn-next" onclick="goHome()">'+t('backToHome')+'</button>';
   const navEl = document.getElementById('nav');
   navEl.innerHTML = nh;
@@ -2931,7 +3072,11 @@ function renderFU(){
   document.getElementById('steps-bar').innerHTML=FU_STEPS.map(function(s,i){
     const cls=i===fuStep?'active':(i<fuStep?'done':'');
     const click=i<=fuStep?'onclick="gotoFUStep('+i+')"':'';
-    return '<button class="step-dot '+cls+'" '+click+'><div class="dot">'+(i<fuStep?'✓':(i+1))+'</div><span>'+translateStep(s)+'</span></button>';
+    const stepLabel = translateStep(s);
+    const ariaCurrent = i===fuStep ? ' aria-current="step"' : '';
+    const ariaLabel = ' aria-label="Step '+(i+1)+': '+stepLabel+(i<fuStep?' (completed)':(i===fuStep?' (current)':' (locked)'))+'"';
+    const disabled = i>fuStep ? ' disabled aria-disabled="true"' : '';
+    return '<button class="step-dot '+cls+'" role="listitem"'+ariaCurrent+ariaLabel+disabled+' '+click+'><div class="dot" aria-hidden="true">'+(i<fuStep?'✓':(i+1))+'</div><span>'+stepLabel+'</span></button>';
   }).join('');
   const pct=(fuStep/2)*100;
   const pf=document.getElementById('progress-fill');
@@ -2944,7 +3089,10 @@ function renderFU(){
     h += '<div class="card">';
     h += FF(t('weight'), 'pesoF', 'kg');
     h += FF(t('height'), 'altezzaF', 'cm');
-    h += '<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(FU.sessoF==='M'?'on':'')+'" onclick="setSexF(\'M\')">'+t('male')+'</button><button class="'+(FU.sessoF==='F'?'on':'')+'" onclick="setSexF(\'F\')">'+t('female')+'</button></div></div>';
+    h += '<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(FU.sessoF==='M'?'on':'')+'" onclick="setSexF(\'M\')" aria-label="'+t('male')+'">'+t('male')+'</button><button class="'+(FU.sessoF==='F'?'on':'')+'" onclick="setSexF(\'F\')" aria-label="'+t('female')+'">'+t('female')+'</button></div></div>';
+    h += '<div class="toggle-row"><label>'+t('rhythm')+'<button class="help-icon-inline" onclick="showHelpAlert(\'rhythmHelp\')" aria-label="Help: rhythm">?</button></label><div class="toggle-btn"><button class="'+(FU.rhythmF==='SR'?'on':'')+'" onclick="setRhythmF(\'SR\')">'+t('rhythmSR')+'</button><button class="'+(FU.rhythmF==='AF'?'on':'')+'" onclick="setRhythmF(\'AF\')">'+t('rhythmAF')+'</button></div></div>';
+    h += FF(t('lvef'), 'lvefF', '%');
+    h += '<div class="field-help-inline">'+t('lvefHelp')+'</div>';
     h += '<div class="field"><label>'+(lang==='it'?'Data eco':'Echo date')+'</label><div class="input-stepper-wrap"><input type="date" value="'+(FU.fuDate||'')+'" oninput="updateFieldF(\'fuDate\',this.value)"></div></div>';
     h += '<hr class="sep">';
     h += '<div class="derived key"><span class="dlabel">BSA</span><span class="dval" data-fu="bsa">'+(c.bsa!=null?c.bsa.toFixed(2):'—')+'</span><span class="dunit">m²</span></div>';
@@ -2993,7 +3141,7 @@ function renderFU(){
     
     h += '<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h += '<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
-    h += '<div class="ppm-label">'+pi.label+'</div>';
+    h += '<div class="ppm-label">'+pi.label+(c.flowState?'<span class="flow-state-pill '+c.flowState+'" title="'+(c.flowState==='low'?t('flowStateHelpLowFlow'):t('flowStateHelpNormalFlow'))+'">'+(c.flowState==='low'?t('lowFlowState'):t('normalFlowState'))+'</span>':'')+'</div>';
     h += '<div class="ppm-value">'+t('avai')+' = <strong>'+fmt(ai)+'</strong> cm²/m²</div>';
     if(showCI){
       const ciFU = avaiCI(ai, 'echopost');
@@ -3078,9 +3226,7 @@ function renderFU(){
     // Export buttons for Echo post result
     // Order: Copy (text) → PDF → JSON, consistent with Measured and Predicted
     h += '<div class="export-row">';
-    h += '<button class="export-btn" onclick="exportText(\'echopost\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h += '<button class="export-btn" onclick="exportPDF(\'echopost\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
-    h += '<button class="export-btn" onclick="exportJSON(\'echopost\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h += '</div>';
   }
   
@@ -3088,11 +3234,12 @@ function renderFU(){
   if(fuStep===2) h += creditBlock();
   
   document.getElementById('app').innerHTML = h;
+  buildRecapBarHTML();
   
   // Navbar
   let nh = '';
   if(fuStep>0) nh += '<button class="btn btn-back" onclick="goBackFU()">'+t('back')+'</button>';
-  if(fuStep<2) nh += '<button class="btn btn-next '+(canNextFU()?'':'disabled')+'" onclick="goNextFU()">'+(fuStep===1?t('showResult'):t('next'))+'</button>';
+  if(fuStep<2) nh += '<button class="btn btn-next '+(canNextFU()?'':'disabled')+'" '+(canNextFU()?'':'disabled aria-disabled="true"')+' onclick="goNextFU()">'+(fuStep===1?t('showResult'):t('next'))+'</button>';
   if(fuStep===2) nh += '<button class="btn btn-next" onclick="goHome()">'+t('backToHome')+'</button>';
   const navEl = document.getElementById('nav');
   navEl.innerHTML = nh;
@@ -3103,6 +3250,61 @@ function renderFU(){
   }
   
   saveState();
+}
+
+// Sticky recap bar — shows BSA/BMI and current selections during data entry.
+// Appears in step >= 1 of any mode (home is hidden, result page hides it via display none).
+// Returns HTML string of pills; empty string if nothing meaningful to show yet.
+function buildRecapBarHTML(){
+  const bar = document.getElementById('recap-bar');
+  if(!bar) return;
+  
+  // Hide on home, on result steps, and when no useful data yet
+  let bsa = null, bmi = null;
+  let pills = [];
+  
+  if(mode === 'home'){
+    bar.style.display = 'none'; bar.innerHTML = ''; return;
+  }
+  
+  if(mode === 'predicted'){
+    // Hide on patient step (data being entered) and result step (full info already shown)
+    if(predStep === 0 || predStep === 3){bar.style.display='none';bar.innerHTML='';return;}
+    const c = calcPred();
+    bsa = c.bsa; bmi = c.bmi;
+    if(P.surgModel && P.surgSize){
+      pills.push({cls:'shv', label:'SHV', value:P.surgModel.split(' (')[0]+' '+P.surgSize+'mm'});
+    }
+    if(P.taviModel && P.taviSize && predStep >= 2){
+      pills.push({cls:'tavi', label:'TAVI', value:P.taviModel.split(' (')[0]+' '+P.taviSize+'mm'});
+    }
+  } else if(mode === 'fu'){
+    if(fuStep === 0 || fuStep === 2){bar.style.display='none';bar.innerHTML='';return;}
+    const c = calcFU();
+    bsa = c.bsa; bmi = c.bmi;
+  } else {
+    // measured
+    if(step === 0 || step === 4){bar.style.display='none';bar.innerHTML='';return;}
+    const c = calc();
+    bsa = c.bsa; bmi = c.bmi;
+    if(c.zao != null && step >= 3){
+      pills.push({cls:'', label:'Zao', value:c.zao.toFixed(2)});
+    }
+  }
+  
+  if(bsa == null && bmi == null && pills.length === 0){
+    bar.style.display='none'; bar.innerHTML=''; return;
+  }
+  
+  let html = '';
+  if(bsa != null) html += '<span class="pill bsa" aria-label="Body Surface Area"><strong>BSA</strong> '+bsa.toFixed(2)+' m²</span>';
+  if(bmi != null) html += '<span class="pill bmi" aria-label="Body Mass Index"><strong>BMI</strong> '+bmi.toFixed(1)+' kg/m²</span>';
+  pills.forEach(p => {
+    html += '<span class="pill '+p.cls+'"><strong>'+p.label+'</strong> '+p.value+'</span>';
+  });
+  
+  bar.innerHTML = html;
+  bar.style.display = '';
 }
 
 function render(){
@@ -3120,6 +3322,7 @@ function render(){
     navEl.innerHTML = '';
     navEl.classList.remove('inline');
     navEl.style.display = 'none';
+    buildRecapBarHTML();
     return;
   }
   
@@ -3147,7 +3350,11 @@ function render(){
   document.getElementById('steps-bar').innerHTML=STEPS.map(function(s,i){
     const cls=i===step?'active':(i<step?'done':'');
     const click=i<=step?'onclick="gotoStep('+i+')"':'';
-    return '<button class="step-dot '+cls+'" '+click+'><div class="dot">'+(i<step?'✓':(i+1))+'</div><span>'+translateStep(s)+'</span></button>';
+    const stepLabel = translateStep(s);
+    const ariaCurrent = i===step ? ' aria-current="step"' : '';
+    const ariaLabel = ' aria-label="Step '+(i+1)+': '+stepLabel+(i<step?' (completed)':(i===step?' (current)':' (locked)'))+'"';
+    const disabled = i>step ? ' disabled aria-disabled="true"' : '';
+    return '<button class="step-dot '+cls+'" role="listitem"'+ariaCurrent+ariaLabel+disabled+' '+click+'><div class="dot" aria-hidden="true">'+(i<step?'✓':(i+1))+'</div><span>'+stepLabel+'</span></button>';
   }).join('');
 
   let h='';
@@ -3156,7 +3363,10 @@ function render(){
     h+='<div class="card">';
     h+=F(t('weight'),'peso','kg');
     h+=F(t('height'),'altezza','cm');
-    h+='<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(D.sesso==='M'?'on':'')+'" onclick="setSex(\'M\')">'+t('male')+'</button><button class="'+(D.sesso==='F'?'on':'')+'" onclick="setSex(\'F\')">'+t('female')+'</button></div></div>';
+    h+='<div class="toggle-row"><label>'+t('sex')+'</label><div class="toggle-btn"><button class="'+(D.sesso==='M'?'on':'')+'" onclick="setSex(\'M\')" aria-label="'+t('male')+'">'+t('male')+'</button><button class="'+(D.sesso==='F'?'on':'')+'" onclick="setSex(\'F\')" aria-label="'+t('female')+'">'+t('female')+'</button></div></div>';
+    h+='<div class="toggle-row"><label>'+t('rhythm')+'<button class="help-icon-inline" onclick="showHelpAlert(\'rhythmHelp\')" aria-label="Help: rhythm">?</button></label><div class="toggle-btn"><button class="'+(D.rhythm==='SR'?'on':'')+'" onclick="setRhythm(\'SR\')">'+t('rhythmSR')+'</button><button class="'+(D.rhythm==='AF'?'on':'')+'" onclick="setRhythm(\'AF\')">'+t('rhythmAF')+'</button></div></div>';
+    h+=F(t('lvef'),'lvef','%');
+    h+='<div class="field-help-inline">'+t('lvefHelp')+'</div>';
     h+='<div class="field"><label>'+(lang==='it'?'Data procedura':'Procedure date')+'</label><div class="input-stepper-wrap"><input type="date" value="'+(D.procDate||'')+'" oninput="updateField(\'procDate\',this.value)"></div></div>';
     h+='<hr class="sep">'+DR('BSA','bsa','m²',true)+DR('BMI','bmi','kg/m²',false,1)+'</div>';
   }
@@ -3182,6 +3392,9 @@ function render(){
   if(step===2){
     h+=secTitle('calib',t('zaoCalibration'));
     h+='<div class="note" style="margin-bottom:10px">'+t('zaoCalibNote')+'</div>';
+    if(D.rhythm === 'AF'){
+      h+='<div class="af-advisory" role="alert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>'+t('afWarning')+'</span></div>';
+    }
     h+='<div class="card">';
     h+=F(t('baselineMeanAo'),'ms0','mmHg',true,true);
     h+=F(t('baselineLvet'),'lvet0','msec',true,true);
@@ -3190,6 +3403,9 @@ function render(){
     h+='<div id="warn-box"></div></div>';
   }
   if(step===3){
+    if(D.rhythm === 'AF'){
+      h+='<div class="af-advisory" role="alert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>'+t('afWarning')+'</span></div>';
+    }
     h+='<div class="step3-grid"><div class="prepost"><div class="col">';
     h+=secTitle('pre',t('preTavi'),'pre');
     h+='<div class="card pre">';
@@ -3274,7 +3490,7 @@ function render(){
 
     h+='<div class="ppm-badge"><div class="ppm-card '+pi.cls+'">';
     h+='<div class="ppm-icon">'+ICONS[pi.icon]+'</div>';
-    h+='<div class="ppm-label">'+pi.label+'</div>';
+    h+='<div class="ppm-label">'+pi.label+(c.flowState?'<span class="flow-state-pill '+c.flowState+'" title="'+(c.flowState==='low'?t('flowStateHelpLowFlow'):t('flowStateHelpNormalFlow'))+'">'+(c.flowState==='low'?t('lowFlowState'):t('normalFlowState'))+'</span>':'')+'</div>';
     h+='<div class="ppm-value">'+t('postAvai')+' = <strong id="avai-countup">'+fmt(ai)+'</strong> cm²/m²</div>';
     if(showCI){
       const ciM = avaiCI(ai, 'measured');
@@ -3402,9 +3618,7 @@ function render(){
     h+=renderCrossChecks('measured');
 
     h+='<div class="export-row">';
-    h+='<button class="export-btn" onclick="exportText(\'measured\')">'+ICONS.copy+' '+t('copyResults')+'</button>';
     h+='<button class="export-btn" onclick="exportPDF(\'measured\')">'+ICONS.print+' '+t('exportPdf')+'</button>';
-    h+='<button class="export-btn" onclick="exportJSON(\'measured\')" title="'+t('exportJsonTooltip')+'">'+ICONS.download+' JSON</button>';
     h+='</div>';
 
     if(resultDetailMode === 'detailed'){
@@ -3416,6 +3630,7 @@ function render(){
   if(step===4) h += creditBlock();
 
   document.getElementById('app').innerHTML=h;
+  buildRecapBarHTML();
   updateValues();
   updateNav();
   saveState();
@@ -3431,18 +3646,46 @@ function render(){
 
 window.updateField=updateField;
 window.toggleHelp=toggleHelp;
-window.exportText=exportText;
+window.showHelpAlert=showHelpAlert;
+window.closeHelpPopover=closeHelpPopover;
 
 // Step field by delta for any of the three states (D, P, FU).
 // Rounding to a sensible decimal precision based on step magnitude:
 //  - step >= 1: integer
 //  - step >= 0.5: 1 decimal
 //  - step <  0.5: 2 decimals
+// Sensible defaults when stepping from an empty field. Picked to land near
+// typical adult values for the most-common patient demographic, so a single
+// click of "+" puts the user in a clinically meaningful range rather than
+// starting from 1 kg / 1 cm / 1 mmHg.
+const STEPPER_EMPTY_DEFAULTS = {
+  // Patient
+  peso: 70, pesoP: 70, pesoF: 70,
+  altezza: 170, altezzaP: 170, altezzaF: 170,
+  lvef: 60, lvefP: 60, lvefF: 60,
+  // Echo
+  lvotD: 21, lvotVti: 20, vtiTrans: 60,
+  fuLvotD: 21, fuLvotVti: 22, fuAvVti: 70,
+  fuMeanGrad: 10, fuPeakVel: 2.5,
+  svVal: 70,
+  // Hemodynamics
+  ms0: 100, lvet0: 300,
+  msPre: 100, msPost: 95,
+  dpPre: 50, dpPost: 10
+};
+
 window.stepField = function(key, delta, scope){
   const state = scope === 'P' ? P : (scope === 'F' ? FU : D);
   const updateFn = scope === 'P' ? updateFieldP : (scope === 'F' ? updateFieldF : updateField);
   const cur = state[key];
-  const base = (cur != null && !isNaN(cur)) ? parseFloat(cur) : 0;
+  // If the field is empty and the user clicks +/-, start from a sensible default
+  // rather than from 0 (which produces 1 kg / 1 cm / etc on the first +).
+  // The default is only used as a starting POINT — the delta is still applied,
+  // so e.g. clicking "+" on empty peso → 70 + 1 = 71. Clicking "−" → 70 − 1 = 69.
+  // If no default is registered, fall back to 0 (preserves old behavior).
+  const isEmpty = (cur == null || cur === '' || isNaN(cur));
+  const fallback = STEPPER_EMPTY_DEFAULTS.hasOwnProperty(key) ? STEPPER_EMPTY_DEFAULTS[key] : 0;
+  const base = isEmpty ? fallback : parseFloat(cur);
   let next = base + delta;
   // Round to avoid floating-point drift
   const absDelta = Math.abs(delta);
@@ -3464,13 +3707,17 @@ window.goBack=function(){if(step>0){step--;render();window.scrollTo({top:0,behav
 window.goNext=function(){if(canNext()&&step<4){step++;render();window.scrollTo({top:0,behavior:'smooth'})}};
 window.gotoStep=function(i){if(i<=step){step=i;render();window.scrollTo({top:0,behavior:'smooth'})}};
 window.setSex=function(s){D.sesso=s;render()};
+window.setRhythm=function(r){D.rhythm=r;render();saveState()};
+window.setRhythmP=function(r){P.rhythmP=r;render();saveState()};
+window.setRhythmF=function(r){FU.rhythmF=r;render();saveState()};
 window.setBvf=function(v){D.bvfPerformed=v;render();saveState()};
 window.setBvfPlanned=function(v){P.bvfPlanned=v;render();saveState()};
 window.setSvMode=function(v){D.svDiretto=v;D.svVal=null;D.lvotD=null;D.lvotVti=null;D.vtiTrans=null;render()};
 window.newMeasure=function(){D.msPre=null;D.dpPre=null;D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
 window.recheckPost=function(){D.msPost=null;D.dpPost=null;step=3;render();window.scrollTo({top:0,behavior:'smooth'})};
-window.resetAll=function(){
-  if(!confirm(t('confirmReset'))) return;
+// Internal helper that performs the actual reset (no confirm prompt).
+// Separated from resetAll so the in-app confirm dialog can call it directly.
+function _doResetAll(){
   // Reset ALL state across the three modes (Measured, Predicted, Echo FU)
   D = Object.assign({}, DEFAULT);
   P = Object.assign({}, PRED_DEFAULT);
@@ -3495,6 +3742,43 @@ window.resetAll=function(){
   render();
   window.scrollTo({top:0, behavior:'smooth'});
   showToast(t('resetDone'));
+}
+
+window.resetAll=function(){
+  // Use a custom in-app confirm dialog instead of native confirm().
+  // Native confirm() can be silently blocked by mobile browsers (iOS Safari,
+  // Chrome iOS) when the page is mid-render or the user-activation token is
+  // stale, which made the Reset button appear unresponsive. The in-app dialog
+  // works reliably on every platform.
+  const bg = document.getElementById('confirm-popover-bg');
+  const body = document.getElementById('confirm-popover-body');
+  if(!bg || !body){
+    // Fallback to native confirm if dialog container isn't available
+    if(confirm(t('confirmReset'))) _doResetAll();
+    return;
+  }
+  body.textContent = t('confirmReset');
+  // Wire up Yes/No buttons
+  const yesBtn = document.getElementById('confirm-popover-yes');
+  const noBtn = document.getElementById('confirm-popover-no');
+  if(yesBtn){
+    yesBtn.textContent = t('confirmYes');
+    yesBtn.onclick = function(){
+      bg.classList.remove('show');
+      _doResetAll();
+    };
+  }
+  if(noBtn){
+    noBtn.textContent = t('confirmNo');
+    noBtn.onclick = function(){ bg.classList.remove('show'); };
+  }
+  bg.classList.add('show');
+  // Focus the No button (safer default for destructive actions)
+  setTimeout(() => { if(noBtn) noBtn.focus(); }, 50);
+};
+window.closeConfirmPopover=function(){
+  const bg = document.getElementById('confirm-popover-bg');
+  if(bg) bg.classList.remove('show');
 };
 window.toggleTheme=function(){
   const cur=document.documentElement.getAttribute('data-theme')||'light';
@@ -3702,6 +3986,11 @@ const SURGICAL_DB = {
     sizes:{19:1.1,21:1.3,23:1.5,25:1.9,27:2.1},
     fracturable:false, fractureRef:'Stentless: no rigid frame',
     ref:'Edwards Lifesciences technical specifications', doi:null},
+  'Freedom Solo (LivaNova/Sorin)': {category:'Stentless', leafletDesign:'stentless-root',
+    sizes:{19:1.49,21:1.67,23:1.92,25:2.01,27:2.13},
+    fracturable:false, fractureRef:'Stentless bovine pericardial valve with no rigid frame to fracture; supra-annular single-suture-line design',
+    ref:'Repossini A et al. JTCVS 2014;148(5):2110-9 — 277 consecutive patients, postoperative mean EOA. DOI: 10.1016/j.jtcvs.2014.03.027',
+    doi:'10.1016/j.jtcvs.2014.03.027'},
 
   // --- Sutureless (modern, manufacturer data) ---
   'Perceval (LivaNova)': {category:'Sutureless', leafletDesign:'pericardial-inside',
@@ -4010,7 +4299,13 @@ function calcPred(){
   const taviAVAi = (taviVIV && bsa) ? taviVIV/bsa : null;
   const taviPPM = classifyPPM(taviAVAi, isObese);
   
-  return {bsa, bmi, isObese, surgEOA, surgAVAi, surgPPM, taviNominal, taviVIV, taviAVAi, taviPPM, taviIsSupra, isRedoTavi, bvfGain};
+  // Flow state classification (ESC/EACTS 2025): low-flow PPM if LVEF < 50%
+  let flowState = null;
+  if(P.lvefP != null && P.lvefP > 0){
+    flowState = P.lvefP < 50 ? 'low' : 'normal';
+  }
+  
+  return {bsa, bmi, isObese, surgEOA, surgAVAi, surgPPM, taviNominal, taviVIV, taviAVAi, taviPPM, taviIsSupra, isRedoTavi, bvfGain, flowState, lvef:P.lvefP, rhythm:P.rhythmP};
 }
 
 // ============================================================================
@@ -4238,7 +4533,9 @@ function canNextPred(){
 
 function updateFieldP(k,v){
   if(v===''||v===null||v===undefined){P[k]=null}
-  else{const n=parseFloat(v);P[k]=isNaN(n)?null:n}
+  else{const n=parseDecimal(v);P[k]=n}
+  // Refresh range warning IMMEDIATELY on input
+  if(typeof window.refreshWarnP === 'function') window.refreshWarnP(k);
   updateValuesP();
   updateNavP();
   saveState();
@@ -4246,8 +4543,9 @@ function updateFieldP(k,v){
 
 // Update only derived values without re-rendering inputs (preserves focus)
 function updateValuesP(){
-  // Update BSA, BMI badges and other [data-p] derived fields
-  const bsa = (P.pesoP && P.altezzaP) ? Math.sqrt(P.pesoP * P.altezzaP / 3600) : null;
+  // BSA: use the same formula as the main computeBSA() helper (DuBois or Mosteller per user choice).
+  // Previously hardcoded to Mosteller, causing UI/result inconsistency for DuBois users.
+  const bsa = (P.pesoP && P.altezzaP) ? computeBSA(P.pesoP, P.altezzaP) : null;
   const bmi = (P.pesoP && P.altezzaP) ? (P.pesoP / Math.pow(P.altezzaP/100, 2)) : null;
   document.querySelectorAll('[data-p="bsa"]').forEach(el => {
     if(bsa != null){el.textContent = bsa.toFixed(2);el.parentElement && el.parentElement.classList.remove('empty')}
@@ -4265,10 +4563,26 @@ function setSurgModel(v){P.surgModel=v;P.surgSize=null;P.surgOverride=null;P.bvf
 // Use parseFloat (not parseInt) to support Myval intermediate sizes (21.5, 24.5, 27.5, 30.5).
 // parseInt('21.5') would yield 21, causing a database lookup miss (sizes are stored under '21.5').
 function setSurgSize(v){P.surgSize=v?parseFloat(v):null;render();saveState()}
-function setSurgOverride(v){P.surgOverride=v?parseFloat(v):null;render();saveState()}
+// Override setters with safety clamping. Override EOA must be in the physically plausible range
+// (0.3–4.0 cm²) — values outside are silently clamped to null to prevent absurd calculations.
+// We use a permissive upper bound (4.0) to accommodate large valves; lower bound (0.3) excludes
+// negatives and near-zero values that would explode the AVAi denominator.
+function setSurgOverride(v){
+  if(!v){P.surgOverride=null;render();saveState();return}
+  const n=parseDecimal(v);
+  if(n==null||n<0.3||n>4.0){P.surgOverride=null}
+  else{P.surgOverride=n}
+  render();saveState();
+}
+function setTaviOverride(v){
+  if(!v){P.taviOverride=null;render();saveState();return}
+  const n=parseDecimal(v);
+  if(n==null||n<0.3||n>4.0){P.taviOverride=null}
+  else{P.taviOverride=n}
+  render();saveState();
+}
 function setTaviModel(v){P.taviModel=v;P.taviSize=null;P.taviOverride=null;render();saveState()}
 function setTaviSize(v){P.taviSize=v?parseFloat(v):null;render();saveState()}
-function setTaviOverride(v){P.taviOverride=v?parseFloat(v):null;render();saveState()}
 
 // Measured-mode SHV/TAVI setters — used to provide personalized BVF/BVR recommendations
 // on the Measured result page based on the surgical valve's fracturability profile.
@@ -4387,7 +4701,13 @@ function calcFU(){
     else svd = 'No SVD';
   }
   
-  return {bsa, bmi, isObese, lvotArea, sv, ava, avai, dvi, ppm, svd};
+  // Flow state classification
+  let flowState = null;
+  if(FU.lvefF != null && FU.lvefF > 0){
+    flowState = FU.lvefF < 50 ? 'low' : 'normal';
+  }
+  
+  return {bsa, bmi, isObese, lvotArea, sv, ava, avai, dvi, ppm, svd, flowState, lvef:FU.lvefF, rhythm:FU.rhythmF};
 }
 
 function canNextFU(){
@@ -4399,7 +4719,9 @@ function canNextFU(){
 function updateFieldF(k,v){
   if(v===''||v===null||v===undefined){FU[k]=null}
   else if(k==='fuDate'||k==='fuAR'){FU[k]=v}
-  else{const n=parseFloat(v);FU[k]=isNaN(n)?null:n}
+  else{const n=parseDecimal(v);FU[k]=n}
+  // Refresh range warning IMMEDIATELY on input
+  if(typeof window.refreshWarnF === 'function') window.refreshWarnF(k);
   updateValuesF();
   updateNavF();
   saveState();
@@ -4407,7 +4729,8 @@ function updateFieldF(k,v){
 
 // Update only derived values without re-rendering inputs (preserves focus)
 function updateValuesF(){
-  const bsa = (FU.pesoF && FU.altezzaF) ? Math.sqrt(FU.pesoF * FU.altezzaF / 3600) : null;
+  // BSA: use computeBSA() to match the main calculation formula (DuBois or Mosteller).
+  const bsa = (FU.pesoF && FU.altezzaF) ? computeBSA(FU.pesoF, FU.altezzaF) : null;
   const bmi = (FU.pesoF && FU.altezzaF) ? (FU.pesoF / Math.pow(FU.altezzaF/100, 2)) : null;
   const lvotArea = FU.fuLvotD ? Math.PI * Math.pow(FU.fuLvotD/20, 2) : null;
   const sv = (lvotArea && FU.fuLvotVti) ? lvotArea * FU.fuLvotVti : null;
@@ -4493,115 +4816,6 @@ window.exportPDF = function(mode){
   window.print();
 };
 
-// Structured data export (JSON) for downstream research analysis
-// Outputs all input parameters + computed results for the requested mode.
-// No personal identifiers are included — patient anthropometrics only.
-window.exportJSON = function(mode){
-  const date = new Date().toISOString();
-  const dateShort = date.slice(0,10);
-  const payload = {
-    schemaVersion: CURRENT_SCHEMA,
-    toolVersion: '4.1.1',
-    exportedAt: date,
-    exportedMode: mode,
-    language: lang
-  };
-  
-  if(mode === 'predicted'){
-    const c = calcPred();
-    payload.predicted = {
-      input: {
-        weight_kg: P.pesoP, height_cm: P.altezzaP, sex: P.sessoP,
-        degeneratedType: P.degeneratedType,
-        surgicalValve: P.surgModel ? {
-          model: P.surgModel,
-          size_mm: P.surgSize,
-          eoaOverride_cm2: P.surgOverride,
-          leafletDesign: SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].leafletDesign : null,
-          fracturable: SURGICAL_DB[P.surgModel] ? SURGICAL_DB[P.surgModel].fracturable : null
-        } : null,
-        intendedTavi: P.taviModel ? {
-          model: P.taviModel,
-          size_mm: P.taviSize,
-          eoaOverride_cm2: P.taviOverride,
-          category: TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].category : null,
-          supraAnnular: TAVI_DB[P.taviModel] ? TAVI_DB[P.taviModel].supraAnnular : null
-        } : null,
-        bvfPlanned: P.bvfPlanned
-      },
-      computed: {
-        bsa_m2: c.bsa, bmi: c.bmi, isObese: c.isObese,
-        surgicalEoa_cm2: c.surgEOA, surgicalAvai_cm2_m2: c.surgAVAi, surgicalPpm: c.surgPPM,
-        taviNominalEoa_cm2: c.taviNominal, taviVivAdjustedEoa_cm2: c.taviVIV,
-        taviAvai_cm2_m2: c.taviAVAi, taviPpm: c.taviPPM,
-        bvfGain_cm2: c.bvfGain || 0,
-        isRedoTavi: c.isRedoTavi
-      }
-    };
-  } else if(mode === 'measured'){
-    const c = calc();
-    payload.measured = {
-      input: {
-        weight_kg: D.peso, height_cm: D.altezza, sex: D.sesso,
-        procedureDate: D.procDate,
-        echo: {
-          svDirect: D.svDiretto, svValue_ml: D.svVal,
-          lvotDiameter_mm: D.lvotD, lvotVti_cm: D.lvotVti, transvalvularVti_cm: D.vtiTrans
-        },
-        calibration: {
-          baselineMeanAorticPressure_mmHg: D.ms0, baselineLvet_ms: D.lvet0
-        },
-        prePostMeasurements: {
-          preMeanAorticPressure_mmHg: D.msPre, preMeanGradient_mmHg: D.dpPre,
-          postMeanAorticPressure_mmHg: D.msPost, postMeanGradient_mmHg: D.dpPost
-        },
-        bvfPerformed: D.bvfPerformed
-      },
-      computed: {
-        bsa_m2: c.bsa, bmi: c.bmi, sv_ml: c.sv,
-        zao_mmHg_s_per_ml: c.zao,
-        avaPre_cm2: c.avaPre, avaPost_cm2: c.avaPost,
-        avaiPre_cm2_m2: c.avaiPre, avaiPost_cm2_m2: c.avaiPost,
-        avaEcho_cm2: c.avaEcho, avaiEcho_cm2_m2: c.avaiEcho,
-        ppmPost: classifyPPM(c.avaiPost, c.bmi >= 30)
-      }
-    };
-  } else if(mode === 'echopost'){
-    const c = calcFU();
-    payload.echoPost = {
-      input: {
-        weight_kg: FU.pesoF, height_cm: FU.altezzaF, sex: FU.sessoF,
-        echoDate: FU.echoDate,
-        lvotDiameter_mm: FU.fuLvotD, lvotVti_cm: FU.fuLvotVti,
-        aorticVti_cm: FU.fuAvVti, meanGradient_mmHg: FU.fuMeanGrad,
-        peakVelocity_m_s: FU.fuPeakVel, aorticRegurgitation: FU.fuAR
-      },
-      computed: {
-        bsa_m2: c.bsa, sv_ml: c.sv,
-        ava_cm2: c.ava, avai_cm2_m2: c.avai, dvi: c.dvi,
-        varc3SvdClassification: c.svd,
-        ppm: classifyPPM(c.avai, c.bmi && c.bmi >= 30)
-      }
-    };
-  }
-  
-  // Trigger browser download
-  try{
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'VIV_PPM_' + mode + '_' + dateShort + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-    showToast(t('jsonDownloaded'));
-  } catch(e){
-    console.error('JSON export failed:', e);
-    showToast(t('exportFailed') + ': ' + e.message);
-  }
-};
 
 // ============================================================================
 // SELF-TEST / HEALTHCHECK
@@ -4709,7 +4923,7 @@ function runHealthcheck(){
   
   let html = '<div style="max-width:680px;margin:30px auto;padding:24px;font-family:-apple-system,Segoe UI,sans-serif;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)">';
   html += '<h1 style="margin:0 0 8px;color:#0b1e3a">VIV PPM Calculator — Healthcheck</h1>';
-  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.1.1 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
+  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.2.1 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
   html += '<div style="padding:14px;border-radius:10px;background:'+(allPass?'#dcfce7':'#fee2e2')+';border-left:4px solid '+(allPass?'#16a34a':'#dc2626')+';margin-bottom:20px;font-weight:700;color:'+(allPass?'#15803d':'#991b1b')+'">';
   html += allPass ? '✓ ALL TESTS PASSED ('+passCount+'/'+tests.length+')' : '✕ FAILURES — Pass: '+passCount+', Fail: '+failCount+', Error: '+errorCount;
   html += '</div>';
@@ -4775,11 +4989,11 @@ function showErrorBanner(){
 }
 
 window.reportBug = function(){
-  const subject = encodeURIComponent('VIV PPM Calculator v4.1.1 — Bug report');
+  const subject = encodeURIComponent('VIV PPM Calculator v4.2.1 — Bug report');
   const body = encodeURIComponent(
     'Hi Francesco,\n\nI encountered an error in the VIV PPM Calculator.\n\n' +
     '--- Technical details (auto-filled, please do not delete) ---\n' +
-    'Tool version: 4.1.1\n' +
+    'Tool version: 4.2.1\n' +
     'Schema: v' + CURRENT_SCHEMA + '\n' +
     'Language: ' + lang + '\n' +
     'BSA formula: ' + bsaFormula + '\n' +
