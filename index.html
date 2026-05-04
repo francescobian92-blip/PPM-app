@@ -803,7 +803,7 @@ html{scroll-behavior:smooth;background:#0b1e3a}
   <p>Francesco Bianchini, MD</p>
   <div class="print-header-meta">
     <span>Printed: <span id="print-date"></span></span>
-    <span>Tool version: 4.3.0 · For research use only</span>
+    <span>Tool version: 4.3.1 · For research use only</span>
   </div>
 </div>
 
@@ -818,7 +818,7 @@ html{scroll-behavior:smooth;background:#0b1e3a}
       </div>
       <div class="hdr-titles">
         <h1>VIV PPM <span class="hdr-status">Ready</span></h1>
-        <p>Predicted & measured PPM · v4.3.0</p>
+        <p>Predicted & measured PPM · v4.3.1</p>
       </div>
     </div>
     <div class="hdr-tools">
@@ -868,7 +868,7 @@ html{scroll-behavior:smooth;background:#0b1e3a}
 <div class="modal-bg" id="info-modal" onclick="if(event.target.id==='info-modal')closeModal()">
   <div class="modal">
     <h3 id="about-title">About this tool</h3>
-    <p><strong id="about-version">VIV PPM Calculator v4.3.0</strong></p>
+    <p><strong id="about-version">VIV PPM Calculator v4.3.1</strong></p>
     <p id="about-desc">Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.</p>
     <p><strong id="about-method">Method:</strong> <span id="about-method-desc">AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.</span></p>
     <p><strong id="about-thresholds">PPM thresholds:</strong> <span id="about-thresholds-desc">ESC/EACTS 2025 guidelines.</span></p>
@@ -876,7 +876,7 @@ html{scroll-behavior:smooth;background:#0b1e3a}
     <div style="margin-top:16px;padding:14px;background:var(--bg-alt);border-radius:10px;border-left:3px solid var(--blue);font-size:12.5px;line-height:1.6">
       <div style="font-weight:700;color:var(--text);margin-bottom:4px" id="about-author">Author</div>
       <div><a href="https://github.com/francescobian92-blip" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-weight:600">Francesco Bianchini, MD</a></div>
-      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.3.0 · © 2026</div>
+      <div style="color:var(--text-soft);font-size:10.5px;margin-top:8px;letter-spacing:0.3px">VIV PPM Calculator · v4.3.1 · © 2026</div>
     </div>
     <div style="margin-top:14px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;line-height:1.5">
       <div style="font-weight:700;color:var(--text);margin-bottom:6px" id="about-bsa-title">BSA formula</div>
@@ -1176,7 +1176,7 @@ const I18N = {
     tourGetStarted: 'Get started',
     // About modal
     aboutTitle: 'About this tool',
-    aboutVersion: 'VIV PPM Calculator v4.3.0',
+    aboutVersion: 'VIV PPM Calculator v4.3.1',
     aboutDesc: 'Real-time prediction of patient-prosthesis mismatch (PPM) during valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), based on a hybrid Gorlin approach combining echocardiographic stroke volume with intra-procedural invasive hemodynamics.',
     aboutMethod: 'Method:',
     aboutMethodDesc: 'AVA = Mean systolic aortic pressure / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>mean</sub>), where Z<sub>ao</sub> is calibrated at baseline using echo-derived stroke volume.',
@@ -1574,7 +1574,7 @@ const I18N = {
     tourGetStarted: 'Inizia',
     // About modal
     aboutTitle: 'Informazioni sul tool',
-    aboutVersion: 'VIV PPM Calculator v4.3.0',
+    aboutVersion: 'VIV PPM Calculator v4.3.1',
     aboutDesc: 'Predizione in tempo reale del patient-prosthesis mismatch (PPM) durante valve-in-valve transcatheter aortic valve implantation (VIV-TAVI), basata su un approccio hybrid Gorlin che combina lo stroke volume ecocardiografico con l\'emodinamica invasiva intra-procedurale.',
     aboutMethod: 'Metodo:',
     aboutMethodDesc: 'AVA = Pressione aortica sistolica media / (Z<sub>ao</sub> × 44.3 × √ΔP<sub>medio</sub>), dove Z<sub>ao</sub> è calibrata al baseline tramite stroke volume eco.',
@@ -1920,7 +1920,15 @@ function fmt(v,d){d=d===undefined?2:d;return(v!=null&&!isNaN(v))?v.toFixed(d):"�
 
 function canNext(){
   if(step===0)return D.peso>0&&D.altezza>0;
-  if(step===1){const c=calc();return c.sv>0}
+  // Step 1 (Echo): require ALL three measurements to be positive (or, if user opted
+  // for SV-direct mode, require svVal>0). vtiTrans>0 is enforced even though it's not
+  // used by the hybrid-Gorlin pipeline — without it we lose the echo-vs-Gorlin
+  // cross-check, which is a core safety net of the methodology and should not be
+  // silently skipped.
+  if(step===1){
+    if(D.svDiretto) return D.svVal>0;
+    return D.lvotD>0 && D.lvotVti>0 && D.vtiTrans>0;
+  }
   if(step===2)return D.ms0>0&&D.lvet0>0&&calc().zao>0;
   if(step===3)return D.msPre>0&&D.dpPre>0&&D.msPost>0&&D.dpPost>0;
   return true;
@@ -2671,7 +2679,7 @@ function animateMarker(avai){
 function creditBlock(){
   return '<div class="credit">' +
     '<a class="credit-name" href="https://github.com/francescobian92-blip" target="_blank" rel="noopener">Francesco Bianchini, MD</a>' +
-    '<div class="credit-version">VIV PPM Calculator v4.3.0 · © 2026</div>' +
+    '<div class="credit-version">VIV PPM Calculator v4.3.1 · © 2026</div>' +
   '</div>';
 }
 
@@ -4885,9 +4893,9 @@ function runHealthcheck(){
   });
   
   // ---- Test 6: Database integrity ----
-  runTest('SURGICAL_DB has 20 entries', () => {
+  runTest('SURGICAL_DB has 21 entries', () => {
     const n = Object.keys(SURGICAL_DB).length;
-    return n === 20 || `Expected 20, got ${n}`;
+    return n === 21 || `Expected 21, got ${n}`;
   });
   runTest('All SHV have fracturable flag', () => {
     const missing = Object.entries(SURGICAL_DB).filter(([k,v]) => v.fracturable === undefined).map(([k]) => k);
@@ -4926,7 +4934,7 @@ function runHealthcheck(){
   
   let html = '<div style="max-width:680px;margin:30px auto;padding:24px;font-family:-apple-system,Segoe UI,sans-serif;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)">';
   html += '<h1 style="margin:0 0 8px;color:#0b1e3a">VIV PPM Calculator — Healthcheck</h1>';
-  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.3.0 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
+  html += '<div style="color:#64748b;font-size:13px;margin-bottom:16px">Tool version 4.3.1 · Schema v'+CURRENT_SCHEMA+' · '+new Date().toISOString()+'</div>';
   html += '<div style="padding:14px;border-radius:10px;background:'+(allPass?'#dcfce7':'#fee2e2')+';border-left:4px solid '+(allPass?'#16a34a':'#dc2626')+';margin-bottom:20px;font-weight:700;color:'+(allPass?'#15803d':'#991b1b')+'">';
   html += allPass ? '✓ ALL TESTS PASSED ('+passCount+'/'+tests.length+')' : '✕ FAILURES — Pass: '+passCount+', Fail: '+failCount+', Error: '+errorCount;
   html += '</div>';
@@ -4992,11 +5000,11 @@ function showErrorBanner(){
 }
 
 window.reportBug = function(){
-  const subject = encodeURIComponent('VIV PPM Calculator v4.3.0 — Bug report');
+  const subject = encodeURIComponent('VIV PPM Calculator v4.3.1 — Bug report');
   const body = encodeURIComponent(
     'Hi Francesco,\n\nI encountered an error in the VIV PPM Calculator.\n\n' +
     '--- Technical details (auto-filled, please do not delete) ---\n' +
-    'Tool version: 4.3.0\n' +
+    'Tool version: 4.3.1\n' +
     'Schema: v' + CURRENT_SCHEMA + '\n' +
     'Language: ' + lang + '\n' +
     'BSA formula: ' + bsaFormula + '\n' +
